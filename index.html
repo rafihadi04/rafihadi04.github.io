@@ -17,7 +17,6 @@
         }
 
         .main-container {
-            /* Mengubah height menjadi min-height agar fleksibel */
             min-height: calc(100vh - 56px); 
         }
 
@@ -27,7 +26,6 @@
             border-radius: 0.5rem;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             max-width: 90%;
-            /* Menghapus overflow-x dan white-space, akan diatur oleh Tailwind */
         }
 
         #canvas-container {
@@ -36,14 +34,14 @@
             margin-top: 1rem;
             position: relative;
             overflow: hidden;
-            flex-grow: 1; /* Memastikan canvas mengisi ruang tersedia */
+            flex-grow: 1;
             width: 100%;
             max-width: 100%;
         }
 
         #previewCanvas {
             border-radius: 0.5rem;
-            touch-action: none; /* Disable default touch actions */
+            touch-action: none;
             background-color: transparent;
         }
 
@@ -62,22 +60,6 @@
             background-color: #fff;
             color: #0d6efd;
         }
-        
-        /* Custom scrollbar untuk panel kontrol di desktop */
-        .controls-container::-webkit-scrollbar {
-            height: 8px;
-        }
-        .controls-container::-webkit-scrollbar-track {
-            background: #e9ecef;
-            border-radius: 10px;
-        }
-        .controls-container::-webkit-scrollbar-thumb {
-            background: #adb5bd;
-            border-radius: 10px;
-        }
-        .controls-container::-webkit-scrollbar-thumb:hover {
-            background: #6c757d;
-        }
     </style>
 </head>
 <body class="bg-gray-100">
@@ -89,7 +71,7 @@
 </nav>
 
 <div class="container-fluid main-container flex flex-col items-center">
-    <div class="controls-container flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4 w-full justify-center mt-3 md:overflow-x-auto md:whitespace-nowrap">
+    <div class="controls-container flex flex-col md:flex-row flex-wrap gap-4 w-full justify-center mt-3">
         <div class="flex-none p-3 bg-gray-100 rounded-lg shadow-sm w-full md:w-auto">
             <h5 class="font-bold text-gray-800 mb-2">Composition</h5>
             <div class="flex flex-col space-y-2">
@@ -191,6 +173,7 @@
 </div>
 
 <script>
+    // -- JavaScript Anda tetap sama persis seperti sebelumnya --
     const compositionWidthInput = document.getElementById('compositionWidthInput');
     const compositionHeightInput = document.getElementById('compositionHeightInput');
     const loadCompositionBtn = document.getElementById('loadCompositionBtn');
@@ -230,41 +213,34 @@
     let groupStart = { x: 0, y: 0 };
     let scale = 1;
 
-    // Helper function to scale coordinates
     function s(value) {
         return value * scale;
     }
 
-    // Function to calculate snapping
     function getSnapPosition(x, y, group) {
         const snapThreshold = 10;
         let newX = x;
         let newY = y;
         
-        // Snap to Composition edges and center
         if (snapToCenterToggle.checked) {
             const compCenterX = composition.width / 2;
             const compCenterY = composition.height / 2;
             const groupCenterX = x + group.width / 2;
             const groupCenterY = y + group.height / 2;
 
-            // Snap to horizontal center
             if (Math.abs(groupCenterX - compCenterX) < snapThreshold) {
                 newX = compCenterX - group.width / 2;
             }
-            // Snap to vertical center
             if (Math.abs(groupCenterY - compCenterY) < snapThreshold) {
                 newY = compCenterY - group.height / 2;
             }
             
-            // Snap to composition edges
             if (Math.abs(x - 0) < snapThreshold) newX = 0;
             if (Math.abs(y - 0) < snapThreshold) newY = 0;
             if (Math.abs(x + group.width - composition.width) < snapThreshold) newX = composition.width - group.width;
             if (Math.abs(y + group.height - composition.height) < snapThreshold) newY = composition.height - group.height;
         }
 
-        // Snap to Other Groups
         if (snapToGroupToggle.checked) {
             groups.forEach(g => {
                 if (g !== group) {
@@ -281,13 +257,11 @@
                         right: newX + group.width
                     };
 
-                    // Check horizontal snaps
                     if (Math.abs(groupEdges.left - gEdges.right) < snapThreshold) newX = gEdges.right;
                     if (Math.abs(groupEdges.right - gEdges.left) < snapThreshold) newX = gEdges.left - group.width;
                     if (Math.abs(groupEdges.left - gEdges.left) < snapThreshold) newX = gEdges.left;
                     if (Math.abs(groupEdges.right - gEdges.right) < snapThreshold) newX = gEdges.right - group.width;
 
-                    // Check vertical snaps
                     if (Math.abs(groupEdges.top - gEdges.bottom) < snapThreshold) newY = gEdges.bottom;
                     if (Math.abs(groupEdges.bottom - gEdges.top) < snapThreshold) newY = gEdges.top - group.height;
                     if (Math.abs(groupEdges.top - gEdges.top) < snapThreshold) newY = gEdges.top;
@@ -298,7 +272,6 @@
         return { x: newX, y: newY };
     }
     
-    // Fungsi untuk menggambar pola tes di dalam grup
     function drawTestPatternInGroup(targetCtx, group) {
         const cellSize = parseInt(testPatternCellSizeInput.value) || 48;
         for (let x = 0; x < group.width; x += cellSize) {
@@ -306,7 +279,6 @@
                 const isEvenCell = ((x / cellSize) % 2 === 0 && (y / cellSize) % 2 === 0) || ((x / cellSize) % 2 !== 0 && (y / cellSize) % 2 !== 0);
                 let color = group.color;
                 
-                // Buat warna yang lebih terang/gelap untuk pola kotak-kotak
                 const r = parseInt(color.slice(1, 3), 16);
                 const g = parseInt(color.slice(3, 5), 16);
                 const b = parseInt(color.slice(5, 7), 16);
@@ -323,7 +295,6 @@
         }
     }
 
-    // Fungsi untuk menggambar semua elemen di kanvas
     function draw() {
         const containerRect = canvasContainer.getBoundingClientRect();
         previewCanvas.width = containerRect.width;
@@ -336,13 +307,10 @@
         ctx.save();
         ctx.translate(offsetX, offsetY);
         
-        // Gambar latar belakang komposisi
         ctx.fillStyle = '#f8f9fa';
         ctx.fillRect(0, 0, s(composition.width), s(composition.height));
         
-        // Gambar grup
         groups.forEach(group => {
-            // Gambar pola tes di dalam grup jika diaktifkan
             if (showTestPattern.checked) {
                 ctx.save();
                 ctx.scale(scale, scale);
@@ -355,19 +323,16 @@
             const w = s(group.width);
             const h = s(group.height);
             
-            // Gambar batas grup
             ctx.strokeStyle = '#fff';
             ctx.lineWidth = s(2);
             ctx.strokeRect(x, y, w, h);
 
-            // Sorot grup yang dipilih
             if (group === selectedGroup) {
                 ctx.strokeStyle = '#0d6efd';
                 ctx.lineWidth = s(4);
                 ctx.strokeRect(x, y, w, h);
             }
 
-            // Gambar teks grup
             ctx.save();
             ctx.translate(x + w / 2, y + h / 2);
             const fontSize = Math.max(10, s(16));
@@ -394,7 +359,6 @@
             ctx.restore();
         });
 
-        // Gambar panduan
         if (showMainGuides.checked) {
             drawMainGuides();
         }
@@ -405,7 +369,6 @@
         ctx.restore();
     }
     
-    // Fungsi untuk menggambar panduan utama
     function drawMainGuides() {
         const compW = s(composition.width);
         const compH = s(composition.height);
@@ -415,7 +378,6 @@
         ctx.lineWidth = s(1);
         ctx.setLineDash([s(5), s(5)]);
 
-        // Garis tengah horizontal dan vertikal
         ctx.beginPath();
         ctx.moveTo(compW / 2, 0);
         ctx.lineTo(compW / 2, compH);
@@ -423,7 +385,6 @@
         ctx.lineTo(compW, compH / 2);
         ctx.stroke();
 
-        // Garis diagonal
         ctx.beginPath();
         ctx.moveTo(0, 0);
         ctx.lineTo(compW, compH);
@@ -431,7 +392,6 @@
         ctx.lineTo(0, compH);
         ctx.stroke();
 
-        // Lingkaran tengah
         ctx.beginPath();
         const circleRadius = Math.min(compW, compH) / 4;
         ctx.arc(compW / 2, compH / 2, circleRadius, 0, 2 * Math.PI);
@@ -440,7 +400,6 @@
         ctx.restore();
     }
     
-    // Fungsi untuk menggambar panduan pada setiap grup
     function drawGroupGuides() {
         groups.forEach(group => {
             const x = s(group.x);
@@ -453,7 +412,6 @@
             ctx.lineWidth = s(1);
             ctx.setLineDash([s(5), s(5)]);
 
-            // Garis tengah grup
             ctx.beginPath();
             ctx.moveTo(x + w / 2, y);
             ctx.lineTo(x + w / 2, y + h);
@@ -461,7 +419,6 @@
             ctx.lineTo(x + w, y + h / 2);
             ctx.stroke();
             
-            // Garis diagonal grup
             ctx.beginPath();
             ctx.moveTo(x, y);
             ctx.lineTo(x + w, y + h);
@@ -469,7 +426,6 @@
             ctx.lineTo(x, y + h);
             ctx.stroke();
 
-            // Lingkaran grup
             ctx.beginPath();
             const groupCircleRadius = Math.min(w, h) / 4;
             ctx.arc(x + w / 2, y + h / 2, groupCircleRadius, 0, 2 * Math.PI);
@@ -479,7 +435,6 @@
         });
     }
 
-    // Fungsi untuk mengisi UI daftar grup
     function populateGroupList() {
         groupList.innerHTML = '';
         groups.forEach((group, index) => {
@@ -498,7 +453,6 @@
         updateControls();
     }
 
-    // Fungsi untuk memilih grup
     function selectGroup(index) {
         if (index === null) {
             selectedGroup = null;
@@ -530,7 +484,6 @@
         draw();
     }
 
-    // Fungsi untuk memperbarui panel kontrol
     function updateControls() {
         const groupItems = document.querySelectorAll('.group-item');
         groupItems.forEach(item => {
@@ -542,28 +495,22 @@
         });
     }
 
-    // Fungsi untuk menangani ekspor ke PNG
     function exportPng() {
         const tempCanvas = document.createElement('canvas');
         tempCanvas.width = composition.width;
         tempCanvas.height = composition.height;
         const tempCtx = tempCanvas.getContext('2d');
         
-        // Gambar latar belakang komposisi
         tempCtx.fillStyle = '#f8f9fa';
         tempCtx.fillRect(0, 0, composition.width, composition.height);
 
-        // Gambar grup dengan pola tes
         groups.forEach(group => {
-            // Gambar pola tes di dalam grup
             drawTestPatternInGroup(tempCtx, group);
 
-            // Gambar batas grup
             tempCtx.strokeStyle = '#fff';
             tempCtx.lineWidth = 2;
             tempCtx.strokeRect(group.x, group.y, group.width, group.height);
 
-            // Gambar teks grup
             const nameText = group.name;
             const sizeText = `${group.width}x${group.height}`;
             const fontSize = 16;
@@ -586,7 +533,6 @@
             tempCtx.fillText(sizeText, group.x + group.width / 2, group.y + group.height / 2 + fontSize/2);
         });
 
-        // Gambar panduan
         if (showMainGuides.checked) {
             tempCtx.strokeStyle = 'white';
             tempCtx.lineWidth = 1;
@@ -595,26 +541,22 @@
             const compW = composition.width;
             const compH = composition.height;
 
-            // Garis tengah
             tempCtx.beginPath();
             tempCtx.moveTo(compW / 2, 0); tempCtx.lineTo(compW / 2, compH);
             tempCtx.moveTo(0, compH / 2); tempCtx.lineTo(compW, compH / 2);
             tempCtx.stroke();
 
-            // Garis diagonal
             tempCtx.beginPath();
             tempCtx.moveTo(0, 0); tempCtx.lineTo(compW, compH);
             tempCtx.moveTo(compW, 0); tempCtx.lineTo(0, compH);
             tempCtx.stroke();
 
-            // Lingkaran tengah
             tempCtx.beginPath();
             const circleRadius = Math.min(compW, compH) / 4;
             tempCtx.arc(compW / 2, compH / 2, circleRadius, 0, 2 * Math.PI);
             tempCtx.stroke();
         }
         
-        // Panduan grup
         if (showGroupGuides.checked) {
             groups.forEach(group => {
                 const x = group.x;
@@ -640,14 +582,12 @@
             });
         }
 
-
         const link = document.createElement('a');
         link.download = 'pixel_mapper.png';
         link.href = tempCanvas.toDataURL('image/png');
         link.click();
     }
 
-    // Fungsi untuk penskalaan otomatis pratinjau kanvas
     function autoScale() {
         const containerRect = canvasContainer.getBoundingClientRect();
         const containerWidth = containerRect.width;
@@ -663,7 +603,6 @@
         draw();
     }
 
-    // Event listeners
     loadCompositionBtn.addEventListener('click', () => {
         const width = parseInt(compositionWidthInput.value);
         const height = parseInt(compositionHeightInput.value);
@@ -672,7 +611,6 @@
             composition.height = height;
             autoScale();
         } else {
-            // Mengganti alert() dengan UI modal
             const modal = document.createElement('div');
             modal.innerHTML = `
                 <div class="modal fade" id="infoModal" tabindex="-1">
@@ -706,7 +644,6 @@
         let y = parseInt(groupYInput.value);
         const color = groupColorInput.value;
 
-        // Jika X dan Y kosong, tempatkan grup di tengah komposisi
         if (isNaN(x) || isNaN(y)) {
             x = (composition.width - width) / 2;
             y = (composition.height - height) / 2;
@@ -719,7 +656,6 @@
             selectGroup(groups.length - 1);
             draw();
         } else {
-            // Mengganti alert() dengan UI modal
             const modal = document.createElement('div');
             modal.innerHTML = `
                 <div class="modal fade" id="infoModal" tabindex="-1">
@@ -765,7 +701,6 @@
                 populateGroupList();
                 draw();
             } else {
-                // Mengganti alert() dengan UI modal
                 const modal = document.createElement('div');
                 modal.innerHTML = `
                     <div class="modal fade" id="infoModal" tabindex="-1">
@@ -804,7 +739,6 @@
         }
     });
 
-    // Handle events for dragging on canvas
     previewCanvas.addEventListener('mousedown', (e) => {
         const rect = previewCanvas.getBoundingClientRect();
         const offsetX = (previewCanvas.width - s(composition.width)) / 2;
@@ -825,7 +759,7 @@
         }
         
         if (foundGroup) {
-            selectGroup(foundIndex); // Perbaikan: memanggil selectGroup() dengan index
+            selectGroup(foundIndex);
             isDragging = true;
             dragStart = { x: e.clientX, y: e.clientY };
             groupStart = { x: selectedGroup.x, y: selectedGroup.y };
@@ -866,7 +800,6 @@
         }
     });
 
-    // Touch events for mobile
     previewCanvas.addEventListener('touchstart', (e) => {
         const touch = e.touches[0];
         const rect = previewCanvas.getBoundingClientRect();
@@ -888,12 +821,12 @@
         }
         
         if (foundGroup) {
-            selectGroup(foundIndex); // Perbaikan: memanggil selectGroup() dengan index
+            selectGroup(foundIndex);
             isDragging = true;
             dragStart = { x: touch.clientX, y: touch.clientY };
             groupStart = { x: selectedGroup.x, y: selectedGroup.y };
             draw();
-            e.preventDefault(); // Mencegah gulir
+            e.preventDefault();
         } else {
             selectGroup(null);
         }
@@ -917,7 +850,7 @@
             groupYInput.value = Math.round(selectedGroup.y);
             
             draw();
-            e.preventDefault(); // Mencegah gulir
+            e.preventDefault();
         }
     });
 
@@ -934,7 +867,6 @@
 
     exportPngBtn.addEventListener('click', exportPng);
     
-    // Kontrol zoom
     zoomInBtn.addEventListener('click', () => {
         scale += 0.1;
         zoomLevelSpan.textContent = `${Math.round(scale * 100)}%`;
@@ -947,7 +879,6 @@
         draw();
     });
 
-    // Menggambar ulang saat input berubah
     groupNameInput.addEventListener('input', () => { if(selectedGroup) selectedGroup.name = groupNameInput.value; draw(); });
     groupWidthInput.addEventListener('input', () => { if(selectedGroup) selectedGroup.width = parseInt(groupWidthInput.value) || 0; draw(); });
     groupHeightInput.addEventListener('input', () => { if(selectedGroup) selectedGroup.height = parseInt(groupHeightInput.value) || 0; draw(); });
@@ -956,18 +887,15 @@
     groupColorInput.addEventListener('input', () => { if(selectedGroup) selectedGroup.color = groupColorInput.value; draw(); });
     testPatternCellSizeInput.addEventListener('input', draw);
     
-    // Checkbox listeners
     showTestPattern.addEventListener('change', draw);
     showMainGuides.addEventListener('change', draw);
     showGroupGuides.addEventListener('change', draw);
     snapToCenterToggle.addEventListener('change', draw);
     snapToGroupToggle.addEventListener('change', draw);
 
-    // Setup awal
     window.addEventListener('resize', autoScale);
     
     function initialSetup() {
-        // Tambahkan grup default
         groups.push({ name: 'L', width: 384, height: 960, x: 0, y: 0, color: '#CC6666' });
         groups.push({ name: 'CTR', width: 2688, height: 960, x: 384, y: 0, color: '#CC66CC' });
         groups.push({ name: 'R', width: 384, height: 960, x: 3072, y: 0, color: '#6699CC' });
