@@ -1,33 +1,38 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <!-- Meta Tags Essentials -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    
+
     <!-- SEO Meta Tags -->
     <title>Pixel Mapper LED - Tool Gratis Untuk Mapping LED Display & Video Wall</title>
-    <meta name="description" content="Tool profesional gratis untuk pixel mapping LED display, video wall, dan stage lighting. Buat layout LED matrix dengan mudah, export ke PNG, dan optimalkan setup visual Anda.">
-    <meta name="keywords" content="pixel mapper, led mapping, video wall mapper, led display tool, stage lighting, visual mapping, led matrix, pixel mapping software">
+    <meta name="description"
+        content="Tool profesional gratis untuk pixel mapping LED display, video wall, dan stage lighting. Buat layout LED matrix dengan mudah, export ke PNG, dan optimalkan setup visual Anda.">
+    <meta name="keywords"
+        content="pixel mapper, led mapping, video wall mapper, led display tool, stage lighting, visual mapping, led matrix, pixel mapping software">
     <meta name="author" content="Pixel Mapper LED">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://your-domain.vercel.app/">
-    
+
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://your-domain.vercel.app/">
     <meta property="og:title" content="Pixel Mapper LED - Tool Gratis Mapping LED Display">
-    <meta property="og:description" content="Tool profesional gratis untuk pixel mapping LED display dan video wall. Buat layout LED matrix dengan mudah dan export hasil Anda.">
+    <meta property="og:description"
+        content="Tool profesional gratis untuk pixel mapping LED display dan video wall. Buat layout LED matrix dengan mudah dan export hasil Anda.">
     <meta property="og:image" content="https://your-domain.vercel.app/og-image.png">
-    
+
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://your-domain.vercel.app/">
     <meta property="twitter:title" content="Pixel Mapper LED - Tool Gratis Mapping LED Display">
-    <meta property="twitter:description" content="Tool profesional gratis untuk pixel mapping LED display dan video wall.">
+    <meta property="twitter:description"
+        content="Tool profesional gratis untuk pixel mapping LED display dan video wall.">
     <meta property="twitter:image" content="https://your-domain.vercel.app/og-image.png">
-    
+
     <!-- Structured Data / Schema.org -->
     <script type="application/ld+json">
     {
@@ -50,20 +55,22 @@
       }
     }
     </script>
-    
+
     <!-- Favicon -->
-    <link rel="icon" type="image/png" sizes="32x32" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎨</text></svg>">
-    
+    <link rel="icon" type="image/png" sizes="32x32"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎨</text></svg>">
+
     <!-- Google AdSense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8076941697142270"
-     crossorigin="anonymous"></script>
-    
+        crossorigin="anonymous"></script>
+
     <!-- Styles -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
     <style>
         :root {
             --primary-color: #6366f1;
@@ -219,7 +226,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
             z-index: 10000;
         }
 
@@ -228,8 +235,13 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
         }
 
         /* Top Ad Banner */
@@ -271,7 +283,8 @@
         }
 
         /* Form Controls */
-        .form-control, .form-select {
+        .form-control,
+        .form-select {
             border: 2px solid var(--border-color);
             border-radius: 0.5rem;
             padding: 0.5rem 0.75rem;
@@ -279,7 +292,8 @@
             transition: all 0.2s;
         }
 
-        .form-control:focus, .form-select:focus {
+        .form-control:focus,
+        .form-select:focus {
             border-color: var(--primary-color);
             box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
         }
@@ -360,7 +374,7 @@
         #previewCanvas:active {
             cursor: grabbing;
         }
-        
+
         #previewCanvas.panning {
             cursor: grabbing !important;
         }
@@ -507,7 +521,7 @@
             .logo-text h1 {
                 font-size: 1.25rem;
             }
-            
+
             /* Hide desktop ads on mobile */
             .desktop-ad {
                 display: none !important;
@@ -524,23 +538,23 @@
             #canvas-container {
                 min-height: 300px;
             }
-            
+
             .input-label {
                 min-width: 75px;
                 font-size: 0.8rem;
             }
-            
+
             .input-row input {
                 min-width: 65px;
                 max-width: 80px;
             }
-            
+
             /* Hide tips on mobile */
-            #canvas-container > div[style*="position: absolute; top: 1rem"] {
+            #canvas-container>div[style*="position: absolute; top: 1rem"] {
                 display: none;
             }
         }
-        
+
         /* Tablet and up */
         @media (min-width: 769px) {
             .mobile-interstitial-ad {
@@ -550,8 +564,15 @@
 
         /* Loading Animation */
         @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
         }
 
         .pulse {
@@ -574,7 +595,7 @@
             color: var(--text-secondary);
             flex-shrink: 0;
         }
-        
+
         .input-row {
             display: flex;
             gap: 0.375rem;
@@ -582,13 +603,13 @@
             flex: 1;
             min-width: 0;
         }
-        
+
         .input-row input {
             flex: 1;
             min-width: 75px;
             max-width: 100px;
         }
-        
+
         .input-separator {
             font-weight: 600;
             color: var(--text-secondary);
@@ -624,422 +645,434 @@
         }
     </style>
 </head>
+
 <body>
 
-<!-- Header -->
-<header class="app-header">
-    <div class="header-content">
-        <div class="logo-section">
-            <div class="logo-icon">🎨</div>
-            <div class="logo-text">
-                <h1>Pixel Mapper LED</h1>
-                <p>Professional LED Display Mapping Tool</p>
-            </div>
-        </div>
-        
-        <!-- Header Ad Slot (728x90 Leaderboard) - Desktop Only -->
-        <div class="ad-container desktop-ad" style="max-width: 728px; width: 100%;">
-            <!-- Google AdSense Leaderboard 728x90 -->
-            <ins class="adsbygoogle"
-                 style="display:inline-block;width:728px;height:90px"
-                 data-ad-client="ca-pub-8076941697142270"
-                 data-ad-slot="1234567890"></ins>
-            <script>
-                 (adsbygoogle = window.adsbygoogle || []).push({});
-            </script>
-        </div>
-    </div>
-</header>
-
-<div class="main-container">
-    <!-- Mobile Interstitial Ad Placeholder (akan muncul setiap 5 detik page view di mobile) -->
-    <div id="mobileInterstitialAd" class="mobile-interstitial-ad">
-        <div class="interstitial-content">
-            <button class="close-interstitial" onclick="closeMobileAd()">✕</button>
-            <!-- Google AdSense Mobile Interstitial -->
-            <ins class="adsbygoogle"
-                 style="display:inline-block;width:320px;height:480px"
-                 data-ad-client="ca-pub-8076941697142270"
-                 data-ad-slot="9876543210"></ins>
-            <script>
-                 (adsbygoogle = window.adsbygoogle || []).push({});
-            </script>
-        </div>
-    </div>
-
-    <div class="row g-3">
-        <!-- Main Content -->
-        <div class="col-12">
-            <!-- Controls Grid -->
-            <div class="row g-3 mb-3">
-                <!-- Composition Card -->
-                <div class="col-sm-6 col-lg-4 col-xl-3">
-                    <div class="control-card">
-                        <h5 class="card-title">Composition</h5>
-                        <div class="input-group-custom">
-                            <label class="input-label">Size (px):</label>
-                            <div class="input-row">
-                                <input type="number" id="compositionWidthInput" class="form-control form-control-sm" placeholder="W" value="3456">
-                                <span class="input-separator">×</span>
-                                <input type="number" id="compositionHeightInput" class="form-control form-control-sm" placeholder="H" value="960">
-                            </div>
-                        </div>
-                        <button id="loadCompositionBtn" class="btn btn-primary w-100">Load Composition</button>
-                    </div>
-                </div>
-
-                <!-- Group Controls Card -->
-                <div class="col-sm-6 col-lg-4 col-xl-3">
-                    <div class="control-card">
-                        <h5 class="card-title">Group Controls</h5>
-                        <div class="input-group-custom">
-                            <label class="input-label">Name:</label>
-                            <input type="text" id="groupNameInput" class="form-control form-control-sm" placeholder="Group Name" style="flex: 1; min-width: 0;">
-                        </div>
-                        <div class="input-group-custom">
-                            <label class="input-label">Size (px):</label>
-                            <div class="input-row">
-                                <input type="number" id="groupWidthInput" class="form-control form-control-sm" placeholder="W">
-                                <span class="input-separator">×</span>
-                                <input type="number" id="groupHeightInput" class="form-control form-control-sm" placeholder="H">
-                            </div>
-                        </div>
-                        <div class="input-group-custom">
-                            <label class="input-label">Position (px):</label>
-                            <div class="input-row">
-                                <input type="number" id="groupXInput" class="form-control form-control-sm" placeholder="X" value="0">
-                                <span class="input-separator">,</span>
-                                <input type="number" id="groupYInput" class="form-control form-control-sm" placeholder="Y" value="0">
-                            </div>
-                        </div>
-                        <div class="input-group-custom">
-                            <label class="input-label">Color:</label>
-                            <input type="color" id="groupColorInput" class="form-control" value="#ff8800" style="flex: 1; max-width: 120px; height: 40px;">
-                        </div>
-                        <button id="addGroupBtn" class="btn btn-success w-100">Add Group</button>
-                    </div>
-                </div>
-
-                <!-- Groups List Card -->
-                <div class="col-sm-6 col-lg-4 col-xl-3">
-                    <div class="control-card">
-                        <h5 class="card-title">Groups</h5>
-                        <div id="groupList" style="max-height: 200px; overflow-y: auto; margin-bottom: 0.75rem;">
-                            <!-- Groups will be populated here -->
-                        </div>
-                        <div style="display: flex; gap: 0.5rem;">
-                            <button id="removeGroupBtn" class="btn btn-danger flex-fill" disabled>Remove</button>
-                            <button id="saveGroupBtn" class="btn btn-warning flex-fill" disabled>Save</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Global Settings Card -->
-                <div class="col-sm-6 col-lg-4 col-xl-3">
-                    <div class="control-card">
-                        <h5 class="card-title">Global Settings</h5>
-                        <div class="form-check form-switch mb-2">
-                            <input class="form-check-input" type="checkbox" role="switch" id="snapToCenterToggle" checked>
-                            <label class="form-check-label" for="snapToCenterToggle">Snap to Center</label>
-                        </div>
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" role="switch" id="snapToGroupToggle" checked>
-                            <label class="form-check-label" for="snapToGroupToggle">Snap to Groups</label>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Output Card -->
-                <div class="col-sm-6 col-lg-4 col-xl-3">
-                    <div class="control-card">
-                        <h5 class="card-title">Output</h5>
-                        <div class="form-check form-switch mb-2">
-                            <input class="form-check-input" type="checkbox" role="switch" id="showTestPattern" checked>
-                            <label class="form-check-label" for="showTestPattern">Show Test Pattern</label>
-                        </div>
-                        <div class="input-group-custom" style="margin-bottom: 0.5rem;">
-                            <label class="input-label">Cell Size:</label>
-                            <input type="number" id="testPatternCellSize" class="form-control form-control-sm" value="48" style="flex: 1; max-width: 100px;">
-                        </div>
-                        <div class="form-check form-switch mb-2">
-                            <input class="form-check-input" type="checkbox" role="switch" id="showMainGuides">
-                            <label class="form-check-label" for="showMainGuides">Main Guides</label>
-                        </div>
-                        <div class="form-check form-switch mb-3">
-                            <input class="form-check-input" type="checkbox" role="switch" id="showGroupGuides" checked>
-                            <label class="form-check-label" for="showGroupGuides">Group Guides</label>
-                        </div>
-                        <button id="exportPngBtn" class="btn btn-primary w-100">📥 Export PNG</button>
-                    </div>
+    <!-- Header -->
+    <header class="app-header">
+        <div class="header-content">
+            <div class="logo-section">
+                <div class="logo-icon">🎨</div>
+                <div class="logo-text">
+                    <h1>Pixel Mapper LED</h1>
+                    <p>Professional LED Display Mapping Tool</p>
                 </div>
             </div>
 
-            <!-- Canvas -->
-            <div id="canvas-container">
-                <canvas id="previewCanvas"></canvas>
-                <div id="zoom-controls">
-                    <button id="zoomOutBtn" title="Zoom Out">−</button>
-                    <span id="zoomLevel">100%</span>
-                    <button id="zoomInBtn" title="Zoom In">+</button>
+            <!-- Header Ad Slot (728x90 Leaderboard) - Desktop Only -->
+            <div class="ad-container desktop-ad" style="max-width: 728px; width: 100%;">
+                <!-- Google AdSense Leaderboard 728x90 -->
+                <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8076941697142270"
+                    data-ad-slot="9030229358" data-ad-format="auto" data-full-width-responsive="true"></ins>
+                <script>
+                    (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <!-- Mobile Interstitial Ad Placeholder (akan muncul setiap 5 detik page view di mobile) -->
+        <div id="mobileInterstitialAd" class="mobile-interstitial-ad">
+            <div class="interstitial-content">
+                <button class="close-interstitial" onclick="closeMobileAd()">✕</button>
+                <!-- Google AdSense Mobile Interstitial -->
+                <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8076941697142270"
+                    data-ad-slot="8838657665" data-ad-format="auto" data-full-width-responsive="true"></ins>
+                <script>
+                    (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
+            </div>
+        </div>
+
+        <div class="row g-3">
+            <!-- Main Content -->
+            <div class="col-12">
+                <!-- Controls Grid -->
+                <div class="row g-3 mb-3">
+                    <!-- Composition Card -->
+                    <div class="col-sm-6 col-lg-4 col-xl-3">
+                        <div class="control-card">
+                            <h5 class="card-title">Composition</h5>
+                            <div class="input-group-custom">
+                                <label class="input-label">Size (px):</label>
+                                <div class="input-row">
+                                    <input type="number" id="compositionWidthInput" class="form-control form-control-sm"
+                                        placeholder="W" value="3456">
+                                    <span class="input-separator">×</span>
+                                    <input type="number" id="compositionHeightInput"
+                                        class="form-control form-control-sm" placeholder="H" value="960">
+                                </div>
+                            </div>
+                            <button id="loadCompositionBtn" class="btn btn-primary w-100">Load Composition</button>
+                        </div>
+                    </div>
+
+                    <!-- Group Controls Card -->
+                    <div class="col-sm-6 col-lg-4 col-xl-3">
+                        <div class="control-card">
+                            <h5 class="card-title">Group Controls</h5>
+                            <div class="input-group-custom">
+                                <label class="input-label">Name:</label>
+                                <input type="text" id="groupNameInput" class="form-control form-control-sm"
+                                    placeholder="Group Name" style="flex: 1; min-width: 0;">
+                            </div>
+                            <div class="input-group-custom">
+                                <label class="input-label">Size (px):</label>
+                                <div class="input-row">
+                                    <input type="number" id="groupWidthInput" class="form-control form-control-sm"
+                                        placeholder="W">
+                                    <span class="input-separator">×</span>
+                                    <input type="number" id="groupHeightInput" class="form-control form-control-sm"
+                                        placeholder="H">
+                                </div>
+                            </div>
+                            <div class="input-group-custom">
+                                <label class="input-label">Position (px):</label>
+                                <div class="input-row">
+                                    <input type="number" id="groupXInput" class="form-control form-control-sm"
+                                        placeholder="X" value="0">
+                                    <span class="input-separator">,</span>
+                                    <input type="number" id="groupYInput" class="form-control form-control-sm"
+                                        placeholder="Y" value="0">
+                                </div>
+                            </div>
+                            <div class="input-group-custom">
+                                <label class="input-label">Color:</label>
+                                <input type="color" id="groupColorInput" class="form-control" value="#ff8800"
+                                    style="flex: 1; max-width: 120px; height: 40px;">
+                            </div>
+                            <button id="addGroupBtn" class="btn btn-success w-100">Add Group</button>
+                        </div>
+                    </div>
+
+                    <!-- Groups List Card -->
+                    <div class="col-sm-6 col-lg-4 col-xl-3">
+                        <div class="control-card">
+                            <h5 class="card-title">Groups</h5>
+                            <div id="groupList" style="max-height: 200px; overflow-y: auto; margin-bottom: 0.75rem;">
+                                <!-- Groups will be populated here -->
+                            </div>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <button id="removeGroupBtn" class="btn btn-danger flex-fill" disabled>Remove</button>
+                                <button id="saveGroupBtn" class="btn btn-warning flex-fill" disabled>Save</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Global Settings Card -->
+                    <div class="col-sm-6 col-lg-4 col-xl-3">
+                        <div class="control-card">
+                            <h5 class="card-title">Global Settings</h5>
+                            <div class="form-check form-switch mb-2">
+                                <input class="form-check-input" type="checkbox" role="switch" id="snapToCenterToggle"
+                                    checked>
+                                <label class="form-check-label" for="snapToCenterToggle">Snap to Center</label>
+                            </div>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" role="switch" id="snapToGroupToggle"
+                                    checked>
+                                <label class="form-check-label" for="snapToGroupToggle">Snap to Groups</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Output Card -->
+                    <div class="col-sm-6 col-lg-4 col-xl-3">
+                        <div class="control-card">
+                            <h5 class="card-title">Output</h5>
+                            <div class="form-check form-switch mb-2">
+                                <input class="form-check-input" type="checkbox" role="switch" id="showTestPattern"
+                                    checked>
+                                <label class="form-check-label" for="showTestPattern">Show Test Pattern</label>
+                            </div>
+                            <div class="input-group-custom" style="margin-bottom: 0.5rem;">
+                                <label class="input-label">Cell Size:</label>
+                                <input type="number" id="testPatternCellSize" class="form-control form-control-sm"
+                                    value="48" style="flex: 1; max-width: 100px;">
+                            </div>
+                            <div class="form-check form-switch mb-2">
+                                <input class="form-check-input" type="checkbox" role="switch" id="showMainGuides">
+                                <label class="form-check-label" for="showMainGuides">Main Guides</label>
+                            </div>
+                            <div class="form-check form-switch mb-3">
+                                <input class="form-check-input" type="checkbox" role="switch" id="showGroupGuides"
+                                    checked>
+                                <label class="form-check-label" for="showGroupGuides">Group Guides</label>
+                            </div>
+                            <button id="exportPngBtn" class="btn btn-primary w-100">📥 Export PNG</button>
+                        </div>
+                    </div>
                 </div>
-                <div style="position: absolute; top: 1rem; left: 1rem; background: rgba(0, 0, 0, 0.7); color: white; padding: 0.5rem 0.75rem; border-radius: 0.5rem; font-size: 0.75rem; backdrop-filter: blur(10px);">
-                    💡 <strong>Tips:</strong> Shift+Click & Drag untuk Pan Canvas • Double Click untuk Reset View • Mouse Wheel untuk Zoom
+
+                <!-- Canvas -->
+                <div id="canvas-container">
+                    <canvas id="previewCanvas"></canvas>
+                    <div id="zoom-controls">
+                        <button id="zoomOutBtn" title="Zoom Out">−</button>
+                        <span id="zoomLevel">100%</span>
+                        <button id="zoomInBtn" title="Zoom In">+</button>
+                    </div>
+                    <div
+                        style="position: absolute; top: 1rem; left: 1rem; background: rgba(0, 0, 0, 0.7); color: white; padding: 0.5rem 0.75rem; border-radius: 0.5rem; font-size: 0.75rem; backdrop-filter: blur(10px);">
+                        💡 <strong>Tips:</strong> Shift+Click & Drag untuk Pan Canvas • Double Click untuk Reset View •
+                        Mouse Wheel untuk Zoom
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<!-- Footer -->
-<footer class="app-footer">
-    <div class="footer-content">
-        <div class="footer-links">
-            <a href="#about">About</a>
-            <a href="#features">Features</a>
-            <a href="#tutorial">Tutorial</a>
-            <a href="#contact">Contact</a>
-            <a href="#privacy">Privacy Policy</a>
-            <a href="#terms">Terms of Service</a>
+    <!-- Footer -->
+    <footer class="app-footer">
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="#about">About</a>
+                <a href="#features">Features</a>
+                <a href="#tutorial">Tutorial</a>
+                <a href="#contact">Contact</a>
+                <a href="#privacy">Privacy Policy</a>
+                <a href="#terms">Terms of Service</a>
+            </div>
+            <p class="footer-text">
+                © 2024 Pixel Mapper LED. Professional LED Display Mapping Tool.<br>
+                Made with ❤️ for the LED & Visual Production Community
+            </p>
         </div>
-        <p class="footer-text">
-            © 2024 Pixel Mapper LED. Professional LED Display Mapping Tool.<br>
-            Made with ❤️ for the LED & Visual Production Community
-        </p>
-    </div>
-</footer>
+    </footer>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    // Core Variables
-    const compositionWidthInput = document.getElementById('compositionWidthInput');
-    const compositionHeightInput = document.getElementById('compositionHeightInput');
-    const loadCompositionBtn = document.getElementById('loadCompositionBtn');
-    const groupNameInput = document.getElementById('groupNameInput');
-    const groupWidthInput = document.getElementById('groupWidthInput');
-    const groupHeightInput = document.getElementById('groupHeightInput');
-    const groupXInput = document.getElementById('groupXInput');
-    const groupYInput = document.getElementById('groupYInput');
-    const groupColorInput = document.getElementById('groupColorInput');
-    const addGroupBtn = document.getElementById('addGroupBtn');
-    const removeGroupBtn = document.getElementById('removeGroupBtn');
-    const saveGroupBtn = document.getElementById('saveGroupBtn');
-    const groupListDiv = document.getElementById('groupList');
-    const previewCanvas = document.getElementById('previewCanvas');
-    const ctx = previewCanvas.getContext('2d');
-    const exportPngBtn = document.getElementById('exportPngBtn');
-    const showTestPattern = document.getElementById('showTestPattern');
-    const showMainGuides = document.getElementById('showMainGuides');
-    const showGroupGuides = document.getElementById('showGroupGuides');
-    const testPatternCellSizeInput = document.getElementById('testPatternCellSize');
-    const snapToCenterToggle = document.getElementById('snapToCenterToggle');
-    const snapToGroupToggle = document.getElementById('snapToGroupToggle');
-    const zoomInBtn = document.getElementById('zoomInBtn');
-    const zoomOutBtn = document.getElementById('zoomOutBtn');
-    const zoomLevelSpan = document.getElementById('zoomLevel');
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Core Variables
+        const compositionWidthInput = document.getElementById('compositionWidthInput');
+        const compositionHeightInput = document.getElementById('compositionHeightInput');
+        const loadCompositionBtn = document.getElementById('loadCompositionBtn');
+        const groupNameInput = document.getElementById('groupNameInput');
+        const groupWidthInput = document.getElementById('groupWidthInput');
+        const groupHeightInput = document.getElementById('groupHeightInput');
+        const groupXInput = document.getElementById('groupXInput');
+        const groupYInput = document.getElementById('groupYInput');
+        const groupColorInput = document.getElementById('groupColorInput');
+        const addGroupBtn = document.getElementById('addGroupBtn');
+        const removeGroupBtn = document.getElementById('removeGroupBtn');
+        const saveGroupBtn = document.getElementById('saveGroupBtn');
+        const groupListDiv = document.getElementById('groupList');
+        const previewCanvas = document.getElementById('previewCanvas');
+        const ctx = previewCanvas.getContext('2d');
+        const exportPngBtn = document.getElementById('exportPngBtn');
+        const showTestPattern = document.getElementById('showTestPattern');
+        const showMainGuides = document.getElementById('showMainGuides');
+        const showGroupGuides = document.getElementById('showGroupGuides');
+        const testPatternCellSizeInput = document.getElementById('testPatternCellSize');
+        const snapToCenterToggle = document.getElementById('snapToCenterToggle');
+        const snapToGroupToggle = document.getElementById('snapToGroupToggle');
+        const zoomInBtn = document.getElementById('zoomInBtn');
+        const zoomOutBtn = document.getElementById('zoomOutBtn');
+        const zoomLevelSpan = document.getElementById('zoomLevel');
 
-    let composition = { width: 3456, height: 960 };
-    let groups = [];
-    let selectedGroup = null;
-    let isDragging = false;
-    let dragStart = { x: 0, y: 0 };
-    let groupStart = { x: 0, y: 0 };
-    let scale = 1.0;
-    
-    // Pan/Move canvas variables
-    let isPanning = false;
-    let panStart = { x: 0, y: 0 };
-    let panOffset = { x: 0, y: 0 };
+        let composition = { width: 3456, height: 960 };
+        let groups = [];
+        let selectedGroup = null;
+        let isDragging = false;
+        let dragStart = { x: 0, y: 0 };
+        let groupStart = { x: 0, y: 0 };
+        let scale = 1.0;
 
-    const s = (val) => val * scale;
-    const SNAP_THRESHOLD = 10;
+        // Pan/Move canvas variables
+        let isPanning = false;
+        let panStart = { x: 0, y: 0 };
+        let panOffset = { x: 0, y: 0 };
 
-    function autoScale() {
-        const container = document.getElementById('canvas-container');
-        const containerWidth = container.clientWidth - 40;
-        const containerHeight = container.clientHeight - 40;
-        
-        const scaleX = containerWidth / composition.width;
-        const scaleY = containerHeight / composition.height;
-        scale = Math.min(scaleX, scaleY, 1.0);
-        
-        previewCanvas.width = containerWidth + 40;
-        previewCanvas.height = containerHeight + 40;
-        
-        // Reset pan offset when auto-scaling
-        panOffset = { x: 0, y: 0 };
-        
-        zoomLevelSpan.textContent = `${Math.round(scale * 100)}%`;
-        draw();
-    }
+        const s = (val) => val * scale;
+        const SNAP_THRESHOLD = 10;
 
-    function draw() {
-        ctx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
-        
-        const offsetX = (previewCanvas.width - s(composition.width)) / 2 + panOffset.x;
-        const offsetY = (previewCanvas.height - s(composition.height)) / 2 + panOffset.y;
-        
-        ctx.save();
-        ctx.translate(offsetX, offsetY);
-        
-        // Draw composition background
-        ctx.fillStyle = '#1e293b';
-        ctx.fillRect(0, 0, s(composition.width), s(composition.height));
-        
-        // Draw test pattern
-        if (showTestPattern.checked) {
-            const cellSize = parseInt(testPatternCellSizeInput.value) || 48;
-            ctx.strokeStyle = 'rgba(100, 116, 139, 0.3)';
-            ctx.lineWidth = 1;
-            
-            for (let x = 0; x <= composition.width; x += cellSize) {
-                ctx.beginPath();
-                ctx.moveTo(s(x), 0);
-                ctx.lineTo(s(x), s(composition.height));
-                ctx.stroke();
-            }
-            
-            for (let y = 0; y <= composition.height; y += cellSize) {
-                ctx.beginPath();
-                ctx.moveTo(0, s(y));
-                ctx.lineTo(s(composition.width), s(y));
-                ctx.stroke();
-            }
+        function autoScale() {
+            const container = document.getElementById('canvas-container');
+            const containerWidth = container.clientWidth - 40;
+            const containerHeight = container.clientHeight - 40;
+
+            const scaleX = containerWidth / composition.width;
+            const scaleY = containerHeight / composition.height;
+            scale = Math.min(scaleX, scaleY, 1.0);
+
+            previewCanvas.width = containerWidth + 40;
+            previewCanvas.height = containerHeight + 40;
+
+            // Reset pan offset when auto-scaling
+            panOffset = { x: 0, y: 0 };
+
+            zoomLevelSpan.textContent = `${Math.round(scale * 100)}%`;
+            draw();
         }
-        
-        // Draw main guides
-        if (showMainGuides.checked) {
-            ctx.strokeStyle = 'rgba(239, 68, 68, 0.5)';
-            ctx.lineWidth = 2;
-            ctx.setLineDash([5, 5]);
-            
-            // Center vertical
-            ctx.beginPath();
-            ctx.moveTo(s(composition.width / 2), 0);
-            ctx.lineTo(s(composition.width / 2), s(composition.height));
-            ctx.stroke();
-            
-            // Center horizontal
-            ctx.beginPath();
-            ctx.moveTo(0, s(composition.height / 2));
-            ctx.lineTo(s(composition.width), s(composition.height / 2));
-            ctx.stroke();
-            
-            ctx.setLineDash([]);
-        }
-        
-        // Draw groups
-        groups.forEach((group, index) => {
-            const isSelected = selectedGroup === group;
-            
-            ctx.fillStyle = group.color;
-            ctx.globalAlpha = isSelected ? 0.8 : 0.6;
-            ctx.fillRect(s(group.x), s(group.y), s(group.width), s(group.height));
-            ctx.globalAlpha = 1;
-            
-            ctx.strokeStyle = isSelected ? '#fff' : 'rgba(255, 255, 255, 0.5)';
-            ctx.lineWidth = isSelected ? 3 : 2;
-            ctx.strokeRect(s(group.x), s(group.y), s(group.width), s(group.height));
-            
-            // Draw group guides
-            if (showGroupGuides.checked) {
-                ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+
+        function draw() {
+            ctx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
+
+            const offsetX = (previewCanvas.width - s(composition.width)) / 2 + panOffset.x;
+            const offsetY = (previewCanvas.height - s(composition.height)) / 2 + panOffset.y;
+
+            ctx.save();
+            ctx.translate(offsetX, offsetY);
+
+            // Draw composition background
+            ctx.fillStyle = '#1e293b';
+            ctx.fillRect(0, 0, s(composition.width), s(composition.height));
+
+            // Draw test pattern
+            if (showTestPattern.checked) {
+                const cellSize = parseInt(testPatternCellSizeInput.value) || 48;
+                ctx.strokeStyle = 'rgba(100, 116, 139, 0.3)';
                 ctx.lineWidth = 1;
-                ctx.setLineDash([3, 3]);
-                
-                // Vertical center
+
+                for (let x = 0; x <= composition.width; x += cellSize) {
+                    ctx.beginPath();
+                    ctx.moveTo(s(x), 0);
+                    ctx.lineTo(s(x), s(composition.height));
+                    ctx.stroke();
+                }
+
+                for (let y = 0; y <= composition.height; y += cellSize) {
+                    ctx.beginPath();
+                    ctx.moveTo(0, s(y));
+                    ctx.lineTo(s(composition.width), s(y));
+                    ctx.stroke();
+                }
+            }
+
+            // Draw main guides
+            if (showMainGuides.checked) {
+                ctx.strokeStyle = 'rgba(239, 68, 68, 0.5)';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([5, 5]);
+
+                // Center vertical
                 ctx.beginPath();
-                ctx.moveTo(s(group.x + group.width / 2), 0);
-                ctx.lineTo(s(group.x + group.width / 2), s(composition.height));
+                ctx.moveTo(s(composition.width / 2), 0);
+                ctx.lineTo(s(composition.width / 2), s(composition.height));
                 ctx.stroke();
-                
-                // Horizontal center
+
+                // Center horizontal
                 ctx.beginPath();
-                ctx.moveTo(0, s(group.y + group.height / 2));
-                ctx.lineTo(s(composition.width), s(group.y + group.height / 2));
+                ctx.moveTo(0, s(composition.height / 2));
+                ctx.lineTo(s(composition.width), s(composition.height / 2));
                 ctx.stroke();
-                
+
                 ctx.setLineDash([]);
             }
-            
-            // Draw label with better sizing
-            ctx.fillStyle = '#fff';
-            const fontSize = Math.max(14, s(18));
-            ctx.font = `bold ${fontSize}px Inter`;
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText(group.name, s(group.x + group.width / 2), s(group.y + group.height / 2));
-            
-            // Draw dimensions
-            ctx.font = `${Math.max(11, s(14))}px Inter`;
-            ctx.fillText(`${group.width}×${group.height}`, s(group.x + group.width / 2), s(group.y + group.height / 2) + fontSize + 5);
-        });
-        
-        ctx.restore();
-    }
 
-    function getSnapPosition(x, y, group) {
-        let snapX = x;
-        let snapY = y;
-        
-        if (snapToCenterToggle.checked) {
-            const centerX = (composition.width - group.width) / 2;
-            const centerY = (composition.height - group.height) / 2;
-            
-            if (Math.abs(x - centerX) < SNAP_THRESHOLD) snapX = centerX;
-            if (Math.abs(y - centerY) < SNAP_THRESHOLD) snapY = centerY;
-        }
-        
-        if (snapToGroupToggle.checked) {
-            groups.forEach(otherGroup => {
-                if (otherGroup === group) return;
-                
-                // Snap to edges
-                if (Math.abs(x - otherGroup.x) < SNAP_THRESHOLD) snapX = otherGroup.x;
-                if (Math.abs(x + group.width - otherGroup.x) < SNAP_THRESHOLD) snapX = otherGroup.x - group.width;
-                if (Math.abs(x - (otherGroup.x + otherGroup.width)) < SNAP_THRESHOLD) snapX = otherGroup.x + otherGroup.width;
-                if (Math.abs(x + group.width - (otherGroup.x + otherGroup.width)) < SNAP_THRESHOLD) snapX = otherGroup.x + otherGroup.width - group.width;
-                
-                if (Math.abs(y - otherGroup.y) < SNAP_THRESHOLD) snapY = otherGroup.y;
-                if (Math.abs(y + group.height - otherGroup.y) < SNAP_THRESHOLD) snapY = otherGroup.y - group.height;
-                if (Math.abs(y - (otherGroup.y + otherGroup.height)) < SNAP_THRESHOLD) snapY = otherGroup.y + otherGroup.height;
-                if (Math.abs(y + group.height - (otherGroup.y + otherGroup.height)) < SNAP_THRESHOLD) snapY = otherGroup.y + otherGroup.height - group.height;
+            // Draw groups
+            groups.forEach((group, index) => {
+                const isSelected = selectedGroup === group;
+
+                ctx.fillStyle = group.color;
+                ctx.globalAlpha = isSelected ? 0.8 : 0.6;
+                ctx.fillRect(s(group.x), s(group.y), s(group.width), s(group.height));
+                ctx.globalAlpha = 1;
+
+                ctx.strokeStyle = isSelected ? '#fff' : 'rgba(255, 255, 255, 0.5)';
+                ctx.lineWidth = isSelected ? 3 : 2;
+                ctx.strokeRect(s(group.x), s(group.y), s(group.width), s(group.height));
+
+                // Draw group guides
+                if (showGroupGuides.checked) {
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+                    ctx.lineWidth = 1;
+                    ctx.setLineDash([3, 3]);
+
+                    // Vertical center
+                    ctx.beginPath();
+                    ctx.moveTo(s(group.x + group.width / 2), 0);
+                    ctx.lineTo(s(group.x + group.width / 2), s(composition.height));
+                    ctx.stroke();
+
+                    // Horizontal center
+                    ctx.beginPath();
+                    ctx.moveTo(0, s(group.y + group.height / 2));
+                    ctx.lineTo(s(composition.width), s(group.y + group.height / 2));
+                    ctx.stroke();
+
+                    ctx.setLineDash([]);
+                }
+
+                // Draw label with better sizing
+                ctx.fillStyle = '#fff';
+                const fontSize = Math.max(14, s(18));
+                ctx.font = `bold ${fontSize}px Inter`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(group.name, s(group.x + group.width / 2), s(group.y + group.height / 2));
+
+                // Draw dimensions
+                ctx.font = `${Math.max(11, s(14))}px Inter`;
+                ctx.fillText(`${group.width}×${group.height}`, s(group.x + group.width / 2), s(group.y + group.height / 2) + fontSize + 5);
             });
-        }
-        
-        return { x: snapX, y: snapY };
-    }
 
-    function selectGroup(index) {
-        if (index !== null && index >= 0 && index < groups.length) {
-            selectedGroup = groups[index];
-            groupNameInput.value = selectedGroup.name;
-            groupWidthInput.value = selectedGroup.width;
-            groupHeightInput.value = selectedGroup.height;
-            groupXInput.value = selectedGroup.x;
-            groupYInput.value = selectedGroup.y;
-            groupColorInput.value = selectedGroup.color;
-            removeGroupBtn.disabled = false;
-            saveGroupBtn.disabled = false;
-        } else {
-            selectedGroup = null;
-            groupNameInput.value = '';
-            groupWidthInput.value = '';
-            groupHeightInput.value = '';
-            groupXInput.value = '0';
-            groupYInput.value = '0';
-            groupColorInput.value = '#ff8800';
-            removeGroupBtn.disabled = true;
-            saveGroupBtn.disabled = true;
+            ctx.restore();
         }
-        populateGroupList();
-    }
 
-    function populateGroupList() {
-        groupListDiv.innerHTML = '';
-        groups.forEach((group, index) => {
-            const div = document.createElement('div');
-            div.className = 'group-item' + (selectedGroup === group ? ' active' : '');
-            div.innerHTML = `
+        function getSnapPosition(x, y, group) {
+            let snapX = x;
+            let snapY = y;
+
+            if (snapToCenterToggle.checked) {
+                const centerX = (composition.width - group.width) / 2;
+                const centerY = (composition.height - group.height) / 2;
+
+                if (Math.abs(x - centerX) < SNAP_THRESHOLD) snapX = centerX;
+                if (Math.abs(y - centerY) < SNAP_THRESHOLD) snapY = centerY;
+            }
+
+            if (snapToGroupToggle.checked) {
+                groups.forEach(otherGroup => {
+                    if (otherGroup === group) return;
+
+                    // Snap to edges
+                    if (Math.abs(x - otherGroup.x) < SNAP_THRESHOLD) snapX = otherGroup.x;
+                    if (Math.abs(x + group.width - otherGroup.x) < SNAP_THRESHOLD) snapX = otherGroup.x - group.width;
+                    if (Math.abs(x - (otherGroup.x + otherGroup.width)) < SNAP_THRESHOLD) snapX = otherGroup.x + otherGroup.width;
+                    if (Math.abs(x + group.width - (otherGroup.x + otherGroup.width)) < SNAP_THRESHOLD) snapX = otherGroup.x + otherGroup.width - group.width;
+
+                    if (Math.abs(y - otherGroup.y) < SNAP_THRESHOLD) snapY = otherGroup.y;
+                    if (Math.abs(y + group.height - otherGroup.y) < SNAP_THRESHOLD) snapY = otherGroup.y - group.height;
+                    if (Math.abs(y - (otherGroup.y + otherGroup.height)) < SNAP_THRESHOLD) snapY = otherGroup.y + otherGroup.height;
+                    if (Math.abs(y + group.height - (otherGroup.y + otherGroup.height)) < SNAP_THRESHOLD) snapY = otherGroup.y + otherGroup.height - group.height;
+                });
+            }
+
+            return { x: snapX, y: snapY };
+        }
+
+        function selectGroup(index) {
+            if (index !== null && index >= 0 && index < groups.length) {
+                selectedGroup = groups[index];
+                groupNameInput.value = selectedGroup.name;
+                groupWidthInput.value = selectedGroup.width;
+                groupHeightInput.value = selectedGroup.height;
+                groupXInput.value = selectedGroup.x;
+                groupYInput.value = selectedGroup.y;
+                groupColorInput.value = selectedGroup.color;
+                removeGroupBtn.disabled = false;
+                saveGroupBtn.disabled = false;
+            } else {
+                selectedGroup = null;
+                groupNameInput.value = '';
+                groupWidthInput.value = '';
+                groupHeightInput.value = '';
+                groupXInput.value = '0';
+                groupYInput.value = '0';
+                groupColorInput.value = '#ff8800';
+                removeGroupBtn.disabled = true;
+                saveGroupBtn.disabled = true;
+            }
+            populateGroupList();
+        }
+
+        function populateGroupList() {
+            groupListDiv.innerHTML = '';
+            groups.forEach((group, index) => {
+                const div = document.createElement('div');
+                div.className = 'group-item' + (selectedGroup === group ? ' active' : '');
+                div.innerHTML = `
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <span style="font-weight: 600;">${group.name}</span>
                     <span class="badge">${group.width}×${group.height}</span>
@@ -1048,436 +1081,429 @@
                     Position: ${group.x}, ${group.y}
                 </div>
             `;
-            div.addEventListener('click', () => selectGroup(index));
-            groupListDiv.appendChild(div);
-        });
-    }
+                div.addEventListener('click', () => selectGroup(index));
+                groupListDiv.appendChild(div);
+            });
+        }
 
-    function exportPng() {
-        const exportCanvas = document.createElement('canvas');
-        exportCanvas.width = composition.width;
-        exportCanvas.height = composition.height;
-        const exportCtx = exportCanvas.getContext('2d');
-        
-        // Background
-        exportCtx.fillStyle = '#1e293b';
-        exportCtx.fillRect(0, 0, composition.width, composition.height);
-        
-        // Draw test pattern if enabled
-        if (showTestPattern.checked) {
-            const cellSize = parseInt(testPatternCellSizeInput.value) || 48;
-            exportCtx.strokeStyle = 'rgba(100, 116, 139, 0.3)';
-            exportCtx.lineWidth = 1;
-            
-            for (let x = 0; x <= composition.width; x += cellSize) {
-                exportCtx.beginPath();
-                exportCtx.moveTo(x, 0);
-                exportCtx.lineTo(x, composition.height);
-                exportCtx.stroke();
-            }
-            
-            for (let y = 0; y <= composition.height; y += cellSize) {
-                exportCtx.beginPath();
-                exportCtx.moveTo(0, y);
-                exportCtx.lineTo(composition.width, y);
-                exportCtx.stroke();
-            }
-        }
-        
-        // Draw main guides if enabled
-        if (showMainGuides.checked) {
-            exportCtx.strokeStyle = 'rgba(239, 68, 68, 0.5)';
-            exportCtx.lineWidth = 2;
-            exportCtx.setLineDash([5, 5]);
-            
-            // Center vertical
-            exportCtx.beginPath();
-            exportCtx.moveTo(composition.width / 2, 0);
-            exportCtx.lineTo(composition.width / 2, composition.height);
-            exportCtx.stroke();
-            
-            // Center horizontal
-            exportCtx.beginPath();
-            exportCtx.moveTo(0, composition.height / 2);
-            exportCtx.lineTo(composition.width, composition.height / 2);
-            exportCtx.stroke();
-            
-            exportCtx.setLineDash([]);
-        }
-        
-        // Draw groups
-        groups.forEach(group => {
-            // Fill
-            exportCtx.fillStyle = group.color;
-            exportCtx.globalAlpha = 0.6;
-            exportCtx.fillRect(group.x, group.y, group.width, group.height);
-            exportCtx.globalAlpha = 1;
-            
-            // Border
-            exportCtx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
-            exportCtx.lineWidth = 2;
-            exportCtx.strokeRect(group.x, group.y, group.width, group.height);
-            
-            // Draw group guides if enabled
-            if (showGroupGuides.checked) {
-                exportCtx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+        function exportPng() {
+            const exportCanvas = document.createElement('canvas');
+            exportCanvas.width = composition.width;
+            exportCanvas.height = composition.height;
+            const exportCtx = exportCanvas.getContext('2d');
+
+            // Background
+            exportCtx.fillStyle = '#1e293b';
+            exportCtx.fillRect(0, 0, composition.width, composition.height);
+
+            // Draw test pattern if enabled
+            if (showTestPattern.checked) {
+                const cellSize = parseInt(testPatternCellSizeInput.value) || 48;
+                exportCtx.strokeStyle = 'rgba(100, 116, 139, 0.3)';
                 exportCtx.lineWidth = 1;
-                exportCtx.setLineDash([3, 3]);
-                
-                // Vertical center
+
+                for (let x = 0; x <= composition.width; x += cellSize) {
+                    exportCtx.beginPath();
+                    exportCtx.moveTo(x, 0);
+                    exportCtx.lineTo(x, composition.height);
+                    exportCtx.stroke();
+                }
+
+                for (let y = 0; y <= composition.height; y += cellSize) {
+                    exportCtx.beginPath();
+                    exportCtx.moveTo(0, y);
+                    exportCtx.lineTo(composition.width, y);
+                    exportCtx.stroke();
+                }
+            }
+
+            // Draw main guides if enabled
+            if (showMainGuides.checked) {
+                exportCtx.strokeStyle = 'rgba(239, 68, 68, 0.5)';
+                exportCtx.lineWidth = 2;
+                exportCtx.setLineDash([5, 5]);
+
+                // Center vertical
                 exportCtx.beginPath();
-                exportCtx.moveTo(group.x + group.width / 2, 0);
-                exportCtx.lineTo(group.x + group.width / 2, composition.height);
+                exportCtx.moveTo(composition.width / 2, 0);
+                exportCtx.lineTo(composition.width / 2, composition.height);
                 exportCtx.stroke();
-                
-                // Horizontal center
+
+                // Center horizontal
                 exportCtx.beginPath();
-                exportCtx.moveTo(0, group.y + group.height / 2);
-                exportCtx.lineTo(composition.width, group.y + group.height / 2);
+                exportCtx.moveTo(0, composition.height / 2);
+                exportCtx.lineTo(composition.width, composition.height / 2);
                 exportCtx.stroke();
-                
+
                 exportCtx.setLineDash([]);
             }
-            
-            // Calculate text size
-            const centerX = group.x + group.width / 2;
-            const centerY = group.y + group.height / 2;
-            const nameFontSize = Math.max(24, group.height / 15);
-            const dimFontSize = Math.max(18, group.height / 20);
-            
-            // Measure text for box
-            exportCtx.font = `bold ${nameFontSize}px Inter`;
-            const nameMetrics = exportCtx.measureText(group.name);
-            exportCtx.font = `${dimFontSize}px Inter`;
-            const dimText = `${group.width}×${group.height}`;
-            const dimMetrics = exportCtx.measureText(dimText);
-            
-            const maxWidth = Math.max(nameMetrics.width, dimMetrics.width);
-            const boxPadding = 12;
-            const boxWidth = maxWidth + boxPadding * 2;
-            const boxHeight = nameFontSize + dimFontSize + boxPadding * 2 + 8;
-            
-            // Draw semi-transparent box
-            exportCtx.fillStyle = 'rgba(0, 0, 0, 0.6)';
-            exportCtx.fillRect(
-                centerX - boxWidth / 2,
-                centerY - boxHeight / 2,
-                boxWidth,
-                boxHeight
-            );
-            
-            // Draw box border
-            exportCtx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
-            exportCtx.lineWidth = 1;
-            exportCtx.strokeRect(
-                centerX - boxWidth / 2,
-                centerY - boxHeight / 2,
-                boxWidth,
-                boxHeight
-            );
-            
-            // Draw group name
-            exportCtx.fillStyle = '#fff';
-            exportCtx.font = `bold ${nameFontSize}px Inter`;
-            exportCtx.textAlign = 'center';
-            exportCtx.textBaseline = 'middle';
-            exportCtx.fillText(group.name, centerX, centerY - dimFontSize / 2 - 4);
-            
-            // Draw dimensions
-            exportCtx.font = `${dimFontSize}px Inter`;
-            exportCtx.fillText(dimText, centerX, centerY + nameFontSize / 2 + 4);
-        });
-        
-        const link = document.createElement('a');
-        link.download = `pixel-mapper-${composition.width}x${composition.height}.png`;
-        link.href = exportCanvas.toDataURL('image/png');
-        link.click();
-    }
 
-    // Event Listeners
-    loadCompositionBtn.addEventListener('click', () => {
-        const width = parseInt(compositionWidthInput.value);
-        const height = parseInt(compositionHeightInput.value);
-        if (width > 0 && height > 0) {
-            composition = { width, height };
-            autoScale();
+            // Draw groups
+            groups.forEach(group => {
+                // Fill
+                exportCtx.fillStyle = group.color;
+                exportCtx.globalAlpha = 0.6;
+                exportCtx.fillRect(group.x, group.y, group.width, group.height);
+                exportCtx.globalAlpha = 1;
+
+                // Border
+                exportCtx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+                exportCtx.lineWidth = 2;
+                exportCtx.strokeRect(group.x, group.y, group.width, group.height);
+
+                // Draw group guides if enabled
+                if (showGroupGuides.checked) {
+                    exportCtx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+                    exportCtx.lineWidth = 1;
+                    exportCtx.setLineDash([3, 3]);
+
+                    // Vertical center
+                    exportCtx.beginPath();
+                    exportCtx.moveTo(group.x + group.width / 2, 0);
+                    exportCtx.lineTo(group.x + group.width / 2, composition.height);
+                    exportCtx.stroke();
+
+                    // Horizontal center
+                    exportCtx.beginPath();
+                    exportCtx.moveTo(0, group.y + group.height / 2);
+                    exportCtx.lineTo(composition.width, group.y + group.height / 2);
+                    exportCtx.stroke();
+
+                    exportCtx.setLineDash([]);
+                }
+
+                // Calculate text size
+                const centerX = group.x + group.width / 2;
+                const centerY = group.y + group.height / 2;
+                const nameFontSize = Math.max(24, group.height / 15);
+                const dimFontSize = Math.max(18, group.height / 20);
+
+                // Measure text for box
+                exportCtx.font = `bold ${nameFontSize}px Inter`;
+                const nameMetrics = exportCtx.measureText(group.name);
+                exportCtx.font = `${dimFontSize}px Inter`;
+                const dimText = `${group.width}×${group.height}`;
+                const dimMetrics = exportCtx.measureText(dimText);
+
+                const maxWidth = Math.max(nameMetrics.width, dimMetrics.width);
+                const boxPadding = 12;
+                const boxWidth = maxWidth + boxPadding * 2;
+                const boxHeight = nameFontSize + dimFontSize + boxPadding * 2 + 8;
+
+                // Draw semi-transparent box
+                exportCtx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+                exportCtx.fillRect(
+                    centerX - boxWidth / 2,
+                    centerY - boxHeight / 2,
+                    boxWidth,
+                    boxHeight
+                );
+
+                // Draw box border
+                exportCtx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+                exportCtx.lineWidth = 1;
+                exportCtx.strokeRect(
+                    centerX - boxWidth / 2,
+                    centerY - boxHeight / 2,
+                    boxWidth,
+                    boxHeight
+                );
+
+                // Draw group name
+                exportCtx.fillStyle = '#fff';
+                exportCtx.font = `bold ${nameFontSize}px Inter`;
+                exportCtx.textAlign = 'center';
+                exportCtx.textBaseline = 'middle';
+                exportCtx.fillText(group.name, centerX, centerY - dimFontSize / 2 - 4);
+
+                // Draw dimensions
+                exportCtx.font = `${dimFontSize}px Inter`;
+                exportCtx.fillText(dimText, centerX, centerY + nameFontSize / 2 + 4);
+            });
+
+            const link = document.createElement('a');
+            link.download = `pixel-mapper-${composition.width}x${composition.height}.png`;
+            link.href = exportCanvas.toDataURL('image/png');
+            link.click();
         }
-    });
 
-    addGroupBtn.addEventListener('click', () => {
-        const name = groupNameInput.value || `Group ${groups.length + 1}`;
-        const width = parseInt(groupWidthInput.value) || 100;
-        const height = parseInt(groupHeightInput.value) || 100;
-        const x = parseInt(groupXInput.value) || 0;
-        const y = parseInt(groupYInput.value) || 0;
-        const color = groupColorInput.value;
-        
-        groups.push({ name, width, height, x, y, color });
-        populateGroupList();
-        draw();
-    });
+        // Event Listeners
+        loadCompositionBtn.addEventListener('click', () => {
+            const width = parseInt(compositionWidthInput.value);
+            const height = parseInt(compositionHeightInput.value);
+            if (width > 0 && height > 0) {
+                composition = { width, height };
+                autoScale();
+            }
+        });
 
-    saveGroupBtn.addEventListener('click', () => {
-        if (selectedGroup) {
-            selectedGroup.name = groupNameInput.value;
-            selectedGroup.width = parseInt(groupWidthInput.value) || selectedGroup.width;
-            selectedGroup.height = parseInt(groupHeightInput.value) || selectedGroup.height;
-            selectedGroup.x = parseInt(groupXInput.value) || selectedGroup.x;
-            selectedGroup.y = parseInt(groupYInput.value) || selectedGroup.y;
-            selectedGroup.color = groupColorInput.value;
+        addGroupBtn.addEventListener('click', () => {
+            const name = groupNameInput.value || `Group ${groups.length + 1}`;
+            const width = parseInt(groupWidthInput.value) || 100;
+            const height = parseInt(groupHeightInput.value) || 100;
+            const x = parseInt(groupXInput.value) || 0;
+            const y = parseInt(groupYInput.value) || 0;
+            const color = groupColorInput.value;
+
+            groups.push({ name, width, height, x, y, color });
             populateGroupList();
             draw();
-        }
-    });
+        });
 
-    removeGroupBtn.addEventListener('click', () => {
-        if (selectedGroup) {
-            const index = groups.indexOf(selectedGroup);
-            if (index > -1) {
-                groups.splice(index, 1);
-                selectGroup(null);
+        saveGroupBtn.addEventListener('click', () => {
+            if (selectedGroup) {
+                selectedGroup.name = groupNameInput.value;
+                selectedGroup.width = parseInt(groupWidthInput.value) || selectedGroup.width;
+                selectedGroup.height = parseInt(groupHeightInput.value) || selectedGroup.height;
+                selectedGroup.x = parseInt(groupXInput.value) || selectedGroup.x;
+                selectedGroup.y = parseInt(groupYInput.value) || selectedGroup.y;
+                selectedGroup.color = groupColorInput.value;
                 populateGroupList();
                 draw();
             }
-        }
-    });
+        });
 
-    previewCanvas.addEventListener('mousedown', (e) => {
-        const rect = previewCanvas.getBoundingClientRect();
-        const offsetX = (previewCanvas.width - s(composition.width)) / 2 + panOffset.x;
-        const offsetY = (previewCanvas.height - s(composition.height)) / 2 + panOffset.y;
-        const mouseX = (e.clientX - rect.left - offsetX) / scale;
-        const mouseY = (e.clientY - rect.top - offsetY) / scale;
-
-        // Middle click or space+click for panning
-        if (e.button === 1 || (e.button === 0 && e.shiftKey)) {
-            isPanning = true;
-            panStart = { x: e.clientX - panOffset.x, y: e.clientY - panOffset.y };
-            previewCanvas.style.cursor = 'grabbing';
-            e.preventDefault();
-            return;
-        }
-
-        let foundIndex = null;
-        for (let i = groups.length - 1; i >= 0; i--) {
-            const group = groups[i];
-            if (mouseX >= group.x && mouseX <= group.x + group.width &&
-                mouseY >= group.y && mouseY <= group.y + group.height) {
-                foundIndex = i;
-                break;
+        removeGroupBtn.addEventListener('click', () => {
+            if (selectedGroup) {
+                const index = groups.indexOf(selectedGroup);
+                if (index > -1) {
+                    groups.splice(index, 1);
+                    selectGroup(null);
+                    populateGroupList();
+                    draw();
+                }
             }
-        }
-        
-        if (foundIndex !== null) {
-            selectGroup(foundIndex);
-            isDragging = true;
-            dragStart = { x: e.clientX, y: e.clientY };
-            groupStart = { x: selectedGroup.x, y: selectedGroup.y };
-            draw();
-        } else {
-            selectGroup(null);
-        }
-    });
+        });
 
-    previewCanvas.addEventListener('mousemove', (e) => {
-        if (isPanning) {
-            panOffset.x = e.clientX - panStart.x;
-            panOffset.y = e.clientY - panStart.y;
-            draw();
-            return;
-        }
-        
-        if (isDragging && selectedGroup) {
-            const deltaX = (e.clientX - dragStart.x) / scale;
-            const deltaY = (e.clientY - dragStart.y) / scale;
-            const newX = groupStart.x + deltaX;
-            const newY = groupStart.y + deltaY;
-            const snapPos = getSnapPosition(newX, newY, selectedGroup);
-            
-            selectedGroup.x = snapPos.x;
-            selectedGroup.y = snapPos.y;
-            groupXInput.value = Math.round(selectedGroup.x);
-            groupYInput.value = Math.round(selectedGroup.y);
-            draw();
-        }
-    });
+        previewCanvas.addEventListener('mousedown', (e) => {
+            const rect = previewCanvas.getBoundingClientRect();
+            const offsetX = (previewCanvas.width - s(composition.width)) / 2 + panOffset.x;
+            const offsetY = (previewCanvas.height - s(composition.height)) / 2 + panOffset.y;
+            const mouseX = (e.clientX - rect.left - offsetX) / scale;
+            const mouseY = (e.clientY - rect.top - offsetY) / scale;
 
-    previewCanvas.addEventListener('mouseup', () => {
-        if (isPanning) {
-            isPanning = false;
-            previewCanvas.style.cursor = 'grab';
-        }
-        
-        isDragging = false;
-        if (selectedGroup) {
-            selectedGroup.x = Math.round(selectedGroup.x);
-            selectedGroup.y = Math.round(selectedGroup.y);
-            groupXInput.value = selectedGroup.x;
-            groupYInput.value = selectedGroup.y;
-            draw();
-        }
-    });
-
-    // Touch Events
-    previewCanvas.addEventListener('touchstart', (e) => {
-        const touch = e.touches[0];
-        const rect = previewCanvas.getBoundingClientRect();
-        const offsetX = (previewCanvas.width - s(composition.width)) / 2 + panOffset.x;
-        const offsetY = (previewCanvas.height - s(composition.height)) / 2 + panOffset.y;
-        const mouseX = (touch.clientX - rect.left - offsetX) / scale;
-        const mouseY = (touch.clientY - rect.top - offsetY) / scale;
-
-        let foundIndex = null;
-        for (let i = groups.length - 1; i >= 0; i--) {
-            const group = groups[i];
-            if (mouseX >= group.x && mouseX <= group.x + group.width &&
-                mouseY >= group.y && mouseY <= group.y + group.height) {
-                foundIndex = i;
-                break;
+            // Middle click or space+click for panning
+            if (e.button === 1 || (e.button === 0 && e.shiftKey)) {
+                isPanning = true;
+                panStart = { x: e.clientX - panOffset.x, y: e.clientY - panOffset.y };
+                previewCanvas.style.cursor = 'grabbing';
+                e.preventDefault();
+                return;
             }
-        }
-        
-        if (foundIndex !== null) {
-            selectGroup(foundIndex);
-            isDragging = true;
-            dragStart = { x: touch.clientX, y: touch.clientY };
-            groupStart = { x: selectedGroup.x, y: selectedGroup.y };
-            draw();
-            e.preventDefault();
-        } else {
-            selectGroup(null);
-        }
-    });
 
-    previewCanvas.addEventListener('touchmove', (e) => {
-        if (isDragging && selectedGroup) {
+            let foundIndex = null;
+            for (let i = groups.length - 1; i >= 0; i--) {
+                const group = groups[i];
+                if (mouseX >= group.x && mouseX <= group.x + group.width &&
+                    mouseY >= group.y && mouseY <= group.y + group.height) {
+                    foundIndex = i;
+                    break;
+                }
+            }
+
+            if (foundIndex !== null) {
+                selectGroup(foundIndex);
+                isDragging = true;
+                dragStart = { x: e.clientX, y: e.clientY };
+                groupStart = { x: selectedGroup.x, y: selectedGroup.y };
+                draw();
+            } else {
+                selectGroup(null);
+            }
+        });
+
+        previewCanvas.addEventListener('mousemove', (e) => {
+            if (isPanning) {
+                panOffset.x = e.clientX - panStart.x;
+                panOffset.y = e.clientY - panStart.y;
+                draw();
+                return;
+            }
+
+            if (isDragging && selectedGroup) {
+                const deltaX = (e.clientX - dragStart.x) / scale;
+                const deltaY = (e.clientY - dragStart.y) / scale;
+                const newX = groupStart.x + deltaX;
+                const newY = groupStart.y + deltaY;
+                const snapPos = getSnapPosition(newX, newY, selectedGroup);
+
+                selectedGroup.x = snapPos.x;
+                selectedGroup.y = snapPos.y;
+                groupXInput.value = Math.round(selectedGroup.x);
+                groupYInput.value = Math.round(selectedGroup.y);
+                draw();
+            }
+        });
+
+        previewCanvas.addEventListener('mouseup', () => {
+            if (isPanning) {
+                isPanning = false;
+                previewCanvas.style.cursor = 'grab';
+            }
+
+            isDragging = false;
+            if (selectedGroup) {
+                selectedGroup.x = Math.round(selectedGroup.x);
+                selectedGroup.y = Math.round(selectedGroup.y);
+                groupXInput.value = selectedGroup.x;
+                groupYInput.value = selectedGroup.y;
+                draw();
+            }
+        });
+
+        // Touch Events
+        previewCanvas.addEventListener('touchstart', (e) => {
             const touch = e.touches[0];
-            const deltaX = (touch.clientX - dragStart.x) / scale;
-            const deltaY = (touch.clientY - dragStart.y) / scale;
-            const newX = groupStart.x + deltaX;
-            const newY = groupStart.y + deltaY;
-            const snapPos = getSnapPosition(newX, newY, selectedGroup);
-            
-            selectedGroup.x = snapPos.x;
-            selectedGroup.y = snapPos.y;
-            groupXInput.value = Math.round(selectedGroup.x);
-            groupYInput.value = Math.round(selectedGroup.y);
+            const rect = previewCanvas.getBoundingClientRect();
+            const offsetX = (previewCanvas.width - s(composition.width)) / 2 + panOffset.x;
+            const offsetY = (previewCanvas.height - s(composition.height)) / 2 + panOffset.y;
+            const mouseX = (touch.clientX - rect.left - offsetX) / scale;
+            const mouseY = (touch.clientY - rect.top - offsetY) / scale;
+
+            let foundIndex = null;
+            for (let i = groups.length - 1; i >= 0; i--) {
+                const group = groups[i];
+                if (mouseX >= group.x && mouseX <= group.x + group.width &&
+                    mouseY >= group.y && mouseY <= group.y + group.height) {
+                    foundIndex = i;
+                    break;
+                }
+            }
+
+            if (foundIndex !== null) {
+                selectGroup(foundIndex);
+                isDragging = true;
+                dragStart = { x: touch.clientX, y: touch.clientY };
+                groupStart = { x: selectedGroup.x, y: selectedGroup.y };
+                draw();
+                e.preventDefault();
+            } else {
+                selectGroup(null);
+            }
+        });
+
+        previewCanvas.addEventListener('touchmove', (e) => {
+            if (isDragging && selectedGroup) {
+                const touch = e.touches[0];
+                const deltaX = (touch.clientX - dragStart.x) / scale;
+                const deltaY = (touch.clientY - dragStart.y) / scale;
+                const newX = groupStart.x + deltaX;
+                const newY = groupStart.y + deltaY;
+                const snapPos = getSnapPosition(newX, newY, selectedGroup);
+
+                selectedGroup.x = snapPos.x;
+                selectedGroup.y = snapPos.y;
+                groupXInput.value = Math.round(selectedGroup.x);
+                groupYInput.value = Math.round(selectedGroup.y);
+                draw();
+                e.preventDefault();
+            }
+        });
+
+        previewCanvas.addEventListener('touchend', () => {
+            isDragging = false;
+            if (selectedGroup) {
+                selectedGroup.x = Math.round(selectedGroup.x);
+                selectedGroup.y = Math.round(selectedGroup.y);
+                groupXInput.value = selectedGroup.x;
+                groupYInput.value = selectedGroup.y;
+                draw();
+            }
+        });
+
+        exportPngBtn.addEventListener('click', exportPng);
+
+        zoomInBtn.addEventListener('click', () => {
+            scale = Math.min(2.0, scale + 0.1);
+            zoomLevelSpan.textContent = `${Math.round(scale * 100)}%`;
             draw();
+        });
+
+        zoomOutBtn.addEventListener('click', () => {
+            scale = Math.max(0.1, scale - 0.1);
+            zoomLevelSpan.textContent = `${Math.round(scale * 100)}%`;
+            draw();
+        });
+
+        // Mouse wheel zoom
+        previewCanvas.addEventListener('wheel', (e) => {
             e.preventDefault();
-        }
-    });
-
-    previewCanvas.addEventListener('touchend', () => {
-        isDragging = false;
-        if (selectedGroup) {
-            selectedGroup.x = Math.round(selectedGroup.x);
-            selectedGroup.y = Math.round(selectedGroup.y);
-            groupXInput.value = selectedGroup.x;
-            groupYInput.value = selectedGroup.y;
+            const delta = e.deltaY > 0 ? -0.05 : 0.05;
+            scale = Math.max(0.1, Math.min(2.0, scale + delta));
+            zoomLevelSpan.textContent = `${Math.round(scale * 100)}%`;
             draw();
+        });
+
+        // Reset view with double click
+        previewCanvas.addEventListener('dblclick', () => {
+            panOffset = { x: 0, y: 0 };
+            autoScale();
+        });
+
+        groupNameInput.addEventListener('input', () => { if (selectedGroup) { selectedGroup.name = groupNameInput.value; populateGroupList(); draw(); } });
+        groupWidthInput.addEventListener('input', () => { if (selectedGroup) { selectedGroup.width = parseInt(groupWidthInput.value) || 0; draw(); } });
+        groupHeightInput.addEventListener('input', () => { if (selectedGroup) { selectedGroup.height = parseInt(groupHeightInput.value) || 0; draw(); } });
+        groupXInput.addEventListener('input', () => { if (selectedGroup) { selectedGroup.x = parseInt(groupXInput.value) || 0; draw(); } });
+        groupYInput.addEventListener('input', () => { if (selectedGroup) { selectedGroup.y = parseInt(groupYInput.value) || 0; draw(); } });
+        groupColorInput.addEventListener('input', () => { if (selectedGroup) { selectedGroup.color = groupColorInput.value; draw(); } });
+        testPatternCellSizeInput.addEventListener('input', draw);
+
+        showTestPattern.addEventListener('change', draw);
+        showMainGuides.addEventListener('change', draw);
+        showGroupGuides.addEventListener('change', draw);
+        snapToCenterToggle.addEventListener('change', draw);
+        snapToGroupToggle.addEventListener('change', draw);
+
+        window.addEventListener('resize', autoScale);
+
+        function initialSetup() {
+            groups.push({ name: 'L', width: 384, height: 960, x: 0, y: 0, color: '#CC6666' });
+            groups.push({ name: 'CTR', width: 2688, height: 960, x: 384, y: 0, color: '#CC66CC' });
+            groups.push({ name: 'R', width: 384, height: 960, x: 3072, y: 0, color: '#6699CC' });
+            populateGroupList();
+            autoScale();
         }
-    });
 
-    exportPngBtn.addEventListener('click', exportPng);
-    
-    zoomInBtn.addEventListener('click', () => {
-        scale = Math.min(2.0, scale + 0.1);
-        zoomLevelSpan.textContent = `${Math.round(scale * 100)}%`;
-        draw();
-    });
+        window.onload = initialSetup;
+    </script>
 
-    zoomOutBtn.addEventListener('click', () => {
-        scale = Math.max(0.1, scale - 0.1);
-        zoomLevelSpan.textContent = `${Math.round(scale * 100)}%`;
-        draw();
-    });
-    
-    // Mouse wheel zoom
-    previewCanvas.addEventListener('wheel', (e) => {
-        e.preventDefault();
-        const delta = e.deltaY > 0 ? -0.05 : 0.05;
-        scale = Math.max(0.1, Math.min(2.0, scale + delta));
-        zoomLevelSpan.textContent = `${Math.round(scale * 100)}%`;
-        draw();
-    });
-    
-    // Reset view with double click
-    previewCanvas.addEventListener('dblclick', () => {
-        panOffset = { x: 0, y: 0 };
-        autoScale();
-    });
+    <!-- Mobile Interstitial Ad Logic -->
+    <script>
+        let adShownCount = 0;
 
-    groupNameInput.addEventListener('input', () => { if(selectedGroup) { selectedGroup.name = groupNameInput.value; populateGroupList(); draw(); } });
-    groupWidthInput.addEventListener('input', () => { if(selectedGroup) { selectedGroup.width = parseInt(groupWidthInput.value) || 0; draw(); } });
-    groupHeightInput.addEventListener('input', () => { if(selectedGroup) { selectedGroup.height = parseInt(groupHeightInput.value) || 0; draw(); } });
-    groupXInput.addEventListener('input', () => { if(selectedGroup) { selectedGroup.x = parseInt(groupXInput.value) || 0; draw(); } });
-    groupYInput.addEventListener('input', () => { if(selectedGroup) { selectedGroup.y = parseInt(groupYInput.value) || 0; draw(); } });
-    groupColorInput.addEventListener('input', () => { if(selectedGroup) { selectedGroup.color = groupColorInput.value; draw(); } });
-    testPatternCellSizeInput.addEventListener('input', draw);
-    
-    showTestPattern.addEventListener('change', draw);
-    showMainGuides.addEventListener('change', draw);
-    showGroupGuides.addEventListener('change', draw);
-    snapToCenterToggle.addEventListener('change', draw);
-    snapToGroupToggle.addEventListener('change', draw);
-
-    window.addEventListener('resize', autoScale);
-    
-    function initialSetup() {
-        groups.push({ name: 'L', width: 384, height: 960, x: 0, y: 0, color: '#CC6666' });
-        groups.push({ name: 'CTR', width: 2688, height: 960, x: 384, y: 0, color: '#CC66CC' });
-        groups.push({ name: 'R', width: 384, height: 960, x: 3072, y: 0, color: '#6699CC' });
-        populateGroupList();
-        autoScale();
-    }
-    
-    window.onload = initialSetup;
-</script>
-
-<!-- Mobile Interstitial Ad Logic -->
-<script>
-    let adShownCount = 0;
-    
-    function closeMobileAd() {
-        const ad = document.getElementById('mobileInterstitialAd');
-        ad.classList.remove('show');
-        
-        // Set timer untuk ad berikutnya (5 detik)
-        setTimeout(showMobileAd, 50000);
-    }
-    
-    function showMobileAd() {
-        // Hanya tampilkan di mobile (max-width 768px)
-        if (window.innerWidth <= 768) {
+        function closeMobileAd() {
             const ad = document.getElementById('mobileInterstitialAd');
-            ad.classList.add('show');
-            adShownCount++;
-            
-            // Re-push AdSense ads untuk refresh (setelah ad pertama)
-            if (adShownCount > 1) {
-                try {
-                    (adsbygoogle = window.adsbygoogle || []).push({});
-                } catch (e) {
-                    console.log('AdSense refresh:', e);
+            ad.classList.remove('show');
+
+            // Set timer untuk ad berikutnya (5 detik)
+            setTimeout(showMobileAd, 50000);
+        }
+
+        function showMobileAd() {
+            // Hanya tampilkan di mobile (max-width 768px)
+            if (window.innerWidth <= 768) {
+                const ad = document.getElementById('mobileInterstitialAd');
+                ad.classList.add('show');
+                adShownCount++;
+
+                // Re-push AdSense ads untuk refresh (setelah ad pertama)
+                if (adShownCount > 1) {
+                    try {
+                        (adsbygoogle = window.adsbygoogle || []).push({});
+                    } catch (e) {
+                        console.log('AdSense refresh:', e);
+                    }
                 }
             }
         }
-    }
-    
-    // Tampilkan ad pertama kali setelah 5 detik jika mobile
-    if (window.innerWidth <= 768) {
-        setTimeout(showMobileAd, 5000);
-    }
-</script>
 
-<!-- Google Analytics (Optional - ganti dengan tracking ID Anda) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-XXXXXXXXXX');
-</script>
+        // Tampilkan ad pertama kali setelah 5 detik jika mobile
+        if (window.innerWidth <= 768) {
+            setTimeout(showMobileAd, 5000);
+        }
+    </script>
+
 
 </body>
+
 </html>
