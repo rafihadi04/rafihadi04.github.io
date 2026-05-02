@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>LED Screen Test Pattern Generator V2</title>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --panel-bg: #1e1e1e;
+            --text-color: #e0e0e0;
+            --accent: #ff9900;
+            --border: #333;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+        /* Sidebar Layout Fix */
+        .sidebar {
+            width: 400px;
+            background-color: var(--panel-bg);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        .sidebar-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border);
+            background: #151515;
+        }
+        .sidebar-content {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        .sidebar-footer {
+            padding: 15px 20px;
+            border-top: 1px solid var(--border);
+            background: #151515;
+        }
+        
+        /* Preview Area */
+        .preview-area {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            background-color: #000;
+            overflow: auto;
+            position: relative;
+        }
+        canvas {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            box-shadow: 0 0 20px rgba(0,0,0,0.8);
+            border: 1px solid #444;
+        }
+        
+        /* Typography & Forms */
+        h2 { margin: 0; color: var(--accent); font-size: 1.2rem; }
+        h3 { margin-top: 0; margin-bottom: 15px; color: var(--accent); font-size: 1rem; }
+        .section {
+            background: #2a2a2a;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        .input-group {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            align-items: center;
+        }
+        .input-group label { font-size: 13px; flex: 1; font-weight: 500; }
+        .input-group input {
+            flex: 1;
+            background: #121212;
+            border: 1px solid var(--border);
+            color: white;
+            padding: 8px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        /* Buttons */
+        button {
+            background-color: var(--accent);
+            color: #000;
+            border: none;
+            padding: 12px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+            transition: 0.2s;
+            font-size: 14px;
+        }
+        button:hover { background-color: #e68a00; }
+        button:active { transform: scale(0.98); }
+        .btn-danger { background-color: #cc0000; color: white; margin-top: 5px; }
+        .btn-danger:hover { background-color: #990000; }
+        .btn-success { background-color: #28a745; color: white; font-size: 16px; padding: 15px; }
+        .btn-success:hover { background-color: #218838; }
+
+        .group-card {
+            border-left: 4px solid var(--accent);
+            background: #222;
+            padding: 12px;
+            margin-bottom: 12px;
+            border-radius: 4px;
+        }
+
+        /* Responsive Tablet (iPad) */
+        @media (max-width: 1100px) and (min-width: 601px) {
+            body { flex-direction: column-reverse; }
+            .sidebar { width: 100%; height: 45vh; border-right: none; border-top: 2px solid var(--accent); }
+            .preview-area { height: 55vh; padding: 10px; }
+        }
+
+        /* Responsive Mobile */
+        @media (max-width: 600px) {
+            body { flex-direction: column-reverse; }
+            .sidebar { width: 100%; height: 55vh; border-right: none; border-top: 2px solid var(--accent); }
+            .preview-area { height: 45vh; padding: 8px; }
+            .input-group input { padding: 10px; }
+            h2 { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="preview-area">
+        <canvas id="patternCanvas"></canvas>
+    </div>
+
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2>Screen Mapping Pattern Generator</h2>
+        </div>
+        
+        <div class="sidebar-content">
+            <div class="section">
+                <h3>1. Global Composition</h3>
+                <div class="input-group">
+                    <label>Comp Width (px)</label>
+                    <input type="number" id="compW" value="5760" onchange="render()">
+                </div>
+                <div class="input-group">
+                    <label>Comp Height (px)</label>
+                    <input type="number" id="compH" value="1080" onchange="render()">
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>2. Screen Groups (Slices)</h3>
+                <div id="groupsContainer"></div>
+                <button onclick="addGroup()">+ Tambah Grup Layar</button>
+            </div>
+
+            <div class="section">
+                <h3>3. Global Logo</h3>
+                <input type="file" id="logoUpload" accept="image/*" style="margin-bottom: 10px; width: 100%; font-size: 12px;" onchange="handleLogoUpload(event)">
+                <div class="input-group">
+                    <label>Logo Scale (%)</label>
+                    <input type="number" id="logoScale" value="50" onchange="render()">
+                </div>
+                <div class="input-group">
+                    <label>Logo Pos X (px)</label>
+                    <input type="number" id="logoX" value="2880" onchange="render()">
+                </div>
+                <div class="input-group">
+                    <label>Logo Pos Y (px)</label>
+                    <input type="number" id="logoY" value="540" onchange="render()">
+                </div>
+                <button onclick="clearLogo()" class="btn-danger" style="padding: 8px;">Hapus Logo</button>
+            </div>
+        </div>
+
+        <div class="sidebar-footer">
+            <button onclick="downloadPattern()" class="btn-success">Download Pattern (PNG)</button>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('patternCanvas');
+        const ctx = canvas.getContext('2d');
+        let logoImage = null;
+
+        // Default Layout 
+        let groups = [
+            { id: 1, name: "Left Wing", w: 1920, h: 1080, x: 0, y: 0 },
+            { id: 2, name: "Center", w: 1920, h: 1080, x: 1920, y: 0 },
+            { id: 3, name: "Right Wing", w: 1920, h: 1080, x: 3840, y: 0 }
+        ];
+
+        function init() {
+            renderGroupsUI();
+            render();
+        }
+
+        function renderGroupsUI() {
+            const container = document.getElementById('groupsContainer');
+            container.innerHTML = '';
+            groups.forEach((g, index) => {
+                container.innerHTML += `
+                    <div class="group-card">
+                        <input type="text" value="${g.name}" onchange="updateGroup(${index}, 'name', this.value)" style="width: calc(100% - 12px); margin-bottom:10px; background:#111; color:white; border:1px solid #444; padding:8px; border-radius:4px; font-weight:bold;">
+                        <div class="input-group">
+                            <label>Width</label><input type="number" value="${g.w}" onchange="updateGroup(${index}, 'w', this.value)">
+                        </div>
+                        <div class="input-group">
+                            <label>Height</label><input type="number" value="${g.h}" onchange="updateGroup(${index}, 'h', this.value)">
+                        </div>
+                        <div class="input-group">
+                            <label>Offset X</label><input type="number" value="${g.x}" onchange="updateGroup(${index}, 'x', this.value)">
+                        </div>
+                        <div class="input-group">
+                            <label>Offset Y</label><input type="number" value="${g.y}" onchange="updateGroup(${index}, 'y', this.value)">
+                        </div>
+                        <button class="btn-danger" onclick="removeGroup(${index})" style="padding: 8px;">Hapus Grup</button>
+                    </div>
+                `;
+            });
+        }
+
+        function updateGroup(index, field, value) {
+            groups[index][field] = field === 'name' ? value : parseInt(value) || 0;
+            render();
+        }
+
+        function addGroup() {
+            groups.push({ id: Date.now(), name: "New Group", w: 1920, h: 1080, x: 0, y: 0 });
+            renderGroupsUI();
+            render();
+        }
+
+        function removeGroup(index) {
+            groups.splice(index, 1);
+            renderGroupsUI();
+            render();
+        }
+
+        function handleLogoUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const img = new Image();
+                img.onload = function() {
+                    logoImage = img;
+                    render();
+                }
+                img.src = event.target.result;
+            }
+            reader.readAsDataURL(file);
+        }
+
+        function clearLogo() {
+            logoImage = null;
+            document.getElementById('logoUpload').value = "";
+            render();
+        }
+
+        function drawTestPattern(g) {
+            if(g.w <= 0 || g.h <= 0) return;
+
+            ctx.save();
+            ctx.translate(g.x, g.y);
+
+            // Clipping mask
+            ctx.beginPath();
+            ctx.rect(0, 0, g.w, g.h);
+            ctx.clip();
+
+            // Acuan proporsional: semua elemen berbasis minDim agar tidak stretch
+            const cx = g.w / 2;
+            const cy = g.h / 2;
+            const minDim = Math.min(g.w, g.h);
+
+            // ── Background hitam ──
+            ctx.fillStyle = '#050505';
+            ctx.fillRect(0, 0, g.w, g.h);
+
+            // ── Garis Diagonal putih pojok ke pojok (X besar) ──
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
+            ctx.lineWidth = Math.max(1, minDim * 0.002);
+            ctx.beginPath();
+            ctx.moveTo(0, 0);     ctx.lineTo(g.w, g.h);
+            ctx.moveTo(g.w, 0);   ctx.lineTo(0, g.h);
+            ctx.stroke();
+
+            // ── Grid Latar Belakang (10×10) ──
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            for(let x = 0; x <= g.w; x += g.w / 10) { ctx.moveTo(x, 0); ctx.lineTo(x, g.h); }
+            for(let y = 0; y <= g.h; y += g.h / 10) { ctx.moveTo(0, y); ctx.lineTo(g.w, y); }
+            ctx.stroke();
+
+            // ── DIAGONAL ORANYE: garis X pojok ke pojok (corner-to-corner) ──
+            ctx.strokeStyle = 'rgba(255, 153, 0, 0.85)';
+            ctx.lineWidth = Math.max(1.5, minDim * 0.003);
+            ctx.beginPath();
+            ctx.moveTo(0, 0);     ctx.lineTo(g.w, g.h);
+            ctx.moveTo(g.w, 0);   ctx.lineTo(0, g.h);
+            ctx.stroke();
+
+            // ── Lingkaran Overscan Tengah (proporsional, tidak stretch) ──
+            ctx.strokeStyle = 'rgba(255, 153, 0, 0.85)';
+            ctx.lineWidth = Math.max(1.5, minDim * 0.003);
+            ctx.beginPath();
+            ctx.arc(cx, cy, minDim * 0.45, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // ── Lingkaran Sudut (proporsional, tidak stretch) ──
+            const cornerR = minDim * 0.07;
+            [[0,0],[g.w,0],[0,g.h],[g.w,g.h]].forEach(([px, py]) => {
+                ctx.beginPath();
+                ctx.arc(px, py, cornerR, 0, Math.PI * 2);
+                ctx.stroke();
+            });
+
+            // ── Crosshair di tengah ──
+            ctx.strokeStyle = 'rgba(255, 153, 0, 0.6)';
+            ctx.lineWidth = 1;
+            const chSize = minDim * 0.04;
+            ctx.beginPath();
+            ctx.moveTo(cx - chSize, cy); ctx.lineTo(cx + chSize, cy);
+            ctx.moveTo(cx, cy - chSize); ctx.lineTo(cx, cy + chSize);
+            ctx.stroke();
+
+            // ── Color Bars SMPTE Style (lebar & tinggi proporsional minDim) ──
+            const colors = ['#0000ff','#00ffff','#ff00ff','#ff0000','#ff6600','#ffff00','#00ff00'];
+            const barAreaW = minDim * 0.75;
+            const barW     = barAreaW / colors.length;
+            const startX   = cx - barAreaW / 2;
+            const barH     = minDim * 0.12;
+            const startY   = cy - minDim * 0.22;
+
+            colors.forEach((c, i) => {
+                ctx.fillStyle = c;
+                ctx.fillRect(startX + i * barW, startY, barW, barH);
+            });
+
+            // ── RGB Gradients ──
+            const gradH  = minDim * 0.04;
+            const gradY  = startY + barH;
+            ['red','green','blue'].forEach((c, i) => {
+                const grad = ctx.createLinearGradient(startX, 0, startX + barAreaW, 0);
+                grad.addColorStop(0, c);
+                grad.addColorStop(1, '#000');
+                ctx.fillStyle = grad;
+                ctx.fillRect(startX, gradY + i * gradH, barAreaW, gradH);
+            });
+
+            // ── Grayscale Steps ──
+            const grays    = [10,20,30,40,50,60,70,80,90,100];
+            const gBarW    = barAreaW / grays.length;
+            const gStartY  = gradY + 3 * gradH + minDim * 0.02;
+            const gBarH    = minDim * 0.1;
+            const fontSize = Math.max(9, minDim * 0.018);
+
+            grays.forEach((gray, i) => {
+                ctx.fillStyle = `hsl(0,0%,${gray}%)`;
+                ctx.fillRect(startX + i * gBarW, gStartY, gBarW, gBarH);
+
+                ctx.fillStyle = gray > 50 ? '#000' : '#fff';
+                ctx.font = `bold ${fontSize}px Arial`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(gray + '%', startX + i * gBarW + gBarW / 2, gStartY + gBarH / 2);
+            });
+
+            // ── Teks Info Layar ──
+            const nameFontSize = Math.max(14, minDim * 0.06);
+            const infoFontSize = Math.max(10, minDim * 0.025);
+
+            ctx.fillStyle = '#ffffff';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.font = `bold ${nameFontSize}px Arial`;
+            ctx.fillText(g.name, cx, cy - minDim * 0.38);
+
+            ctx.font = `normal ${infoFontSize}px Arial`;
+            ctx.fillStyle = '#ff9900';
+            ctx.fillText(`${g.w}×${g.h}  |  X:${g.x} Y:${g.y}`, cx, cy - minDim * 0.3);
+
+            // ── Garis Tepi Grup ──
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = Math.max(2, minDim * 0.003);
+            ctx.strokeRect(1, 1, g.w - 2, g.h - 2);
+
+            ctx.restore();
+        }
+
+        function render() {
+            const compW = parseInt(document.getElementById('compW').value) || 1920;
+            const compH = parseInt(document.getElementById('compH').value) || 1080;
+            
+            canvas.width = compW;
+            canvas.height = compH;
+
+            // Bersihkan kanvas keseluruhan
+            ctx.clearRect(0, 0, compW, compH);
+
+            // Gambar area mati (warna abu-abu gelap bergaris untuk menandakan area di luar slice)
+            ctx.fillStyle = '#111';
+            ctx.fillRect(0, 0, compW, compH);
+
+            // Render masing-masing grup (slice)
+            groups.forEach(g => {
+                drawTestPattern(g);
+            });
+
+            // Render Global Logo (Akan ter-render di atas semua slice)
+            if (logoImage) {
+                const scale = (parseInt(document.getElementById('logoScale').value) || 50) / 100;
+                const targetW = logoImage.width * scale;
+                const targetH = logoImage.height * scale;
+                const posX = parseInt(document.getElementById('logoX').value) || compW/2;
+                const posY = parseInt(document.getElementById('logoY').value) || compH/2;
+
+                ctx.drawImage(logoImage, posX - (targetW/2), posY - (targetH/2), targetW, targetH);
+            }
+        }
+
+        function downloadPattern() {
+            const link = document.createElement('a');
+            link.download = `Mapping_Pattern_${Date.now()}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
