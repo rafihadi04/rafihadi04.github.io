@@ -8,94 +8,83 @@
 <style>
   *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
   body{background:#0a0e1a;color:#e0e0f0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
-    min-height:100vh;padding:14px;padding-bottom:max(14px,env(safe-area-inset-bottom));
+    min-height:100vh;padding:12px;padding-bottom:max(12px,env(safe-area-inset-bottom));
     display:flex;flex-direction:column;align-items:center}
-  .container{width:100%;max-width:480px;display:flex;flex-direction:column;gap:12px}
-  h1{font-size:1.3rem;text-align:center;color:#4cc9f0}
-  .subtitle{text-align:center;color:#8080a0;font-size:.82rem}
+  .container{width:100%;max-width:480px;display:flex;flex-direction:column;gap:10px}
+  h1{font-size:1.25rem;text-align:center;color:#4cc9f0}
+  .subtitle{text-align:center;color:#8080a0;font-size:.8rem}
 
-  /* ===== INDICATOR ===== */
+  .freq-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;background:#121a2e;
+    padding:8px;border-radius:12px;border:1px solid #1e2a44}
+  .freq-btn{padding:10px 2px;border-radius:8px;border:2px solid transparent;background:#0f1f3a;
+    color:#b0b0d0;font-size:.82rem;font-weight:bold;cursor:pointer;touch-action:manipulation;
+    transition:all .15s}
+  .freq-btn:active{transform:scale(.95)}
+  .freq-btn.active{background:linear-gradient(135deg,#4cc9f0,#4361ee);color:#fff;border-color:#4cc9f0}
+  .freq-btn:disabled{opacity:.4}
+
   .indicator{
-    width:100%;height:230px;border-radius:24px;
+    width:100%;height:200px;border-radius:20px;
     background:#121a2e;border:3px solid #1e2a44;
-    display:flex;align-items:center;justify-content:center;
-    flex-direction:column;gap:8px;
-    transition:background 0.15s,border-color 0.15s,box-shadow 0.15s;
+    display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;
+    transition:background .15s,border-color .15s,box-shadow .15s;
   }
-  .indicator .label{
-    font-size:2rem;font-weight:800;letter-spacing:2px;
-    color:#4a4a6a;transition:color 0.1s;
-  }
-  .indicator .sub{font-size:.8rem;opacity:.5;color:#8080a0}
+  .indicator .label{font-size:1.8rem;font-weight:800;letter-spacing:2px;color:#4a4a6a;transition:color .1s}
+  .indicator .sub{font-size:.78rem;opacity:.6;color:#8080a0;text-align:center;padding:0 16px}
   .indicator.live{border-color:#4cc9f0}
   .indicator.live .label{color:#4cc9f0;animation:breath 2s infinite}
   @keyframes breath{0%,100%{opacity:.6}50%{opacity:1}}
   .indicator.pos{
     background:radial-gradient(circle at 50% 50%,#166534 0%,#052e16 100%);
-    border-color:#4ade80;
-    box-shadow:0 0 40px rgba(74,222,128,.5),inset 0 0 40px rgba(74,222,128,.2);
+    border-color:#4ade80;box-shadow:0 0 40px rgba(74,222,128,.5),inset 0 0 40px rgba(74,222,128,.2);
   }
   .indicator.pos .label{color:#4ade80;text-shadow:0 0 20px rgba(74,222,128,.7);animation:none}
-  .indicator.pos .sub{color:#4ade80;opacity:.8}
+  .indicator.pos .sub{color:#4ade80;opacity:.9}
   .indicator.neg{
     background:radial-gradient(circle at 50% 50%,#991b1b 0%,#450a0a 100%);
-    border-color:#f87171;
-    box-shadow:0 0 40px rgba(248,113,113,.5),inset 0 0 40px rgba(248,113,113,.2);
+    border-color:#f87171;box-shadow:0 0 40px rgba(248,113,113,.5),inset 0 0 40px rgba(248,113,113,.2);
   }
   .indicator.neg .label{color:#f87171;text-shadow:0 0 20px rgba(248,113,113,.7);animation:none}
-  .indicator.neg .sub{color:#f87171;opacity:.8}
+  .indicator.neg .sub{color:#f87171;opacity:.9}
+  .indicator.hint{border-color:#fbbf24}
+  .indicator.hint .label{color:#fbbf24;font-size:1.1rem;animation:none;letter-spacing:0}
+  .indicator.hint .sub{color:#fbbf24;opacity:.8}
 
-  /* ===== BUTTON ===== */
-  .btn{
-    width:100%;padding:20px;font-size:1.2rem;font-weight:bold;border:none;border-radius:14px;
-    background:linear-gradient(135deg,#4cc9f0,#4361ee);color:#fff;
-    cursor:pointer;touch-action:manipulation;
-    transition:transform .1s,background .2s;
-  }
+  .btn{width:100%;padding:18px;font-size:1.15rem;font-weight:bold;border:none;border-radius:12px;
+    background:linear-gradient(135deg,#4cc9f0,#4361ee);color:#fff;cursor:pointer;touch-action:manipulation;
+    transition:transform .1s}
   .btn:active{transform:scale(.98)}
   .btn.stop{background:linear-gradient(135deg,#f72585,#b5179e)}
 
-  /* ===== STATS ===== */
-  .stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  .stat{background:#121a2e;border-radius:14px;padding:14px;text-align:center;border:1px solid #1e2a44}
-  .stat-val{font-size:2rem;font-weight:800;line-height:1}
+  .stats{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .stat{background:#121a2e;border-radius:12px;padding:10px;text-align:center;border:1px solid #1e2a44}
+  .stat-val{font-size:1.7rem;font-weight:800;line-height:1}
   .stat-val.pos{color:#4ade80}
   .stat-val.neg{color:#f87171}
-  .stat-lbl{font-size:.75rem;color:#8080a0;margin-top:6px;letter-spacing:1px}
+  .stat-lbl{font-size:.7rem;color:#8080a0;margin-top:4px;letter-spacing:1px}
 
-  /* ===== HISTORY ===== */
-  .history{
-    display:flex;gap:5px;justify-content:center;flex-wrap:wrap;
-    min-height:34px;padding:8px;background:#121a2e;border-radius:12px;
-    border:1px solid #1e2a44;
-  }
-  .history:empty::before{
-    content:'Riwayat pulsa akan muncul di sini...';
-    color:#4a4a6a;font-size:.75rem;align-self:center;
-  }
-  .history .dot{
-    width:26px;height:26px;border-radius:50%;
-    display:flex;align-items:center;justify-content:center;
-    font-size:14px;font-weight:bold;color:#fff;
-  }
+  .history{display:flex;gap:4px;justify-content:center;flex-wrap:wrap;min-height:28px;padding:6px;
+    background:#121a2e;border-radius:10px;border:1px solid #1e2a44}
+  .history:empty::before{content:'Riwayat pulsa...';color:#4a4a6a;font-size:.7rem;align-self:center}
+  .history .dot{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    font-size:12px;font-weight:bold;color:#fff}
   .history .dot.pos{background:#16a34a}
   .history .dot.neg{background:#dc2626}
 
-  /* ===== WAVEFORM ===== */
-  canvas{width:100%;height:80px;background:#060a14;border-radius:10px;display:block}
+  canvas{width:100%;height:70px;background:#060a14;border-radius:8px;display:block}
 
-  /* ===== INFO ===== */
-  details{background:#121a2e;border-radius:12px;padding:12px;font-size:.82rem;color:#8080a0;
-    border:1px solid #1e2a44;line-height:1.7}
+  details{background:#121a2e;border-radius:10px;padding:10px;font-size:.78rem;color:#8080a0;
+    border:1px solid #1e2a44;line-height:1.6}
   details summary{cursor:pointer;color:#4cc9f0;font-weight:bold;outline:none}
   details strong{color:#b0b0d0}
-  details code{background:#1e2a44;padding:2px 6px;border-radius:4px;color:#4cc9f0;font-size:.85em}
 </style>
 </head>
 <body>
 <div class="container">
   <h1>🎤 Live Phase Checker</h1>
-  <div class="subtitle">Deteksi polaritas real-time</div>
+  <div class="subtitle">Frekuensi harus sama dengan generator</div>
+
+  <div class="freq-grid" id="freqGrid"></div>
 
   <div class="indicator" id="indicator">
     <div class="label" id="indLabel">SIAP</div>
@@ -105,70 +94,64 @@
   <button class="btn" id="toggleBtn">▶ Mulai Live</button>
 
   <div class="stats">
-    <div class="stat">
-      <div class="stat-val pos" id="posCount">0</div>
-      <div class="stat-lbl">SEFASA (+)</div>
-    </div>
-    <div class="stat">
-      <div class="stat-val neg" id="negCount">0</div>
-      <div class="stat-lbl">TERBALIK (−)</div>
-    </div>
+    <div class="stat"><div class="stat-val pos" id="posCount">0</div><div class="stat-lbl">SEFASA (+)</div></div>
+    <div class="stat"><div class="stat-val neg" id="negCount">0</div><div class="stat-lbl">TERBALIK (−)</div></div>
   </div>
 
   <div class="history" id="history"></div>
-
   <canvas id="waveform"></canvas>
 
   <details>
-    <summary>📋 Cara pakai & catatan</summary>
+    <summary>📋 Cara pakai & troubleshooting</summary>
     <p style="margin-top:8px">
-      1. Buka <code>index.html</code> di device lain (laptop/HP lain), tekan <b>Mulai Putar</b><br>
-      2. Dekatkan HP ini <b>10–30 cm</b> ke speaker yang diuji<br>
-      3. Tekan <b>Mulai Live</b> — setiap pulsa akan memicu kilat warna<br>
-      4. Biarkan beberapa pulsa untuk konfirmasi (counter bertambah)
+      1. Buka <b>index.html</b> di device lain, pilih frekuensi sama, tekan Mulai Putar<br>
+      2. Dekatkan HP ini 10–30 cm ke speaker<br>
+      3. Tekan <b>Mulai Live</b><br>
+      4. Pulsa memicu kilat: 🟢 hijau = sefasa, 🔴 merah = terbalik
     </p>
     <p style="margin-top:8px">
-      <b>Warna:</b><br>
-      🟢 <b>HIJAU</b> = Sefasa — polaritas benar<br>
-      🔴 <b>MERAH</b> = Terbalik — tukar kabel + dan −
-    </p>
-    <p style="margin-top:8px">
-      <b>Kalau tidak ada kilat:</b> naikkan volume amp, dekatkan HP, atau pastikan
-      generator sedang memutar (led berkedip di index.html).
+      <b>Kalau tidak ada kilat atau "menunggu" terus:</b><br>
+      • Pastikan frekuensi di generator SAMA dengan yang dipilih di sini<br>
+      • Naikkan volume amp<br>
+      • Dekatkan HP ke speaker<br>
+      • Pastikan generator dalam kondisi playing
     </p>
   </details>
 </div>
 
 <script>
-// ================= CONFIG =================
-const FREQ = 80;
+const FREQ_OPTIONS = [50, 60, 80, 100, 120];
+const DEFAULT_FREQ = 100;
 const PULSE_MIN_GAP_MS = 150;
-const MAX_PULSE_MS = 200;
+const MAX_PULSE_MS = 250;
 const BUFFER_MS = 300;
 const FLOOR_ENV = 0.003;
 const FLASH_MS = 500;
+const STALE_MS = 3000;
 
-// ================= STATE =================
+let currentFreq = DEFAULT_FREQ;
+
 let audioCtx = null, micStream = null, processor = null, muteNode = null;
 let isLive = false;
 let sampleCount = 0;
 let wakeLock = null;
 
-// Filter state
+// Filter & envelope state
 let hpState, lpState, envState = 0;
 let hpCoef, lpCoef, envAlpha;
 let template = null;
 
 // Ring buffer
-let bpBuffer, envBuffer, bufferSize, bufferIdx;
+let bpBuffer, bufferSize, bufferIdx;
 let runningMaxEnv = FLOOR_ENV;
 
 // Pulse detection
 let inPulse = false, pulseStart = 0, lastPulseEnd = -Infinity;
+let lastPulseTime = 0;
 
 // Stats
-let posCount = 0, negCount = 0;
-let history = [];
+let posCount = 0, negCount = 0, history = [];
+let flashTimeout = null, staleTimer = null, drawId = null;
 
 // UI
 const indicator = document.getElementById('indicator');
@@ -180,91 +163,129 @@ const negCountEl = document.getElementById('negCount');
 const historyEl = document.getElementById('history');
 const canvas = document.getElementById('waveform');
 
-// ================= FILTER INIT =================
-function initCoef(sr) {
-  // Highpass 40 Hz
-  {
-    const w0 = 2 * Math.PI * 40 / sr, c = Math.cos(w0);
-    const alpha = Math.sin(w0) / (2 * Math.SQRT1_2), a0 = 1 + alpha;
-    hpCoef = {
-      b0: (1 + c) / 2 / a0, b1: -(1 + c) / a0, b2: (1 + c) / 2 / a0,
-      a1: -2 * c / a0, a2: (1 - alpha) / a0
-    };
+// ==== Frequency sync ====
+function getInitialFreq() {
+  const p = new URLSearchParams(location.search);
+  const uf = parseInt(p.get('freq'), 10);
+  if (FREQ_OPTIONS.includes(uf)) return uf;
+  const sf = parseInt(localStorage.getItem('phasechecker_freq'), 10);
+  if (FREQ_OPTIONS.includes(sf)) return sf;
+  return DEFAULT_FREQ;
+}
+
+function buildFreqButtons() {
+  const grid = document.getElementById('freqGrid');
+  grid.innerHTML = '';
+  FREQ_OPTIONS.forEach(hz => {
+    const b = document.createElement('button');
+    b.className = 'freq-btn';
+    b.dataset.hz = hz;
+    b.textContent = hz + ' Hz';
+    b.addEventListener('click', () => setFreq(hz));
+    grid.appendChild(b);
+  });
+}
+
+function updateFreqButtons() {
+  document.querySelectorAll('.freq-btn').forEach(b => {
+    b.classList.toggle('active', parseInt(b.dataset.hz, 10) === currentFreq);
+    b.disabled = isLive && parseInt(b.dataset.hz, 10) !== currentFreq;
+  });
+}
+
+function setFreq(hz) {
+  if (!FREQ_OPTIONS.includes(hz)) return;
+  if (isLive) {
+    if (hz !== currentFreq) alert('Stop dulu sebelum ganti frekuensi.');
+    return;
   }
-  // Lowpass 150 Hz
+  currentFreq = hz;
+  localStorage.setItem('phasechecker_freq', String(hz));
+  const url = new URL(location.href);
+  url.searchParams.set('freq', String(hz));
+  history.replaceState(null, '', url.toString());
+  updateFreqButtons();
+  updateSubtitle();
+}
+
+function updateSubtitle() {
+  document.querySelector('.subtitle').textContent =
+    `Frekuensi: ${currentFreq} Hz — pastikan sama dengan generator`;
+}
+
+// ==== Filter init ====
+function initFilters(sr) {
+  const hpCutoff = Math.max(20, currentFreq * 0.5);
+  const lpCutoff = Math.min(400, currentFreq * 2.5);
+
   {
-    const w0 = 2 * Math.PI * 150 / sr, c = Math.cos(w0);
-    const alpha = Math.sin(w0) / (2 * Math.SQRT1_2), a0 = 1 + alpha;
-    lpCoef = {
-      b0: (1 - c) / 2 / a0, b1: (1 - c) / a0, b2: (1 - c) / 2 / a0,
-      a1: -2 * c / a0, a2: (1 - alpha) / a0
-    };
+    const w0 = 2 * Math.PI * hpCutoff / sr, c = Math.cos(w0);
+    const a = Math.sin(w0) / (2 * Math.SQRT1_2), a0 = 1 + a;
+    hpCoef = { b0: (1+c)/2/a0, b1: -(1+c)/a0, b2: (1+c)/2/a0, a1: -2*c/a0, a2: (1-a)/a0 };
+  }
+  {
+    const w0 = 2 * Math.PI * lpCutoff / sr, c = Math.cos(w0);
+    const a = Math.sin(w0) / (2 * Math.SQRT1_2), a0 = 1 + a;
+    lpCoef = { b0: (1-c)/2/a0, b1: (1-c)/a0, b2: (1-c)/2/a0, a1: -2*c/a0, a2: (1-a)/a0 };
   }
   hpState = { x1:0, x2:0, y1:0, y2:0 };
   lpState = { x1:0, x2:0, y1:0, y2:0 };
-  envAlpha = Math.exp(-1 / (sr / 25)); // ~25 Hz envelope
+  envAlpha = Math.exp(-1 / (sr / 25));
   envState = 0;
 
-  // Template: 3 cycles of 80 Hz (cukup untuk deteksi polaritas)
-  const tLen = Math.floor(sr * 3 / FREQ);
+  // Template: 3 cycles of current freq
+  const tLen = Math.floor(sr * 3 / currentFreq);
   template = new Float32Array(tLen);
-  for (let i = 0; i < tLen; i++) template[i] = Math.sin(2 * Math.PI * FREQ * i / sr);
+  for (let i = 0; i < tLen; i++) template[i] = Math.sin(2 * Math.PI * currentFreq * i / sr);
 
-  // Buffers
   bufferSize = Math.ceil(sr * BUFFER_MS / 1000);
   bpBuffer = new Float32Array(bufferSize);
-  envBuffer = new Float32Array(bufferSize);
   bufferIdx = 0;
+  runningMaxEnv = FLOOR_ENV;
+  inPulse = false;
+  lastPulseEnd = -Infinity;
+  sampleCount = 0;
 }
 
-// ================= PROCESSING =================
+// ==== Processing ====
 function processChunk(input) {
   const sr = audioCtx.sampleRate;
-  const minGapSamples = sr * PULSE_MIN_GAP_MS / 1000;
-  const maxPulseSamples = sr * MAX_PULSE_MS / 1000;
+  const minGap = sr * PULSE_MIN_GAP_MS / 1000;
+  const maxPulse = sr * MAX_PULSE_MS / 1000;
   const decay = Math.exp(-0.0000096 * input.length);
 
   for (let i = 0; i < input.length; i++) {
     const x = input[i];
-
-    // Highpass
     const yhp = hpCoef.b0*x + hpCoef.b1*hpState.x1 + hpCoef.b2*hpState.x2
               - hpCoef.a1*hpState.y1 - hpCoef.a2*hpState.y2;
     hpState.x2 = hpState.x1; hpState.x1 = x;
     hpState.y2 = hpState.y1; hpState.y1 = yhp;
 
-    // Lowpass
     const ylp = lpCoef.b0*yhp + lpCoef.b1*lpState.x1 + lpCoef.b2*lpState.x2
               - lpCoef.a1*lpState.y1 - lpCoef.a2*lpState.y2;
     lpState.x2 = lpState.x1; lpState.x1 = yhp;
     lpState.y2 = lpState.y1; lpState.y1 = ylp;
 
-    // Envelope
     envState = envAlpha * envState + (1 - envAlpha) * Math.abs(ylp);
 
-    // Store
     bpBuffer[bufferIdx] = ylp;
-    envBuffer[bufferIdx] = envState;
     bufferIdx = (bufferIdx + 1) % bufferSize;
 
     if (envState > runningMaxEnv) runningMaxEnv = envState;
-
     const threshold = Math.max(FLOOR_ENV * 2, runningMaxEnv * 0.35);
 
     if (!inPulse) {
-      if (envState > threshold && (sampleCount - lastPulseEnd) > minGapSamples) {
-        inPulse = true;
-        pulseStart = sampleCount;
+      if (envState > threshold && (sampleCount - lastPulseEnd) > minGap) {
+        inPulse = true; pulseStart = sampleCount;
       }
     } else {
       const dur = sampleCount - pulseStart;
-      if (envState < threshold * 0.5 || dur > maxPulseSamples) {
-        inPulse = false;
-        lastPulseEnd = sampleCount;
-        if (dur >= Math.floor(sr * 0.02)) evaluatePulse(dur);
+      if (envState < threshold * 0.5 || dur > maxPulse) {
+        inPulse = false; lastPulseEnd = sampleCount;
+        const minCycles = Math.floor(sr * 2 / currentFreq);
+        if (dur >= minCycles) evaluatePulse(dur);
       }
     }
-
     sampleCount++;
   }
 
@@ -273,34 +294,27 @@ function processChunk(input) {
 }
 
 function evaluatePulse(duration) {
-  const sr = audioCtx.sampleRate;
-
-  // Ekstrak sampel pulsa dari ring buffer
+  if (!bpBuffer) return;
   const samples = new Float32Array(duration);
   for (let i = 0; i < duration; i++) {
     const idx = (bufferIdx - duration + i + bufferSize * 10) % bufferSize;
     samples[i] = bpBuffer[idx];
   }
 
-  // Correlate sliding template
   const tLen = template.length;
   const maxShift = Math.min(1000, Math.max(0, duration - tLen));
   let bestCorr = 0, bestAbs = 0;
-
   for (let shift = 0; shift <= maxShift; shift++) {
     let corr = 0;
-    for (let i = 0; i < tLen; i++) {
-      if (shift + i < duration) corr += samples[shift + i] * template[i];
-    }
+    const limit = Math.min(tLen, duration - shift);
+    for (let i = 0; i < limit; i++) corr += samples[shift + i] * template[i];
     const abs = Math.abs(corr);
     if (abs > bestAbs) { bestAbs = abs; bestCorr = corr; }
   }
-
   if (bestAbs > 0) onPulse(bestCorr > 0 ? 1 : -1);
 }
 
-// ================= UI UPDATE =================
-let flashTimeout = null;
+// ==== UI ====
 function onPulse(polarity) {
   if (polarity > 0) posCount++; else negCount++;
   posCountEl.textContent = posCount;
@@ -310,8 +324,10 @@ function onPulse(polarity) {
   if (history.length > 20) history.shift();
   renderHistory();
 
-  indicator.classList.remove('pos', 'neg');
-  void indicator.offsetWidth; // reflow
+  lastPulseTime = Date.now();
+
+  indicator.classList.remove('pos', 'neg', 'hint');
+  void indicator.offsetWidth;
   indicator.classList.add(polarity > 0 ? 'pos' : 'neg');
   indLabel.textContent = polarity > 0 ? 'SEFASA' : 'TERBALIK';
   indSub.textContent = polarity > 0 ? '✓ polaritas benar' : '✗ tukar kabel +/−';
@@ -336,21 +352,26 @@ function renderHistory() {
   ).join('');
 }
 
-// ================= LIFECYCLE =================
+function showStaleHint() {
+  if (!isLive) return;
+  if (Date.now() - lastPulseTime > STALE_MS && !indicator.classList.contains('pos') && !indicator.classList.contains('neg')) {
+    indicator.classList.remove('live');
+    indicator.classList.add('hint');
+    indLabel.textContent = 'Tidak ada pulsa';
+    indSub.textContent = `Cek: generator putar di ${currentFreq} Hz? Volume cukup?`;
+  }
+}
+
+// ==== Lifecycle ====
 async function startLive() {
   try {
     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     if (audioCtx.state === 'suspended') await audioCtx.resume();
 
-    initCoef(audioCtx.sampleRate);
+    initFilters(audioCtx.sampleRate);
 
     micStream = await navigator.mediaDevices.getUserMedia({
-      audio: {
-        echoCancellation: false,
-        noiseSuppression: false,
-        autoGainControl: false,
-        channelCount: 1
-      }
+      audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false, channelCount: 1 }
     });
 
     const source = audioCtx.createMediaStreamSource(micStream);
@@ -360,35 +381,31 @@ async function startLive() {
 
     processor.onaudioprocess = (e) => {
       if (!isLive) return;
-      try { processChunk(e.inputBuffer.getChannelData(0)); }
-      catch (err) { console.error(err); }
+      try { processChunk(e.inputBuffer.getChannelData(0)); } catch (err) { console.error(err); }
     };
 
     source.connect(processor);
     processor.connect(muteNode);
     muteNode.connect(audioCtx.destination);
 
-    // Reset stats
     isLive = true;
-    sampleCount = 0;
-    runningMaxEnv = FLOOR_ENV;
-    inPulse = false;
-    lastPulseEnd = -Infinity;
-    posCount = 0; negCount = 0;
-    posCountEl.textContent = '0';
-    negCountEl.textContent = '0';
-    history = [];
+    posCount = 0; negCount = 0; history = [];
+    posCountEl.textContent = '0'; negCountEl.textContent = '0';
     renderHistory();
+    lastPulseTime = Date.now();
 
-    indicator.classList.remove('pos', 'neg');
+    indicator.classList.remove('pos', 'neg', 'hint');
     indicator.classList.add('live');
     indLabel.textContent = 'LIVE';
-    indSub.textContent = 'menunggu pulsa...';
+    indSub.textContent = `menunggu pulsa ${currentFreq} Hz...`;
 
     toggleBtn.textContent = '⏹ Stop';
     toggleBtn.classList.add('stop');
+    updateFreqButtons();
 
     drawLoop();
+    if (staleTimer) clearInterval(staleTimer);
+    staleTimer = setInterval(showStaleHint, 1000);
     requestWakeLock();
   } catch (err) {
     console.error(err);
@@ -398,26 +415,27 @@ async function startLive() {
 
 function stopLive() {
   isLive = false;
-
   if (processor) { try { processor.disconnect(); } catch(e){} processor = null; }
   if (muteNode) { try { muteNode.disconnect(); } catch(e){} muteNode = null; }
   if (micStream) { micStream.getTracks().forEach(t => t.stop()); micStream = null; }
   if (audioCtx) { try { audioCtx.close(); } catch(e){} audioCtx = null; }
   if (flashTimeout) { clearTimeout(flashTimeout); flashTimeout = null; }
+  if (staleTimer) { clearInterval(staleTimer); staleTimer = null; }
+  if (drawId) { cancelAnimationFrame(drawId); drawId = null; }
 
-  indicator.classList.remove('pos', 'neg', 'live');
+  indicator.classList.remove('pos', 'neg', 'live', 'hint');
   indLabel.textContent = 'SIAP';
   indSub.textContent = 'Tekan Mulai Live';
-
   toggleBtn.textContent = '▶ Mulai Live';
   toggleBtn.classList.remove('stop');
+  updateFreqButtons();
 }
 
-// ================= WAVEFORM =================
+// ==== Waveform ====
 function drawLoop() {
   if (!isLive) return;
   drawWaveform();
-  requestAnimationFrame(drawLoop);
+  drawId = requestAnimationFrame(drawLoop);
 }
 
 function drawWaveform() {
@@ -425,12 +443,10 @@ function drawWaveform() {
   const dpr = window.devicePixelRatio || 1;
   const rect = canvas.getBoundingClientRect();
   if (canvas.width !== rect.width * dpr || canvas.height !== rect.height * dpr) {
-    canvas.width = rect.width * dpr;
-    canvas.height = rect.height * dpr;
+    canvas.width = rect.width * dpr; canvas.height = rect.height * dpr;
   }
   const ctx = canvas.getContext('2d');
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
   const w = rect.width, h = rect.height;
   ctx.fillStyle = '#060a14'; ctx.fillRect(0, 0, w, h);
 
@@ -440,7 +456,6 @@ function drawWaveform() {
     const idx = (bufferIdx - 1 - i + bufferSize * 2) % bufferSize;
     if (Math.abs(bpBuffer[idx]) > peak) peak = Math.abs(bpBuffer[idx]);
   }
-
   const mid = h / 2, scale = h * 0.4 / peak;
 
   ctx.strokeStyle = '#1e2a44'; ctx.lineWidth = 1;
@@ -454,36 +469,49 @@ function drawWaveform() {
     if (px === 0) ctx.moveTo(px, y); else ctx.lineTo(px, y);
   }
   ctx.stroke();
+
+  ctx.fillStyle = '#4cc9f0'; ctx.font = 'bold 11px -apple-system, sans-serif';
+  ctx.fillText(`${currentFreq} Hz`, 8, 14);
 }
 
-// ================= WAKE LOCK =================
+// ==== Wake lock ====
 async function requestWakeLock() {
-  try { if ('wakeLock' in navigator) wakeLock = await navigator.wakeLock.request('screen'); }
-  catch(e){}
+  try { if ('wakeLock' in navigator) wakeLock = await navigator.wakeLock.request('screen'); } catch(e){}
 }
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'visible' && isLive) requestWakeLock();
 });
 
-// ================= INIT =================
+// ==== Init ====
+currentFreq = getInitialFreq();
+buildFreqButtons();
+updateFreqButtons();
+updateSubtitle();
+
+// Sync URL juga
+(() => {
+  const url = new URL(location.href);
+  if (url.searchParams.get('freq') !== String(currentFreq)) {
+    url.searchParams.set('freq', String(currentFreq));
+    history.replaceState(null, '', url.toString());
+  }
+})();
+
 toggleBtn.addEventListener('click', async () => {
   if (isLive) stopLive(); else await startLive();
 });
 
-// Canvas placeholder
-(function initCanvas() {
+// Placeholder waveform
+(function() {
   const ctx = canvas.getContext('2d');
   const dpr = window.devicePixelRatio || 1;
   const rect = canvas.getBoundingClientRect();
-  canvas.width = rect.width * dpr;
-  canvas.height = rect.height * dpr;
+  canvas.width = rect.width * dpr; canvas.height = rect.height * dpr;
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  ctx.fillStyle = '#060a14';
-  ctx.fillRect(0, 0, rect.width, rect.height);
-  ctx.fillStyle = '#4a4a6a';
-  ctx.font = '11px -apple-system, sans-serif';
+  ctx.fillStyle = '#060a14'; ctx.fillRect(0, 0, rect.width, rect.height);
+  ctx.fillStyle = '#4a4a6a'; ctx.font = '11px -apple-system, sans-serif';
   ctx.textAlign = 'center';
-  ctx.fillText('Waveform 40–150 Hz akan tampil di sini', rect.width / 2, rect.height / 2);
+  ctx.fillText('Waveform akan tampil saat live', rect.width / 2, rect.height / 2);
 })();
 </script>
 </body>
