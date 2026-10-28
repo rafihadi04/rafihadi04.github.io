@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#0a0e1a">
+<title>Phase Test — Generator</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  body{background:#0a0e1a;color:#e0e0f0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+    min-height:100vh;padding:20px;padding-bottom:max(20px,env(safe-area-inset-bottom));display:flex;flex-direction:column;align-items:center}
+  .container{width:100%;max-width:480px;display:flex;flex-direction:column;gap:14px}
+  h1{font-size:1.5rem;text-align:center;color:#4cc9f0}
+  .subtitle{text-align:center;color:#8080a0;font-size:.9rem}
+  .card{background:#121a2e;border-radius:16px;padding:20px;border:1px solid #1e2a44}
+  .play-btn{width:100%;padding:32px 20px;font-size:1.5rem;font-weight:bold;border:none;border-radius:16px;
+    background:linear-gradient(135deg,#4cc9f0,#4361ee);color:#fff;cursor:pointer;touch-action:manipulation;
+    transition:transform .1s,background .2s;display:flex;align-items:center;justify-content:center;gap:12px}
+  .play-btn:active{transform:scale(.97)}
+  .play-btn.active{background:linear-gradient(135deg,#f72585,#b5179e)}
+  canvas{width:100%;height:120px;background:#060a14;border-radius:10px;display:block}
+  .info{font-size:.85rem;color:#8080a0;line-height:1.7}
+  .info strong{color:#b0b0d0}
+  .info code{background:#1e2a44;padding:2px 6px;border-radius:4px;color:#4cc9f0;font-size:.85em}
+  .status{text-align:center;font-size:.9rem;color:#4cc9f0;min-height:1.4em;padding:8px}
+  .badge{display:inline-block;background:#4cc9f0;color:#0a0e1a;padding:2px 10px;border-radius:20px;font-size:.75rem;font-weight:bold}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>🔊 Test Tone Generator</h1>
+  <div class="subtitle">Putar sinyal tes di device ini (via amp → speaker)</div>
+
+  <div class="card">
+    <button class="play-btn" id="playBtn">
+      <span id="playIcon">▶</span>
+      <span id="playText">Mulai Putar</span>
+    </button>
+  </div>
+
+  <div class="card"><canvas id="waveform"></canvas></div>
+
+  <div class="status" id="status">Siap</div>
+
+  <div class="card info">
+    <strong>📋 Cara pakai:</strong><br>
+    1. Sambungkan device ini ke <strong>amplifier → speaker</strong><br>
+    2. Buka <code>checker.html</code> di HP lain<br>
+    3. Tekan <strong>Mulai Putar</strong> di sini<br>
+    4. Di HP checker, dekatkan ke speaker dan mulai tes<br><br>
+    <strong>🎵 Sinyal yang diputar:</strong><br>
+    • <span class="badge">80 Hz</span> pulsa 4 siklus (50 ms)<br>
+    • Jeda 450 ms — berulang setiap 500 ms<br>
+    • Amplitudo 60% (hindari clipping)<br><br>
+    <strong>⚠️ Jangan pakai headphone!</strong> Suara harus keluar dari speaker fisik.
+  </div>
+</div>
+
+<script>
+const FREQ = 80;
+const CYCLES_PER_PULSE = 4;
+const PULSE_INTERVAL_MS = 500;
+const PULSE_AMP = 0.6;
+
+let audioCtx = null, isPlaying = false, sourceNode = null;
+
+function generatePulseBuffer(sampleRate) {
+  const totalLen = Math.floor((PULSE_INTERVAL_MS / 1000) * sampleRate);
+  const buffer = audioCtx.createBuffer(1, totalLen, sampleRate);
+  const data = buffer.getChannelData(0);
+  const pulseLen = Math.floor((CYCLES_PER_PULSE / FREQ) * sampleRate);
+
+  // Ensure pulse fits within buffer
+  const actualPulseLen = Math.min(pulseLen, totalLen);
+  for (let i = 0; i < actualPulseLen; i++) {
+    data[i] = Math.sin(2 * Math.PI * FREQ * i / sampleRate) * PULSE_AMP;
+  }
+  return buffer;
+}
+
+function drawWaveform(buffer) {
+  const canvas = document.getElementById('waveform');
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = rect.width * dpr;
+  canvas.height = rect.height * dpr;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  const w = rect.width, h = rect.height;
+  ctx.fillStyle = '#060a14'; ctx.fillRect(0, 0, w, h);
+  if (!buffer) return;
+
+  const data = buffer.getChannelData(0);
+  const mid = h / 2;
+  const scale = h * 0.4 / PULSE_AMP;
+
+  ctx.strokeStyle = '#1e2a44'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(0, mid); ctx.lineTo(w, mid); ctx.stroke();
+
+  ctx.strokeStyle = '#4cc9f0'; ctx.lineWidth = 1.5; ctx.beginPath();
+  for (let px = 0; px < w; px++) {
+    const idx = Math.floor(px / w * data.length);
+    const v = data[idx] || 0;
+    const y = mid - v * scale;
+    px === 0 ? ctx.moveTo(px, y) : ctx.lineTo(px, y);
+  }
+  ctx.stroke();
+
+  ctx.fillStyle = '#4cc9f0'; ctx.font = '11px -apple-system, sans-serif';
+  ctx.fillText('Pulsa 80 Hz × 4 siklus', 8, 16);
+  ctx.fillStyle = '#606080';
+  ctx.fillText('Interval 500 ms', 8, h - 8);
+}
+
+async function startPlayback() {
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  if (audioCtx.state === 'suspended') await audioCtx.resume();
+
+  const buffer = generatePulseBuffer(audioCtx.sampleRate);
+  drawWaveform(buffer);
+
+  sourceNode = audioCtx.createBufferSource();
+  sourceNode.buffer = buffer;
+  sourceNode.loop = true;
+  sourceNode.connect(audioCtx.destination);
+  sourceNode.start();
+
+  isPlaying = true;
+  updateUI();
+}
+
+function stopPlayback() {
+  if (sourceNode) {
+    try { sourceNode.stop(); } catch (e) {}
+    sourceNode.disconnect();
+    sourceNode = null;
+  }
+  isPlaying = false;
+  updateUI();
+}
+
+function updateUI() {
+  const btn = document.getElementById('playBtn');
+  const icon = document.getElementById('playIcon');
+  const text = document.getElementById('playText');
+  const status = document.getElementById('status');
+  if (isPlaying) {
+    btn.classList.add('active');
+    icon.textContent = '⏸'; text.textContent = 'Stop';
+    status.textContent = '🔊 Memutar sinyal tes...';
+  } else {
+    btn.classList.remove('active');
+    icon.textContent = '▶'; text.textContent = 'Mulai Putar';
+    status.textContent = 'Siap';
+  }
+}
+
+document.getElementById('playBtn').addEventListener('click', async () => {
+  try {
+    if (isPlaying) stopPlayback(); else await startPlayback();
+  } catch (err) {
+    document.getElementById('status').textContent = '❌ ' + err.message;
+    console.error(err);
+  }
+});
+
+// Keep screen awake
+let wakeLock = null;
+async function requestWakeLock() {
+  try { if ('wakeLock' in navigator) wakeLock = await navigator.wakeLock.request('screen'); } catch(e) {}
+}
+requestWakeLock();
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') requestWakeLock();
+});
+</script>
+</body>
+</html>
