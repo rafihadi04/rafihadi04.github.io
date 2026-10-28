@@ -13,7 +13,6 @@
   .container{width:100%;max-width:480px;display:flex;flex-direction:column;gap:10px}
   h1{font-size:1.25rem;text-align:center;color:#4cc9f0}
   .subtitle{text-align:center;color:#8080a0;font-size:.8rem}
-
   .freq-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;background:#121a2e;
     padding:8px;border-radius:12px;border:1px solid #1e2a44}
   .freq-btn{padding:10px 2px;border-radius:8px;border:2px solid transparent;background:#0f1f3a;
@@ -22,47 +21,36 @@
   .freq-btn:active{transform:scale(.95)}
   .freq-btn.active{background:linear-gradient(135deg,#4cc9f0,#4361ee);color:#fff;border-color:#4cc9f0}
   .freq-btn:disabled{opacity:.4}
-
-  .indicator{
-    width:100%;height:200px;border-radius:20px;
-    background:#121a2e;border:3px solid #1e2a44;
+  .indicator{width:100%;height:200px;border-radius:20px;background:#121a2e;border:3px solid #1e2a44;
     display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;
-    transition:background .15s,border-color .15s,box-shadow .15s;
-  }
-  .indicator .label{font-size:1.8rem;font-weight:800;letter-spacing:2px;color:#4a4a6a;transition:color .1s}
+    transition:background .15s,border-color .15s,box-shadow .15s}
+  .indicator .label{font-size:1.8rem;font-weight:800;letter-spacing:2px;color:#4a4a6a}
   .indicator .sub{font-size:.78rem;opacity:.6;color:#8080a0;text-align:center;padding:0 16px}
   .indicator.live{border-color:#4cc9f0}
   .indicator.live .label{color:#4cc9f0;animation:breath 2s infinite}
   @keyframes breath{0%,100%{opacity:.6}50%{opacity:1}}
-  .indicator.pos{
-    background:radial-gradient(circle at 50% 50%,#166534 0%,#052e16 100%);
-    border-color:#4ade80;box-shadow:0 0 40px rgba(74,222,128,.5),inset 0 0 40px rgba(74,222,128,.2);
-  }
+  .indicator.pos{background:radial-gradient(circle at 50% 50%,#166534 0%,#052e16 100%);
+    border-color:#4ade80;box-shadow:0 0 40px rgba(74,222,128,.5),inset 0 0 40px rgba(74,222,128,.2)}
   .indicator.pos .label{color:#4ade80;text-shadow:0 0 20px rgba(74,222,128,.7);animation:none}
   .indicator.pos .sub{color:#4ade80;opacity:.9}
-  .indicator.neg{
-    background:radial-gradient(circle at 50% 50%,#991b1b 0%,#450a0a 100%);
-    border-color:#f87171;box-shadow:0 0 40px rgba(248,113,113,.5),inset 0 0 40px rgba(248,113,113,.2);
-  }
+  .indicator.neg{background:radial-gradient(circle at 50% 50%,#991b1b 0%,#450a0a 100%);
+    border-color:#f87171;box-shadow:0 0 40px rgba(248,113,113,.5),inset 0 0 40px rgba(248,113,113,.2)}
   .indicator.neg .label{color:#f87171;text-shadow:0 0 20px rgba(248,113,113,.7);animation:none}
   .indicator.neg .sub{color:#f87171;opacity:.9}
   .indicator.hint{border-color:#fbbf24}
-  .indicator.hint .label{color:#fbbf24;font-size:1.1rem;animation:none;letter-spacing:0}
+  .indicator.hint .label{color:#fbbf24;font-size:1.05rem;animation:none;letter-spacing:0}
   .indicator.hint .sub{color:#fbbf24;opacity:.8}
-
   .btn{width:100%;padding:18px;font-size:1.15rem;font-weight:bold;border:none;border-radius:12px;
     background:linear-gradient(135deg,#4cc9f0,#4361ee);color:#fff;cursor:pointer;touch-action:manipulation;
     transition:transform .1s}
   .btn:active{transform:scale(.98)}
   .btn.stop{background:linear-gradient(135deg,#f72585,#b5179e)}
-
   .stats{display:grid;grid-template-columns:1fr 1fr;gap:8px}
   .stat{background:#121a2e;border-radius:12px;padding:10px;text-align:center;border:1px solid #1e2a44}
   .stat-val{font-size:1.7rem;font-weight:800;line-height:1}
   .stat-val.pos{color:#4ade80}
   .stat-val.neg{color:#f87171}
   .stat-lbl{font-size:.7rem;color:#8080a0;margin-top:4px;letter-spacing:1px}
-
   .history{display:flex;gap:4px;justify-content:center;flex-wrap:wrap;min-height:28px;padding:6px;
     background:#121a2e;border-radius:10px;border:1px solid #1e2a44}
   .history:empty::before{content:'Riwayat pulsa...';color:#4a4a6a;font-size:.7rem;align-self:center}
@@ -70,9 +58,8 @@
     font-size:12px;font-weight:bold;color:#fff}
   .history .dot.pos{background:#16a34a}
   .history .dot.neg{background:#dc2626}
-
   canvas{width:100%;height:70px;background:#060a14;border-radius:8px;display:block}
-
+  .debug{font-size:.7rem;color:#606080;text-align:center;min-height:1em;font-family:monospace}
   details{background:#121a2e;border-radius:10px;padding:10px;font-size:.78rem;color:#8080a0;
     border:1px solid #1e2a44;line-height:1.6}
   details summary{cursor:pointer;color:#4cc9f0;font-weight:bold;outline:none}
@@ -82,7 +69,7 @@
 <body>
 <div class="container">
   <h1>🎤 Live Phase Checker</h1>
-  <div class="subtitle">Frekuensi harus sama dengan generator</div>
+  <div class="subtitle" id="subtitle">Frekuensi harus sama dengan generator</div>
 
   <div class="freq-grid" id="freqGrid"></div>
 
@@ -100,6 +87,7 @@
 
   <div class="history" id="history"></div>
   <canvas id="waveform"></canvas>
+  <div class="debug" id="debug">—</div>
 
   <details>
     <summary>📋 Cara pakai & troubleshooting</summary>
@@ -110,11 +98,11 @@
       4. Pulsa memicu kilat: 🟢 hijau = sefasa, 🔴 merah = terbalik
     </p>
     <p style="margin-top:8px">
-      <b>Kalau tidak ada kilat atau "menunggu" terus:</b><br>
-      • Pastikan frekuensi di generator SAMA dengan yang dipilih di sini<br>
+      <b>Kalau tidak ada kilat:</b><br>
+      • Pastikan generator sedang playing di frekuensi SAMA<br>
       • Naikkan volume amp<br>
       • Dekatkan HP ke speaker<br>
-      • Pastikan generator dalam kondisi playing
+      • Lihat baris debug di bawah waveform
     </p>
   </details>
 </div>
@@ -128,6 +116,7 @@ const BUFFER_MS = 300;
 const FLOOR_ENV = 0.003;
 const FLASH_MS = 500;
 const STALE_MS = 3000;
+const MIN_CORR_COEF = 0.30; // korelasi minimal untuk menerima pulsa
 
 let currentFreq = DEFAULT_FREQ;
 
@@ -136,24 +125,19 @@ let isLive = false;
 let sampleCount = 0;
 let wakeLock = null;
 
-// Filter & envelope state
 let hpState, lpState, envState = 0;
 let hpCoef, lpCoef, envAlpha;
-let template = null;
 
-// Ring buffer
 let bpBuffer, bufferSize, bufferIdx;
 let runningMaxEnv = FLOOR_ENV;
 
-// Pulse detection
 let inPulse = false, pulseStart = 0, lastPulseEnd = -Infinity;
 let lastPulseTime = 0;
 
-// Stats
-let posCount = 0, negCount = 0, history = [];
+let posCount = 0, negCount = 0;
+let pulseHistory = [];            // ← FIX: rename dari `history`
 let flashTimeout = null, staleTimer = null, drawId = null;
 
-// UI
 const indicator = document.getElementById('indicator');
 const indLabel = document.getElementById('indLabel');
 const indSub = document.getElementById('indSub');
@@ -161,9 +145,10 @@ const toggleBtn = document.getElementById('toggleBtn');
 const posCountEl = document.getElementById('posCount');
 const negCountEl = document.getElementById('negCount');
 const historyEl = document.getElementById('history');
+const debugEl = document.getElementById('debug');
 const canvas = document.getElementById('waveform');
 
-// ==== Frequency sync ====
+// ==== Frekuensi ====
 function getInitialFreq() {
   const p = new URLSearchParams(location.search);
   const uf = parseInt(p.get('freq'), 10);
@@ -201,22 +186,25 @@ function setFreq(hz) {
   }
   currentFreq = hz;
   localStorage.setItem('phasechecker_freq', String(hz));
-  const url = new URL(location.href);
-  url.searchParams.set('freq', String(hz));
-  history.replaceState(null, '', url.toString());
+  try {
+    const url = new URL(location.href);
+    url.searchParams.set('freq', String(hz));
+    window.history.replaceState(null, '', url.toString());  // ← FIX: window.history
+  } catch (e) { /* ignore */ }
   updateFreqButtons();
   updateSubtitle();
 }
 
 function updateSubtitle() {
-  document.querySelector('.subtitle').textContent =
+  document.getElementById('subtitle').textContent =
     `Frekuensi: ${currentFreq} Hz — pastikan sama dengan generator`;
 }
 
-// ==== Filter init ====
+// ==== Filters ====
 function initFilters(sr) {
-  const hpCutoff = Math.max(20, currentFreq * 0.5);
-  const lpCutoff = Math.min(400, currentFreq * 2.5);
+  // Filter sempit & simetris (dalam log-frequency) supaya phase shift ≈ 0 di f_test
+  const hpCutoff = Math.max(20, currentFreq / Math.SQRT2);
+  const lpCutoff = Math.min(500, currentFreq * Math.SQRT2);
 
   {
     const w0 = 2 * Math.PI * hpCutoff / sr, c = Math.cos(w0);
@@ -232,11 +220,6 @@ function initFilters(sr) {
   lpState = { x1:0, x2:0, y1:0, y2:0 };
   envAlpha = Math.exp(-1 / (sr / 25));
   envState = 0;
-
-  // Template: 3 cycles of current freq
-  const tLen = Math.floor(sr * 3 / currentFreq);
-  template = new Float32Array(tLen);
-  for (let i = 0; i < tLen; i++) template[i] = Math.sin(2 * Math.PI * currentFreq * i / sr);
 
   bufferSize = Math.ceil(sr * BUFFER_MS / 1000);
   bpBuffer = new Float32Array(bufferSize);
@@ -293,25 +276,41 @@ function processChunk(input) {
   if (runningMaxEnv < FLOOR_ENV) runningMaxEnv = FLOOR_ENV;
 }
 
+// ==== Phase Detection (FIXED: ambiguous-free) ====
 function evaluatePulse(duration) {
-  if (!bpBuffer) return;
+  if (!bpBuffer || duration < 3) return;
+
+  // Ekstraksi pulse dari ring buffer (FIX: -1 offset)
   const samples = new Float32Array(duration);
   for (let i = 0; i < duration; i++) {
-    const idx = (bufferIdx - duration + i + bufferSize * 10) % bufferSize;
+    const idx = (bufferIdx - duration - 1 + i + bufferSize * 10) % bufferSize;
     samples[i] = bpBuffer[idx];
   }
 
-  const tLen = template.length;
-  const maxShift = Math.min(1000, Math.max(0, duration - tLen));
-  let bestCorr = 0, bestAbs = 0;
-  for (let shift = 0; shift <= maxShift; shift++) {
-    let corr = 0;
-    const limit = Math.min(tLen, duration - shift);
-    for (let i = 0; i < limit; i++) corr += samples[shift + i] * template[i];
-    const abs = Math.abs(corr);
-    if (abs > bestAbs) { bestAbs = abs; bestCorr = corr; }
+  // Korelasi langsung dengan sin(2π f t) pada frame tetap.
+  // In-phase → coef POSITIF. Out-of-phase → coef NEGATIF. Tidak ambigu.
+  const sr = audioCtx.sampleRate;
+  let corr = 0, energy = 0;
+  for (let i = 0; i < samples.length; i++) {
+    corr  += samples[i] * Math.sin(2 * Math.PI * currentFreq * i / sr);
+    energy += samples[i] * samples[i];
   }
-  if (bestAbs > 0) onPulse(bestCorr > 0 ? 1 : -1);
+
+  const normFactor = Math.sqrt(energy * samples.length / 2);
+  if (normFactor < 1e-8) {
+    debugEl.textContent = 'Pulsa terdeteksi tapi energi terlalu lemah';
+    return;
+  }
+
+  const coef = corr / normFactor;
+  debugEl.textContent = `Pulsa: ${duration} sampel | korelasi=${coef.toFixed(2)}`;
+
+  if (Math.abs(coef) < MIN_CORR_COEF) {
+    debugEl.textContent += ' | IGNORED (korelasi lemah)';
+    return;
+  }
+
+  onPulse(coef > 0 ? 1 : -1);
 }
 
 // ==== UI ====
@@ -320,8 +319,8 @@ function onPulse(polarity) {
   posCountEl.textContent = posCount;
   negCountEl.textContent = negCount;
 
-  history.push(polarity);
-  if (history.length > 20) history.shift();
+  pulseHistory.push(polarity);
+  if (pulseHistory.length > 20) pulseHistory.shift();
   renderHistory();
 
   lastPulseTime = Date.now();
@@ -347,14 +346,15 @@ function onPulse(polarity) {
 }
 
 function renderHistory() {
-  historyEl.innerHTML = history.map(p =>
+  historyEl.innerHTML = pulseHistory.map(p =>
     `<div class="dot ${p > 0 ? 'pos' : 'neg'}">${p > 0 ? '+' : '−'}</div>`
   ).join('');
 }
 
 function showStaleHint() {
   if (!isLive) return;
-  if (Date.now() - lastPulseTime > STALE_MS && !indicator.classList.contains('pos') && !indicator.classList.contains('neg')) {
+  if (Date.now() - lastPulseTime > STALE_MS &&
+      !indicator.classList.contains('pos') && !indicator.classList.contains('neg')) {
     indicator.classList.remove('live');
     indicator.classList.add('hint');
     indLabel.textContent = 'Tidak ada pulsa';
@@ -381,7 +381,8 @@ async function startLive() {
 
     processor.onaudioprocess = (e) => {
       if (!isLive) return;
-      try { processChunk(e.inputBuffer.getChannelData(0)); } catch (err) { console.error(err); }
+      try { processChunk(e.inputBuffer.getChannelData(0)); }
+      catch (err) { console.error(err); }
     };
 
     source.connect(processor);
@@ -389,10 +390,11 @@ async function startLive() {
     muteNode.connect(audioCtx.destination);
 
     isLive = true;
-    posCount = 0; negCount = 0; history = [];
+    posCount = 0; negCount = 0; pulseHistory = [];
     posCountEl.textContent = '0'; negCountEl.textContent = '0';
     renderHistory();
     lastPulseTime = Date.now();
+    debugEl.textContent = '—';
 
     indicator.classList.remove('pos', 'neg', 'hint');
     indicator.classList.add('live');
@@ -474,7 +476,6 @@ function drawWaveform() {
   ctx.fillText(`${currentFreq} Hz`, 8, 14);
 }
 
-// ==== Wake lock ====
 async function requestWakeLock() {
   try { if ('wakeLock' in navigator) wakeLock = await navigator.wakeLock.request('screen'); } catch(e){}
 }
@@ -482,20 +483,19 @@ document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'visible' && isLive) requestWakeLock();
 });
 
-// ==== Init ====
+// ==== INIT ====
 currentFreq = getInitialFreq();
 buildFreqButtons();
 updateFreqButtons();
 updateSubtitle();
 
-// Sync URL juga
-(() => {
+try {
   const url = new URL(location.href);
   if (url.searchParams.get('freq') !== String(currentFreq)) {
     url.searchParams.set('freq', String(currentFreq));
-    history.replaceState(null, '', url.toString());
+    window.history.replaceState(null, '', url.toString());  // ← FIX
   }
-})();
+} catch (e) { /* ignore */ }
 
 toggleBtn.addEventListener('click', async () => {
   if (isLive) stopLive(); else await startLive();
