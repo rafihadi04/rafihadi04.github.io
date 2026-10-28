@@ -3,244 +3,344 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="theme-color" content="#1a1a2e">
-<title>Phase Checker</title>
+<meta name="theme-color" content="#0a0e1a">
+<title>Phase Test — Checker</title>
 <style>
   *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-  html,body{background:#1a1a2e;color:#eee;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;min-height:100vh}
-  body{padding:16px;padding-bottom:max(16px,env(safe-area-inset-bottom))}
-  .container{max-width:520px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
-  h1{font-size:1.4rem;text-align:center;color:#4cc9f0;margin-bottom:4px}
-  .card{background:#16213e;border-radius:14px;padding:16px;box-shadow:0 4px 16px rgba(0,0,0,.3)}
-  .status{text-align:center;font-size:.9rem;color:#a0a0b0;min-height:1.4em}
-  .result{text-align:center;padding:24px 16px}
-  .result .icon{font-size:4rem;line-height:1;display:block;margin-bottom:8px}
-  .result .label{font-size:1.3rem;font-weight:bold}
-  .result .conf{font-size:.8rem;opacity:.7;margin-top:4px}
-  .result.in-phase{color:#4ade80}
-  .result.out-of-phase{color:#f87171}
-  .result.unknown{color:#6b7280}
-  button{width:100%;padding:18px;font-size:1.15rem;font-weight:bold;border:none;border-radius:12px;
-    background:linear-gradient(135deg,#4cc9f0,#4361ee);color:#fff;cursor:pointer;
-    transition:transform .1s,opacity .2s;touch-action:manipulation}
-  button:active:not(:disabled){transform:scale(.97)}
-  button:disabled{opacity:.5;cursor:not-allowed}
-  canvas{width:100%;height:160px;background:#0f1f3a;border-radius:8px;display:block}
-  .info{font-size:.82rem;color:#9090a0;line-height:1.7}
-  .info strong{color:#c0c0d0}
+  body{background:#0a0e1a;color:#e0e0f0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+    min-height:100vh;padding:20px;padding-bottom:max(20px,env(safe-area-inset-bottom));display:flex;flex-direction:column;align-items:center}
+  .container{width:100%;max-width:480px;display:flex;flex-direction:column;gap:14px}
+  h1{font-size:1.5rem;text-align:center;color:#4cc9f0}
+  .subtitle{text-align:center;color:#8080a0;font-size:.9rem}
+  .card{background:#121a2e;border-radius:16px;padding:20px;border:1px solid #1e2a44}
+  .btn{width:100%;padding:24px 20px;font-size:1.3rem;font-weight:bold;border:none;border-radius:16px;
+    background:linear-gradient(135deg,#4cc9f0,#4361ee);color:#fff;cursor:pointer;touch-action:manipulation;
+    transition:transform .1s,background .2s}
+  .btn:active{transform:scale(.97)}
+  .btn:disabled{opacity:.5;cursor:not-allowed}
+  .btn.recording{background:linear-gradient(135deg,#f72585,#b5179e);animation:pulse 1s infinite}
+  @keyframes pulse{
+    0%,100%{box-shadow:0 0 0 0 rgba(247,37,133,.4)}
+    50%{box-shadow:0 0 0 12px rgba(247,37,133,0)}
+  }
+  .result{text-align:center;padding:32px 20px;transition:background .3s,border-color .3s}
+  .result .icon{font-size:5rem;line-height:1;display:block;margin-bottom:12px}
+  .result .label{font-size:1.5rem;font-weight:bold;margin-bottom:8px}
+  .result .detail{font-size:.85rem;opacity:.75}
+  .result.unknown{color:#8080a0}
+  .result.in-phase{color:#4ade80;background:rgba(74,222,128,.08);border-color:rgba(74,222,128,.35)}
+  .result.out-of-phase{color:#f87171;background:rgba(248,113,113,.08);border-color:rgba(248,113,113,.35)}
+  .result.uncertain{color:#fbbf24;background:rgba(251,191,36,.08);border-color:rgba(251,191,36,.35)}
+  canvas{width:100%;height:150px;background:#060a14;border-radius:10px;display:block}
+  .info{font-size:.85rem;color:#8080a0;line-height:1.7}
+  .info strong{color:#b0b0d0}
+  .info code{background:#1e2a44;padding:2px 6px;border-radius:4px;color:#4cc9f0;font-size:.85em}
+  .status{text-align:center;font-size:.9rem;color:#4cc9f0;min-height:1.4em;padding:8px}
 </style>
 </head>
 <body>
 <div class="container">
-  <h1>🔊 Phase Checker</h1>
+  <h1>🎤 Phase Checker</h1>
+  <div class="subtitle">Rekam speaker, deteksi polaritas otomatis</div>
 
-  <div class="card"><div class="status" id="status">Tekan tombol untuk memulai pengujian</div></div>
-
-  <div class="card result unknown" id="result">
-    <span class="icon">?</span>
-    <div class="label">Belum Ada Hasil</div>
-    <div class="conf"></div>
+  <div class="card result unknown" id="resultCard">
+    <span class="icon" id="resultIcon">?</span>
+    <div class="label" id="resultLabel">Belum Ada Hasil</div>
+    <div class="detail" id="resultDetail">Tekan tombol untuk mulai</div>
   </div>
 
-  <button id="testBtn">🎤 Mulai Tes Phase</button>
+  <div class="card">
+    <button class="btn" id="startBtn">🎤 Mulai Tes</button>
+  </div>
+
+  <div class="status" id="status">Siap merekam</div>
 
   <div class="card"><canvas id="waveform"></canvas></div>
 
   <div class="card info">
-    <strong>📱 Cara pakai:</strong><br>
-    1. Hubungkan HP ke amplifier/speaker yang diuji<br>
-    2. Dekatkan HP (10–30 cm) ke speaker<br>
-    3. Tekan tombol dan tunggu hasilnya<br><br>
-    <strong>ℹ️ Catatan:</strong><br>
-    • <span style="color:#4ade80">✓ SEFASA</span> = polaritas speaker benar<br>
-    • <span style="color:#f87171">✗ TERBALIK</span> = kabel +/− perlu dibalik<br>
-    • Gunakan di ruangan sunyi untuk hasil terbaik
+    <strong>📋 Cara pakai:</strong><br>
+    1. Buka <code>index.html</code> di device lain, tekan Mulai Putar<br>
+    2. Dekatkan HP ini <strong>10–30 cm</strong> ke speaker<br>
+    3. Tekan <strong>Mulai Tes</strong> — tunggu 3 detik<br>
+    4. Hasil muncul otomatis<br><br>
+    <strong>ℹ️ Interpretasi:</strong><br>
+    • <span style="color:#4ade80">✓ SEFASA</span> — polaritas speaker benar<br>
+    • <span style="color:#f87171">✗ TERBALIK</span> — tukar kabel + dan −<br>
+    • <span style="color:#fbbf24">? TIDAK PASTI</span> — coba lagi, volume/jarak kurang
   </div>
 </div>
 
 <script>
-// ============ KONFIGURASI ============
-const CFG = {
-  testDuration: 0.5,
-  recordDuration: 1.2,
-  analysisRate: 1000,
-  filterCutoff: 300,
-  confThreshold: 0.08,
-  bursts: [
-    { t: 0.05, freq: 150, cycles: 3 },
-    { t: 0.20, freq: 200, cycles: 3 },
-    { t: 0.35, freq: 250, cycles: 3 }
-  ]
-};
+const FREQ = 80;
+const RECORD_DURATION_MS = 3000;
+const MIN_PULSE_GAP_MS = 150;
 
-let audioContext = null, micStream = null, isTesting = false;
+let audioCtx = null;
+let isRecording = false;
 
-// ============ AUDIO ============
-async function ensureAudio() {
-  if (!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)();
-  if (audioContext.state === 'suspended') await audioContext.resume();
-  if (!micStream) {
-    micStream = await navigator.mediaDevices.getUserMedia({
-      audio: { echoCancellation:false, noiseSuppression:false, autoGainControl:false, channelCount:1 }
-    });
+// ===== DSP =====
+function highpass(x, sr, fc) {
+  const w0 = 2 * Math.PI * fc / sr, cos = Math.cos(w0);
+  const alpha = Math.sin(w0) / (2 * Math.SQRT1_2), a0 = 1 + alpha;
+  const b0 = (1 + cos) / 2 / a0, b1 = -(1 + cos) / a0, b2 = b0;
+  const a1 = -2 * cos / a0, a2 = (1 - alpha) / a0;
+  const y = new Float32Array(x.length);
+  let x1=0, x2=0, y1=0, y2=0;
+  for (let i = 0; i < x.length; i++) {
+    const x0 = x[i];
+    const y0 = b0*x0 + b1*x1 + b2*x2 - a1*y1 - a2*y2;
+    y[i] = y0; x2=x1; x1=x0; y2=y1; y1=y0;
   }
+  return y;
 }
 
-function generateTestSignal(sr) {
-  const len = Math.floor(sr * CFG.testDuration);
-  const sig = new Float32Array(len);
-  for (const b of CFG.bursts) {
-    const start = Math.floor(sr * b.t);
-    const blen = Math.floor(sr * b.cycles / b.freq);
-    for (let i = 0; i < blen && start + i < len; i++) {
-      const env = 0.5 * (1 - Math.cos(2 * Math.PI * i / blen));
-      sig[start + i] += Math.sin(2 * Math.PI * b.freq * i / sr) * env;
+function lowpass(x, sr, fc) {
+  const w0 = 2 * Math.PI * fc / sr, cos = Math.cos(w0);
+  const alpha = Math.sin(w0) / (2 * Math.SQRT1_2), a0 = 1 + alpha;
+  const b0 = (1 - cos) / 2 / a0, b1 = (1 - cos) / a0, b2 = b0;
+  const a1 = -2 * cos / a0, a2 = (1 - alpha) / a0;
+  const y = new Float32Array(x.length);
+  let x1=0, x2=0, y1=0, y2=0;
+  for (let i = 0; i < x.length; i++) {
+    const x0 = x[i];
+    const y0 = b0*x0 + b1*x1 + b2*x2 - a1*y1 - a2*y2;
+    y[i] = y0; x2=x1; x1=x0; y2=y1; y1=y0;
+  }
+  return y;
+}
+
+function bandpass(x, sr) {
+  return lowpass(highpass(x, sr, 40), sr, 150);
+}
+
+function analyze(audio, sr) {
+  const bp = bandpass(audio, sr);
+
+  // Envelope via abs + IIR smoothing (~25 Hz)
+  const a = Math.exp(-1 / (sr / 25));
+  const env = new Float32Array(bp.length);
+  let e = 0;
+  for (let i = 0; i < bp.length; i++) {
+    e = a * e + (1 - a) * Math.abs(bp[i]);
+    env[i] = e;
+  }
+
+  let maxEnv = 0;
+  for (const v of env) if (v > maxEnv) maxEnv = v;
+
+  if (maxEnv < 0.001) {
+    return { pulses: [], positive: 0, negative: 0, total: 0, verdict: 'unknown', audio: bp };
+  }
+
+  const threshold = maxEnv * 0.35;
+  const minGap = Math.floor(sr * MIN_PULSE_GAP_MS / 1000);
+  const pulses = [];
+  let lastIdx = -minGap * 2, inPulse = false, pulseStart = 0;
+
+  for (let i = 0; i < env.length; i++) {
+    if (env[i] > threshold && !inPulse && (i - lastIdx) > minGap) {
+      inPulse = true; pulseStart = i; lastIdx = i;
+    }
+    if (inPulse && env[i] < threshold * 0.5) {
+      inPulse = false;
+      const start = Math.max(0, pulseStart - Math.floor(sr * 0.03));
+      const end = Math.min(bp.length, pulseStart + Math.floor(sr * 0.06));
+
+      let maxAbs = 0, peakVal = 0, peakIdx = start;
+      for (let j = start; j < end; j++) {
+        if (Math.abs(bp[j]) > maxAbs) {
+          maxAbs = Math.abs(bp[j]); peakVal = bp[j]; peakIdx = j;
+        }
+      }
+      pulses.push({ peakIdx, peakVal, polarity: peakVal > 0 ? 1 : -1 });
     }
   }
-  let peak = 0;
-  for (const v of sig) peak = Math.max(peak, Math.abs(v));
-  if (peak > 0) { const s = 0.8 / peak; for (let i = 0; i < sig.length; i++) sig[i] *= s; }
-  return sig;
-}
 
-function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+  let positive = 0, negative = 0;
+  for (const p of pulses) p.polarity > 0 ? positive++ : negative++;
 
-async function recordAndPlay(testSignal) {
-  const sr = audioContext.sampleRate;
-  const micSource = audioContext.createMediaStreamSource(micStream);
-  const processor = audioContext.createScriptProcessor(4096, 1, 1);
-  const mute = audioContext.createGain();
-  mute.gain.value = 0;
-
-  const chunks = [];
-  let recording = true;
-  processor.onaudioprocess = (e) => {
-    if (!recording) return;
-    chunks.push(new Float32Array(e.inputBuffer.getChannelData(0)));
-  };
-
-  micSource.connect(processor);
-  processor.connect(mute);
-  mute.connect(audioContext.destination);
-
-  const buffer = audioContext.createBuffer(1, testSignal.length, sr);
-  buffer.copyToChannel(testSignal, 0);
-  const player = audioContext.createBufferSource();
-  player.buffer = buffer;
-  player.connect(audioContext.destination);
-
-  await sleep(150);
-  player.start();
-  await sleep(CFG.recordDuration * 1000);
-
-  recording = false;
-  try { player.stop(); } catch(e) {}
-  micSource.disconnect();
-  processor.disconnect();
-  mute.disconnect();
-
-  let total = 0;
-  for (const c of chunks) total += c.length;
-  const rec = new Float32Array(total);
-  let off = 0;
-  for (const c of chunks) { rec.set(c, off); off += c.length; }
-  return rec;
-}
-
-// ============ DSP ============
-function lowPass(sig, sr, cutoff) {
-  const w0 = 2 * Math.PI * cutoff / sr;
-  const cosw0 = Math.cos(w0);
-  const alpha = Math.sin(w0) / (2 * 0.707);
-  const a0 = 1 + alpha;
-  const b0 = (1 - cosw0) / 2 / a0;
-  const b1 = (1 - cosw0) / a0;
-  const b2 = b0;
-  const a1 = -2 * cosw0 / a0;
-  const a2 = (1 - alpha) / a0;
-  const out = new Float32Array(sig.length);
-  let x1=0,x2=0,y1=0,y2=0;
-  for (let i = 0; i < sig.length; i++) {
-    const x0 = sig[i];
-    const y0 = b0*x0 + b1*x1 + b2*x2 - a1*y1 - a2*y2;
-    out[i] = y0;
-    x2=x1; x1=x0; y2=y1; y1=y0;
+  let verdict = 'unknown';
+  if (pulses.length >= 1) {
+    if (positive > negative) verdict = 'in-phase';
+    else if (negative > positive) verdict = 'out-of-phase';
   }
-  return out;
+  return { pulses, positive, negative, total: pulses.length, verdict, audio: bp };
 }
 
-function preprocess(sig, sr) {
-  let s = lowPass(sig, sr, CFG.filterCutoff);
-  s = lowPass(s, sr, CFG.filterCutoff);
-  const f = Math.max(1, Math.round(sr / CFG.analysisRate));
-  const out = new Float32Array(Math.floor(s.length / f));
-  for (let i = 0; i < out.length; i++) out[i] = s[i * f];
-  return out;
-}
-
-function analyze(reference, recorded, sr) {
-  const ref = preprocess(reference, sr);
-  const rec = preprocess(recorded, sr);
-
-  if (ref.length > rec.length) return { inPhase: false, confidence: 0, lag: 0 };
-
-  const maxLag = rec.length - ref.length;
-  let bestVal = 0, bestLag = 0, bestAbs = 0;
-  for (let lag = 0; lag <= maxLag; lag++) {
-    let sum = 0;
-    for (let i = 0; i < ref.length; i++) sum += ref[i] * rec[lag + i];
-    const abs = Math.abs(sum);
-    if (abs > bestAbs) { bestAbs = abs; bestVal = sum; bestLag = lag; }
-  }
-
-  let re = 0, rce = 0;
-  for (const v of ref) re += v * v;
-  for (const v of rec) rce += v * v;
-  const conf = bestAbs / (Math.sqrt(re * rce) + 1e-12);
-
-  return { inPhase: bestVal > 0, confidence: conf, lag: bestLag };
-}
-
-// ============ VISUALISASI ============
-function drawWaveform(ref, rec, lag) {
+function drawWaveform(data, pulses) {
   const canvas = document.getElementById('waveform');
   const ctx = canvas.getContext('2d');
   const dpr = window.devicePixelRatio || 1;
   const rect = canvas.getBoundingClientRect();
-  if (canvas.width !== rect.width * dpr || canvas.height !== rect.height * dpr) {
-    canvas.width = rect.width * dpr;
-    canvas.height = rect.height * dpr;
-  }
+  canvas.width = rect.width * dpr; canvas.height = rect.height * dpr;
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
   const w = rect.width, h = rect.height;
-  ctx.clearRect(0, 0, w, h);
-  if (!ref || !rec) return;
+  ctx.fillStyle = '#060a14'; ctx.fillRect(0, 0, w, h);
+  if (!data || !data.length) return;
 
-  const maxOf = (arr, n) => {
-    let m = 0; const L = Math.min(arr.length, n || arr.length);
-    for (let i = 0; i < L; i++) m = Math.max(m, Math.abs(arr[i]));
-    return m || 1;
-  };
+  const mid = h / 2;
+  let peak = 0.001;
+  for (const v of data) if (Math.abs(v) > peak) peak = Math.abs(v);
+  const scale = h * 0.4 / peak;
 
-  const mr = maxOf(ref);
-  ctx.strokeStyle = '#4cc9f0'; ctx.lineWidth = 1.5; ctx.beginPath();
-  for (let i = 0; i < ref.length; i++) {
-    const x = (i / ref.length) * w;
-    const y = h * 0.25 - (ref[i] / mr) * h * 0.18;
-    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  ctx.strokeStyle = '#1e2a44'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(0, mid); ctx.lineTo(w, mid); ctx.stroke();
+
+  ctx.strokeStyle = '#4cc9f0'; ctx.lineWidth = 1; ctx.beginPath();
+  for (let px = 0; px < w; px++) {
+    const idx = Math.floor(px / w * data.length);
+    const v = data[idx] || 0;
+    const y = mid - v * scale;
+    px === 0 ? ctx.moveTo(px, y) : ctx.lineTo(px, y);
   }
   ctx.stroke();
 
-  const recShow = Math.min(rec.length, ref.length * 3);
-  const mrec = maxOf(rec, recShow);
-  ctx.strokeStyle = '#f72585'; ctx.beginPath();
-  for (let i = 0; i < recShow; i++) {
-    const x = (i / recShow) * w;
-    const y = h * 0.75 - (rec[i] / mrec) * h * 0.18;
-    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  if (pulses) {
+    for (const p of pulses) {
+      const x = (p.peakIdx / data.length) * w;
+      const y = mid - p.peakVal * scale;
+      ctx.fillStyle = p.polarity > 0 ? '#4ade80' : '#f87171';
+      ctx.beginPath(); ctx.arc(x, y, 4, 0, Math.PI * 2); ctx.fill();
+    }
   }
-  ctx.stroke();
 
-  ctx.font = '11px -apple-system,sans-serif';
-  ctx.fillStyle = '#4cc9f0'; ctx.fillText('Referensi (diputar)', 8, 14);
-  ctx.fillStyle = '#f72585'; ctx.fillText('Terekam (mikrofon)', 8, h * 0.5 + 14);
+  ctx.fillStyle = '#4cc9f0'; ctx.font = '11px -apple-system, sans-serif';
+  ctx.fillText('Bandpass 40–150 Hz', 8, 16);
+  if (pulses && pulses.length) {
+    ctx.fillStyle = '#4ade80';
+    ctx.fillText('+ ' + pulses.filter(p => p.polarity > 0).length, w - 70, 16);
+    ctx.fillStyle = '#f87171';
+    ctx.fillText('− ' + pulses.filter(p => p.polarity < 0).length, w - 35, 16);
+  }
+}
+
+function showResult(result) {
+  const card = document.getElementById('resultCard');
+  const icon = document.getElementById('resultIcon');
+  const label = document.getElementById('resultLabel');
+  const detail = document.getElementById('resultDetail');
+  card.className = 'card result';
+
+  if (result.verdict === 'in-phase') {
+    card.classList.add('in-phase');
+    icon.textContent = '✓'; label.textContent = 'SEFASA';
+    detail.textContent = `${result.positive}/${result.total} pulsa positif — polaritas BENAR`;
+  } else if (result.verdict === 'out-of-phase') {
+    card.classList.add('out-of-phase');
+    icon.textContent = '✗'; label.textContent = 'TERBALIK';
+    detail.textContent = `${result.negative}/${result.total} pulsa negatif — tukar kabel +/−`;
+  } else {
+    card.classList.add('uncertain');
+    icon.textContent = '?'; label.textContent = 'TIDAK PASTI';
+    detail.textContent = result.total === 0
+      ? 'Tidak ada pulsa. Volume kurang / jarak terlalu jauh.'
+      : `Hanya ${result.total} pulsa ambigu. Coba lagi.`;
+  }
+}
+
+// ===== Record & Analyze =====
+async function recordAndAnalyze() {
+  if (isRecording) return;
+  const btn = document.getElementById('startBtn');
+  const status = document.getElementById('status');
+  const card = document.getElementById('resultCard');
+
+  btn.disabled = true;
+  status.textContent = 'Menyiapkan mikrofon...';
+  card.className = 'card result';
+  document.getElementById('resultIcon').textContent = '⏳';
+  document.getElementById('resultLabel').textContent = 'Merekam...';
+  document.getElementById('resultDetail').textContent = 'Dekatkan ke speaker';
+
+  try {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') await audioCtx.resume();
+
+    const stream = await navigator.mediaDevices.getUserMedia({
+      audio: {
+        echoCancellation: false,
+        noiseSuppression: false,
+        autoGainControl: false,
+        channelCount: 1
+      }
+    });
+
+    console.log('Mic settings:', stream.getAudioTracks()[0].getSettings());
+
+    // Try various mimeTypes for max compatibility
+    let mimeType = '';
+    if (typeof MediaRecorder !== 'undefined') {
+      for (const t of ['audio/webm;codecs=opus','audio/webm','audio/mp4','audio/aac']) {
+        if (MediaRecorder.isTypeSupported(t)) { mimeType = t; break; }
+      }
+    } else {
+      throw new Error('MediaRecorder tidak didukung browser ini');
+    }
+
+    const recorder = new MediaRecorder(stream, mimeType ? { mimeType } : {});
+    const chunks = [];
+    recorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
+    const done = new Promise(res => { recorder.onstop = res; });
+
+    recorder.start();
+    isRecording = true;
+    btn.classList.add('recording');
+    btn.textContent = '⏺ Merekam...';
+    status.textContent = '🎙 Merekam 3 detik — jangan gerakkan HP';
+
+    await new Promise(r => setTimeout(r, RECORD_DURATION_MS));
+
+    recorder.stop();
+    await done;
+    isRecording = false;
+    btn.classList.remove('recording');
+    btn.textContent = '🎤 Mulai Tes';
+
+    stream.getTracks().forEach(t => t.stop());
+    status.textContent = 'Menganalisis...';
+
+    const blob = new Blob(chunks, { type: mimeType || 'audio/webm' });
+    const arrayBuffer = await blob.arrayBuffer();
+    const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+    const samples = audioBuffer.getChannelData(0);
+    const sr = audioBuffer.sampleRate;
+
+    console.log('Recorded:', samples.length, 'samples @', sr, 'Hz');
+
+    const result = analyze(samples, sr);
+    console.log('Result:', result);
+
+    drawWaveform(result.audio, result.pulses);
+    showResult(result);
+    status.textContent = `Selesai — ${result.total} pulsa terdeteksi`;
+
+  } catch (err) {
+    console.error(err);
+    isRecording = false;
+    btn.classList.remove('recording');
+    btn.textContent = '🎤 Mulai Tes';
+
+    status.textContent = '❌ ' + err.message;
+    card.className = 'card result uncertain';
+    document.getElementById('resultIcon').textContent = '⚠️';
+    document.getElementById('resultLabel').textContent = 'Error';
+    document.getElementById('resultDetail').textContent = err.message;
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+document.getElementById('startBtn').addEventListener('click', recordAndAnalyze);
+
+let wakeLock = null;
+async function requestWakeLock() {
+  try { if ('wakeLock' in navigator) wakeLock = await navigator.wakeLock.request('screen'); } catch(e) {}
+}
+requestWakeLock();
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') requestWakeLock();
+});
+</script>
+</body>
+</html>
