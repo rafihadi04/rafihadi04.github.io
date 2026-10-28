@@ -4,260 +4,347 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#0a0e1a">
-<title>Phase Test — Checker</title>
+<title>Live Phase Checker</title>
 <style>
   *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
   body{background:#0a0e1a;color:#e0e0f0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
-    min-height:100vh;padding:20px;padding-bottom:max(20px,env(safe-area-inset-bottom));display:flex;flex-direction:column;align-items:center}
-  .container{width:100%;max-width:480px;display:flex;flex-direction:column;gap:14px}
-  h1{font-size:1.5rem;text-align:center;color:#4cc9f0}
-  .subtitle{text-align:center;color:#8080a0;font-size:.9rem}
-  .card{background:#121a2e;border-radius:16px;padding:20px;border:1px solid #1e2a44}
-  .btn{width:100%;padding:24px 20px;font-size:1.3rem;font-weight:bold;border:none;border-radius:16px;
-    background:linear-gradient(135deg,#4cc9f0,#4361ee);color:#fff;cursor:pointer;touch-action:manipulation;
-    transition:transform .1s,background .2s}
-  .btn:active{transform:scale(.97)}
-  .btn:disabled{opacity:.5;cursor:not-allowed}
-  .btn.recording{background:linear-gradient(135deg,#f72585,#b5179e);animation:pulse 1s infinite}
-  @keyframes pulse{
-    0%,100%{box-shadow:0 0 0 0 rgba(247,37,133,.4)}
-    50%{box-shadow:0 0 0 12px rgba(247,37,133,0)}
+    min-height:100vh;padding:14px;padding-bottom:max(14px,env(safe-area-inset-bottom));
+    display:flex;flex-direction:column;align-items:center}
+  .container{width:100%;max-width:480px;display:flex;flex-direction:column;gap:12px}
+  h1{font-size:1.3rem;text-align:center;color:#4cc9f0}
+  .subtitle{text-align:center;color:#8080a0;font-size:.82rem}
+
+  /* ===== INDICATOR ===== */
+  .indicator{
+    width:100%;height:230px;border-radius:24px;
+    background:#121a2e;border:3px solid #1e2a44;
+    display:flex;align-items:center;justify-content:center;
+    flex-direction:column;gap:8px;
+    transition:background 0.15s,border-color 0.15s,box-shadow 0.15s;
   }
-  .result{text-align:center;padding:32px 20px;transition:background .3s,border-color .3s}
-  .result .icon{font-size:5rem;line-height:1;display:block;margin-bottom:12px}
-  .result .label{font-size:1.5rem;font-weight:bold;margin-bottom:8px}
-  .result .detail{font-size:.85rem;opacity:.75}
-  .result.unknown{color:#8080a0}
-  .result.in-phase{color:#4ade80;background:rgba(74,222,128,.08);border-color:rgba(74,222,128,.35)}
-  .result.out-of-phase{color:#f87171;background:rgba(248,113,113,.08);border-color:rgba(248,113,113,.35)}
-  .result.uncertain{color:#fbbf24;background:rgba(251,191,36,.08);border-color:rgba(251,191,36,.35)}
-  canvas{width:100%;height:150px;background:#060a14;border-radius:10px;display:block}
-  .info{font-size:.85rem;color:#8080a0;line-height:1.7}
-  .info strong{color:#b0b0d0}
-  .info code{background:#1e2a44;padding:2px 6px;border-radius:4px;color:#4cc9f0;font-size:.85em}
-  .status{text-align:center;font-size:.9rem;color:#4cc9f0;min-height:1.4em;padding:8px}
+  .indicator .label{
+    font-size:2rem;font-weight:800;letter-spacing:2px;
+    color:#4a4a6a;transition:color 0.1s;
+  }
+  .indicator .sub{font-size:.8rem;opacity:.5;color:#8080a0}
+  .indicator.live{border-color:#4cc9f0}
+  .indicator.live .label{color:#4cc9f0;animation:breath 2s infinite}
+  @keyframes breath{0%,100%{opacity:.6}50%{opacity:1}}
+  .indicator.pos{
+    background:radial-gradient(circle at 50% 50%,#166534 0%,#052e16 100%);
+    border-color:#4ade80;
+    box-shadow:0 0 40px rgba(74,222,128,.5),inset 0 0 40px rgba(74,222,128,.2);
+  }
+  .indicator.pos .label{color:#4ade80;text-shadow:0 0 20px rgba(74,222,128,.7);animation:none}
+  .indicator.pos .sub{color:#4ade80;opacity:.8}
+  .indicator.neg{
+    background:radial-gradient(circle at 50% 50%,#991b1b 0%,#450a0a 100%);
+    border-color:#f87171;
+    box-shadow:0 0 40px rgba(248,113,113,.5),inset 0 0 40px rgba(248,113,113,.2);
+  }
+  .indicator.neg .label{color:#f87171;text-shadow:0 0 20px rgba(248,113,113,.7);animation:none}
+  .indicator.neg .sub{color:#f87171;opacity:.8}
+
+  /* ===== BUTTON ===== */
+  .btn{
+    width:100%;padding:20px;font-size:1.2rem;font-weight:bold;border:none;border-radius:14px;
+    background:linear-gradient(135deg,#4cc9f0,#4361ee);color:#fff;
+    cursor:pointer;touch-action:manipulation;
+    transition:transform .1s,background .2s;
+  }
+  .btn:active{transform:scale(.98)}
+  .btn.stop{background:linear-gradient(135deg,#f72585,#b5179e)}
+
+  /* ===== STATS ===== */
+  .stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .stat{background:#121a2e;border-radius:14px;padding:14px;text-align:center;border:1px solid #1e2a44}
+  .stat-val{font-size:2rem;font-weight:800;line-height:1}
+  .stat-val.pos{color:#4ade80}
+  .stat-val.neg{color:#f87171}
+  .stat-lbl{font-size:.75rem;color:#8080a0;margin-top:6px;letter-spacing:1px}
+
+  /* ===== HISTORY ===== */
+  .history{
+    display:flex;gap:5px;justify-content:center;flex-wrap:wrap;
+    min-height:34px;padding:8px;background:#121a2e;border-radius:12px;
+    border:1px solid #1e2a44;
+  }
+  .history:empty::before{
+    content:'Riwayat pulsa akan muncul di sini...';
+    color:#4a4a6a;font-size:.75rem;align-self:center;
+  }
+  .history .dot{
+    width:26px;height:26px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-size:14px;font-weight:bold;color:#fff;
+  }
+  .history .dot.pos{background:#16a34a}
+  .history .dot.neg{background:#dc2626}
+
+  /* ===== WAVEFORM ===== */
+  canvas{width:100%;height:80px;background:#060a14;border-radius:10px;display:block}
+
+  /* ===== INFO ===== */
+  details{background:#121a2e;border-radius:12px;padding:12px;font-size:.82rem;color:#8080a0;
+    border:1px solid #1e2a44;line-height:1.7}
+  details summary{cursor:pointer;color:#4cc9f0;font-weight:bold;outline:none}
+  details strong{color:#b0b0d0}
+  details code{background:#1e2a44;padding:2px 6px;border-radius:4px;color:#4cc9f0;font-size:.85em}
 </style>
 </head>
 <body>
 <div class="container">
-  <h1>🎤 Phase Checker</h1>
-  <div class="subtitle">Rekam speaker, deteksi polaritas otomatis</div>
+  <h1>🎤 Live Phase Checker</h1>
+  <div class="subtitle">Deteksi polaritas real-time</div>
 
-  <div class="card result unknown" id="resultCard">
-    <span class="icon" id="resultIcon">?</span>
-    <div class="label" id="resultLabel">Belum Ada Hasil</div>
-    <div class="detail" id="resultDetail">Tekan tombol untuk mulai</div>
+  <div class="indicator" id="indicator">
+    <div class="label" id="indLabel">SIAP</div>
+    <div class="sub" id="indSub">Tekan Mulai Live</div>
   </div>
 
-  <div class="card">
-    <button class="btn" id="startBtn">🎤 Mulai Tes</button>
+  <button class="btn" id="toggleBtn">▶ Mulai Live</button>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-val pos" id="posCount">0</div>
+      <div class="stat-lbl">SEFASA (+)</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val neg" id="negCount">0</div>
+      <div class="stat-lbl">TERBALIK (−)</div>
+    </div>
   </div>
 
-  <div class="status" id="status">Siap merekam</div>
+  <div class="history" id="history"></div>
 
-  <div class="card"><canvas id="waveform"></canvas></div>
+  <canvas id="waveform"></canvas>
 
-  <div class="card info">
-    <strong>📋 Cara pakai:</strong><br>
-    1. Buka <code>index.html</code> di device lain, tekan Mulai Putar<br>
-    2. Dekatkan HP ini <strong>10–30 cm</strong> ke speaker<br>
-    3. Tekan <strong>Mulai Tes</strong> — tunggu 3 detik<br>
-    4. Hasil muncul otomatis<br><br>
-    <strong>ℹ️ Interpretasi:</strong><br>
-    • <span style="color:#4ade80">✓ SEFASA</span> — polaritas speaker benar<br>
-    • <span style="color:#f87171">✗ TERBALIK</span> — tukar kabel + dan −<br>
-    • <span style="color:#fbbf24">? TIDAK PASTI</span> — coba lagi, volume/jarak kurang
-  </div>
+  <details>
+    <summary>📋 Cara pakai & catatan</summary>
+    <p style="margin-top:8px">
+      1. Buka <code>index.html</code> di device lain (laptop/HP lain), tekan <b>Mulai Putar</b><br>
+      2. Dekatkan HP ini <b>10–30 cm</b> ke speaker yang diuji<br>
+      3. Tekan <b>Mulai Live</b> — setiap pulsa akan memicu kilat warna<br>
+      4. Biarkan beberapa pulsa untuk konfirmasi (counter bertambah)
+    </p>
+    <p style="margin-top:8px">
+      <b>Warna:</b><br>
+      🟢 <b>HIJAU</b> = Sefasa — polaritas benar<br>
+      🔴 <b>MERAH</b> = Terbalik — tukar kabel + dan −
+    </p>
+    <p style="margin-top:8px">
+      <b>Kalau tidak ada kilat:</b> naikkan volume amp, dekatkan HP, atau pastikan
+      generator sedang memutar (led berkedip di index.html).
+    </p>
+  </details>
 </div>
 
 <script>
+// ================= CONFIG =================
 const FREQ = 80;
-const RECORD_DURATION_MS = 3000;
-const MIN_PULSE_GAP_MS = 150;
+const PULSE_MIN_GAP_MS = 150;
+const MAX_PULSE_MS = 200;
+const BUFFER_MS = 300;
+const FLOOR_ENV = 0.003;
+const FLASH_MS = 500;
 
-let audioCtx = null;
-let isRecording = false;
+// ================= STATE =================
+let audioCtx = null, micStream = null, processor = null, muteNode = null;
+let isLive = false;
+let sampleCount = 0;
+let wakeLock = null;
 
-// ===== DSP =====
-function highpass(x, sr, fc) {
-  const w0 = 2 * Math.PI * fc / sr, cos = Math.cos(w0);
-  const alpha = Math.sin(w0) / (2 * Math.SQRT1_2), a0 = 1 + alpha;
-  const b0 = (1 + cos) / 2 / a0, b1 = -(1 + cos) / a0, b2 = b0;
-  const a1 = -2 * cos / a0, a2 = (1 - alpha) / a0;
-  const y = new Float32Array(x.length);
-  let x1=0, x2=0, y1=0, y2=0;
-  for (let i = 0; i < x.length; i++) {
-    const x0 = x[i];
-    const y0 = b0*x0 + b1*x1 + b2*x2 - a1*y1 - a2*y2;
-    y[i] = y0; x2=x1; x1=x0; y2=y1; y1=y0;
+// Filter state
+let hpState, lpState, envState = 0;
+let hpCoef, lpCoef, envAlpha;
+let template = null;
+
+// Ring buffer
+let bpBuffer, envBuffer, bufferSize, bufferIdx;
+let runningMaxEnv = FLOOR_ENV;
+
+// Pulse detection
+let inPulse = false, pulseStart = 0, lastPulseEnd = -Infinity;
+
+// Stats
+let posCount = 0, negCount = 0;
+let history = [];
+
+// UI
+const indicator = document.getElementById('indicator');
+const indLabel = document.getElementById('indLabel');
+const indSub = document.getElementById('indSub');
+const toggleBtn = document.getElementById('toggleBtn');
+const posCountEl = document.getElementById('posCount');
+const negCountEl = document.getElementById('negCount');
+const historyEl = document.getElementById('history');
+const canvas = document.getElementById('waveform');
+
+// ================= FILTER INIT =================
+function initCoef(sr) {
+  // Highpass 40 Hz
+  {
+    const w0 = 2 * Math.PI * 40 / sr, c = Math.cos(w0);
+    const alpha = Math.sin(w0) / (2 * Math.SQRT1_2), a0 = 1 + alpha;
+    hpCoef = {
+      b0: (1 + c) / 2 / a0, b1: -(1 + c) / a0, b2: (1 + c) / 2 / a0,
+      a1: -2 * c / a0, a2: (1 - alpha) / a0
+    };
   }
-  return y;
+  // Lowpass 150 Hz
+  {
+    const w0 = 2 * Math.PI * 150 / sr, c = Math.cos(w0);
+    const alpha = Math.sin(w0) / (2 * Math.SQRT1_2), a0 = 1 + alpha;
+    lpCoef = {
+      b0: (1 - c) / 2 / a0, b1: (1 - c) / a0, b2: (1 - c) / 2 / a0,
+      a1: -2 * c / a0, a2: (1 - alpha) / a0
+    };
+  }
+  hpState = { x1:0, x2:0, y1:0, y2:0 };
+  lpState = { x1:0, x2:0, y1:0, y2:0 };
+  envAlpha = Math.exp(-1 / (sr / 25)); // ~25 Hz envelope
+  envState = 0;
+
+  // Template: 3 cycles of 80 Hz (cukup untuk deteksi polaritas)
+  const tLen = Math.floor(sr * 3 / FREQ);
+  template = new Float32Array(tLen);
+  for (let i = 0; i < tLen; i++) template[i] = Math.sin(2 * Math.PI * FREQ * i / sr);
+
+  // Buffers
+  bufferSize = Math.ceil(sr * BUFFER_MS / 1000);
+  bpBuffer = new Float32Array(bufferSize);
+  envBuffer = new Float32Array(bufferSize);
+  bufferIdx = 0;
 }
 
-function lowpass(x, sr, fc) {
-  const w0 = 2 * Math.PI * fc / sr, cos = Math.cos(w0);
-  const alpha = Math.sin(w0) / (2 * Math.SQRT1_2), a0 = 1 + alpha;
-  const b0 = (1 - cos) / 2 / a0, b1 = (1 - cos) / a0, b2 = b0;
-  const a1 = -2 * cos / a0, a2 = (1 - alpha) / a0;
-  const y = new Float32Array(x.length);
-  let x1=0, x2=0, y1=0, y2=0;
-  for (let i = 0; i < x.length; i++) {
-    const x0 = x[i];
-    const y0 = b0*x0 + b1*x1 + b2*x2 - a1*y1 - a2*y2;
-    y[i] = y0; x2=x1; x1=x0; y2=y1; y1=y0;
-  }
-  return y;
-}
+// ================= PROCESSING =================
+function processChunk(input) {
+  const sr = audioCtx.sampleRate;
+  const minGapSamples = sr * PULSE_MIN_GAP_MS / 1000;
+  const maxPulseSamples = sr * MAX_PULSE_MS / 1000;
+  const decay = Math.exp(-0.0000096 * input.length);
 
-function bandpass(x, sr) {
-  return lowpass(highpass(x, sr, 40), sr, 150);
-}
+  for (let i = 0; i < input.length; i++) {
+    const x = input[i];
 
-function analyze(audio, sr) {
-  const bp = bandpass(audio, sr);
+    // Highpass
+    const yhp = hpCoef.b0*x + hpCoef.b1*hpState.x1 + hpCoef.b2*hpState.x2
+              - hpCoef.a1*hpState.y1 - hpCoef.a2*hpState.y2;
+    hpState.x2 = hpState.x1; hpState.x1 = x;
+    hpState.y2 = hpState.y1; hpState.y1 = yhp;
 
-  // Envelope via abs + IIR smoothing (~25 Hz)
-  const a = Math.exp(-1 / (sr / 25));
-  const env = new Float32Array(bp.length);
-  let e = 0;
-  for (let i = 0; i < bp.length; i++) {
-    e = a * e + (1 - a) * Math.abs(bp[i]);
-    env[i] = e;
-  }
+    // Lowpass
+    const ylp = lpCoef.b0*yhp + lpCoef.b1*lpState.x1 + lpCoef.b2*lpState.x2
+              - lpCoef.a1*lpState.y1 - lpCoef.a2*lpState.y2;
+    lpState.x2 = lpState.x1; lpState.x1 = yhp;
+    lpState.y2 = lpState.y1; lpState.y1 = ylp;
 
-  let maxEnv = 0;
-  for (const v of env) if (v > maxEnv) maxEnv = v;
+    // Envelope
+    envState = envAlpha * envState + (1 - envAlpha) * Math.abs(ylp);
 
-  if (maxEnv < 0.001) {
-    return { pulses: [], positive: 0, negative: 0, total: 0, verdict: 'unknown', audio: bp };
-  }
+    // Store
+    bpBuffer[bufferIdx] = ylp;
+    envBuffer[bufferIdx] = envState;
+    bufferIdx = (bufferIdx + 1) % bufferSize;
 
-  const threshold = maxEnv * 0.35;
-  const minGap = Math.floor(sr * MIN_PULSE_GAP_MS / 1000);
-  const pulses = [];
-  let lastIdx = -minGap * 2, inPulse = false, pulseStart = 0;
+    if (envState > runningMaxEnv) runningMaxEnv = envState;
 
-  for (let i = 0; i < env.length; i++) {
-    if (env[i] > threshold && !inPulse && (i - lastIdx) > minGap) {
-      inPulse = true; pulseStart = i; lastIdx = i;
-    }
-    if (inPulse && env[i] < threshold * 0.5) {
-      inPulse = false;
-      const start = Math.max(0, pulseStart - Math.floor(sr * 0.03));
-      const end = Math.min(bp.length, pulseStart + Math.floor(sr * 0.06));
+    const threshold = Math.max(FLOOR_ENV * 2, runningMaxEnv * 0.35);
 
-      let maxAbs = 0, peakVal = 0, peakIdx = start;
-      for (let j = start; j < end; j++) {
-        if (Math.abs(bp[j]) > maxAbs) {
-          maxAbs = Math.abs(bp[j]); peakVal = bp[j]; peakIdx = j;
-        }
+    if (!inPulse) {
+      if (envState > threshold && (sampleCount - lastPulseEnd) > minGapSamples) {
+        inPulse = true;
+        pulseStart = sampleCount;
       }
-      pulses.push({ peakIdx, peakVal, polarity: peakVal > 0 ? 1 : -1 });
+    } else {
+      const dur = sampleCount - pulseStart;
+      if (envState < threshold * 0.5 || dur > maxPulseSamples) {
+        inPulse = false;
+        lastPulseEnd = sampleCount;
+        if (dur >= Math.floor(sr * 0.02)) evaluatePulse(dur);
+      }
     }
+
+    sampleCount++;
   }
 
-  let positive = 0, negative = 0;
-  for (const p of pulses) p.polarity > 0 ? positive++ : negative++;
-
-  let verdict = 'unknown';
-  if (pulses.length >= 1) {
-    if (positive > negative) verdict = 'in-phase';
-    else if (negative > positive) verdict = 'out-of-phase';
-  }
-  return { pulses, positive, negative, total: pulses.length, verdict, audio: bp };
+  runningMaxEnv *= decay;
+  if (runningMaxEnv < FLOOR_ENV) runningMaxEnv = FLOOR_ENV;
 }
 
-function drawWaveform(data, pulses) {
-  const canvas = document.getElementById('waveform');
-  const ctx = canvas.getContext('2d');
-  const dpr = window.devicePixelRatio || 1;
-  const rect = canvas.getBoundingClientRect();
-  canvas.width = rect.width * dpr; canvas.height = rect.height * dpr;
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+function evaluatePulse(duration) {
+  const sr = audioCtx.sampleRate;
 
-  const w = rect.width, h = rect.height;
-  ctx.fillStyle = '#060a14'; ctx.fillRect(0, 0, w, h);
-  if (!data || !data.length) return;
-
-  const mid = h / 2;
-  let peak = 0.001;
-  for (const v of data) if (Math.abs(v) > peak) peak = Math.abs(v);
-  const scale = h * 0.4 / peak;
-
-  ctx.strokeStyle = '#1e2a44'; ctx.lineWidth = 1;
-  ctx.beginPath(); ctx.moveTo(0, mid); ctx.lineTo(w, mid); ctx.stroke();
-
-  ctx.strokeStyle = '#4cc9f0'; ctx.lineWidth = 1; ctx.beginPath();
-  for (let px = 0; px < w; px++) {
-    const idx = Math.floor(px / w * data.length);
-    const v = data[idx] || 0;
-    const y = mid - v * scale;
-    px === 0 ? ctx.moveTo(px, y) : ctx.lineTo(px, y);
+  // Ekstrak sampel pulsa dari ring buffer
+  const samples = new Float32Array(duration);
+  for (let i = 0; i < duration; i++) {
+    const idx = (bufferIdx - duration + i + bufferSize * 10) % bufferSize;
+    samples[i] = bpBuffer[idx];
   }
-  ctx.stroke();
 
-  if (pulses) {
-    for (const p of pulses) {
-      const x = (p.peakIdx / data.length) * w;
-      const y = mid - p.peakVal * scale;
-      ctx.fillStyle = p.polarity > 0 ? '#4ade80' : '#f87171';
-      ctx.beginPath(); ctx.arc(x, y, 4, 0, Math.PI * 2); ctx.fill();
+  // Correlate sliding template
+  const tLen = template.length;
+  const maxShift = Math.min(1000, Math.max(0, duration - tLen));
+  let bestCorr = 0, bestAbs = 0;
+
+  for (let shift = 0; shift <= maxShift; shift++) {
+    let corr = 0;
+    for (let i = 0; i < tLen; i++) {
+      if (shift + i < duration) corr += samples[shift + i] * template[i];
     }
+    const abs = Math.abs(corr);
+    if (abs > bestAbs) { bestAbs = abs; bestCorr = corr; }
   }
 
-  ctx.fillStyle = '#4cc9f0'; ctx.font = '11px -apple-system, sans-serif';
-  ctx.fillText('Bandpass 40–150 Hz', 8, 16);
-  if (pulses && pulses.length) {
-    ctx.fillStyle = '#4ade80';
-    ctx.fillText('+ ' + pulses.filter(p => p.polarity > 0).length, w - 70, 16);
-    ctx.fillStyle = '#f87171';
-    ctx.fillText('− ' + pulses.filter(p => p.polarity < 0).length, w - 35, 16);
-  }
+  if (bestAbs > 0) onPulse(bestCorr > 0 ? 1 : -1);
 }
 
-function showResult(result) {
-  const card = document.getElementById('resultCard');
-  const icon = document.getElementById('resultIcon');
-  const label = document.getElementById('resultLabel');
-  const detail = document.getElementById('resultDetail');
-  card.className = 'card result';
+// ================= UI UPDATE =================
+let flashTimeout = null;
+function onPulse(polarity) {
+  if (polarity > 0) posCount++; else negCount++;
+  posCountEl.textContent = posCount;
+  negCountEl.textContent = negCount;
 
-  if (result.verdict === 'in-phase') {
-    card.classList.add('in-phase');
-    icon.textContent = '✓'; label.textContent = 'SEFASA';
-    detail.textContent = `${result.positive}/${result.total} pulsa positif — polaritas BENAR`;
-  } else if (result.verdict === 'out-of-phase') {
-    card.classList.add('out-of-phase');
-    icon.textContent = '✗'; label.textContent = 'TERBALIK';
-    detail.textContent = `${result.negative}/${result.total} pulsa negatif — tukar kabel +/−`;
-  } else {
-    card.classList.add('uncertain');
-    icon.textContent = '?'; label.textContent = 'TIDAK PASTI';
-    detail.textContent = result.total === 0
-      ? 'Tidak ada pulsa. Volume kurang / jarak terlalu jauh.'
-      : `Hanya ${result.total} pulsa ambigu. Coba lagi.`;
-  }
+  history.push(polarity);
+  if (history.length > 20) history.shift();
+  renderHistory();
+
+  indicator.classList.remove('pos', 'neg');
+  void indicator.offsetWidth; // reflow
+  indicator.classList.add(polarity > 0 ? 'pos' : 'neg');
+  indLabel.textContent = polarity > 0 ? 'SEFASA' : 'TERBALIK';
+  indSub.textContent = polarity > 0 ? '✓ polaritas benar' : '✗ tukar kabel +/−';
+
+  if (flashTimeout) clearTimeout(flashTimeout);
+  flashTimeout = setTimeout(() => {
+    indicator.classList.remove('pos', 'neg');
+    if (isLive) {
+      indicator.classList.add('live');
+      indLabel.textContent = 'LIVE';
+      indSub.textContent = 'menunggu pulsa...';
+    } else {
+      indLabel.textContent = 'SIAP';
+      indSub.textContent = 'Tekan Mulai Live';
+    }
+  }, FLASH_MS);
 }
 
-// ===== Record & Analyze =====
-async function recordAndAnalyze() {
-  if (isRecording) return;
-  const btn = document.getElementById('startBtn');
-  const status = document.getElementById('status');
-  const card = document.getElementById('resultCard');
+function renderHistory() {
+  historyEl.innerHTML = history.map(p =>
+    `<div class="dot ${p > 0 ? 'pos' : 'neg'}">${p > 0 ? '+' : '−'}</div>`
+  ).join('');
+}
 
-  btn.disabled = true;
-  status.textContent = 'Menyiapkan mikrofon...';
-  card.className = 'card result';
-  document.getElementById('resultIcon').textContent = '⏳';
-  document.getElementById('resultLabel').textContent = 'Merekam...';
-  document.getElementById('resultDetail').textContent = 'Dekatkan ke speaker';
-
+// ================= LIFECYCLE =================
+async function startLive() {
   try {
     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     if (audioCtx.state === 'suspended') await audioCtx.resume();
 
-    const stream = await navigator.mediaDevices.getUserMedia({
+    initCoef(audioCtx.sampleRate);
+
+    micStream = await navigator.mediaDevices.getUserMedia({
       audio: {
         echoCancellation: false,
         noiseSuppression: false,
@@ -266,81 +353,138 @@ async function recordAndAnalyze() {
       }
     });
 
-    console.log('Mic settings:', stream.getAudioTracks()[0].getSettings());
+    const source = audioCtx.createMediaStreamSource(micStream);
+    processor = audioCtx.createScriptProcessor(2048, 1, 1);
+    muteNode = audioCtx.createGain();
+    muteNode.gain.value = 0;
 
-    // Try various mimeTypes for max compatibility
-    let mimeType = '';
-    if (typeof MediaRecorder !== 'undefined') {
-      for (const t of ['audio/webm;codecs=opus','audio/webm','audio/mp4','audio/aac']) {
-        if (MediaRecorder.isTypeSupported(t)) { mimeType = t; break; }
-      }
-    } else {
-      throw new Error('MediaRecorder tidak didukung browser ini');
-    }
+    processor.onaudioprocess = (e) => {
+      if (!isLive) return;
+      try { processChunk(e.inputBuffer.getChannelData(0)); }
+      catch (err) { console.error(err); }
+    };
 
-    const recorder = new MediaRecorder(stream, mimeType ? { mimeType } : {});
-    const chunks = [];
-    recorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
-    const done = new Promise(res => { recorder.onstop = res; });
+    source.connect(processor);
+    processor.connect(muteNode);
+    muteNode.connect(audioCtx.destination);
 
-    recorder.start();
-    isRecording = true;
-    btn.classList.add('recording');
-    btn.textContent = '⏺ Merekam...';
-    status.textContent = '🎙 Merekam 3 detik — jangan gerakkan HP';
+    // Reset stats
+    isLive = true;
+    sampleCount = 0;
+    runningMaxEnv = FLOOR_ENV;
+    inPulse = false;
+    lastPulseEnd = -Infinity;
+    posCount = 0; negCount = 0;
+    posCountEl.textContent = '0';
+    negCountEl.textContent = '0';
+    history = [];
+    renderHistory();
 
-    await new Promise(r => setTimeout(r, RECORD_DURATION_MS));
+    indicator.classList.remove('pos', 'neg');
+    indicator.classList.add('live');
+    indLabel.textContent = 'LIVE';
+    indSub.textContent = 'menunggu pulsa...';
 
-    recorder.stop();
-    await done;
-    isRecording = false;
-    btn.classList.remove('recording');
-    btn.textContent = '🎤 Mulai Tes';
+    toggleBtn.textContent = '⏹ Stop';
+    toggleBtn.classList.add('stop');
 
-    stream.getTracks().forEach(t => t.stop());
-    status.textContent = 'Menganalisis...';
-
-    const blob = new Blob(chunks, { type: mimeType || 'audio/webm' });
-    const arrayBuffer = await blob.arrayBuffer();
-    const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
-    const samples = audioBuffer.getChannelData(0);
-    const sr = audioBuffer.sampleRate;
-
-    console.log('Recorded:', samples.length, 'samples @', sr, 'Hz');
-
-    const result = analyze(samples, sr);
-    console.log('Result:', result);
-
-    drawWaveform(result.audio, result.pulses);
-    showResult(result);
-    status.textContent = `Selesai — ${result.total} pulsa terdeteksi`;
-
+    drawLoop();
+    requestWakeLock();
   } catch (err) {
     console.error(err);
-    isRecording = false;
-    btn.classList.remove('recording');
-    btn.textContent = '🎤 Mulai Tes';
-
-    status.textContent = '❌ ' + err.message;
-    card.className = 'card result uncertain';
-    document.getElementById('resultIcon').textContent = '⚠️';
-    document.getElementById('resultLabel').textContent = 'Error';
-    document.getElementById('resultDetail').textContent = err.message;
-  } finally {
-    btn.disabled = false;
+    alert('Error: ' + err.message);
   }
 }
 
-document.getElementById('startBtn').addEventListener('click', recordAndAnalyze);
+function stopLive() {
+  isLive = false;
 
-let wakeLock = null;
-async function requestWakeLock() {
-  try { if ('wakeLock' in navigator) wakeLock = await navigator.wakeLock.request('screen'); } catch(e) {}
+  if (processor) { try { processor.disconnect(); } catch(e){} processor = null; }
+  if (muteNode) { try { muteNode.disconnect(); } catch(e){} muteNode = null; }
+  if (micStream) { micStream.getTracks().forEach(t => t.stop()); micStream = null; }
+  if (audioCtx) { try { audioCtx.close(); } catch(e){} audioCtx = null; }
+  if (flashTimeout) { clearTimeout(flashTimeout); flashTimeout = null; }
+
+  indicator.classList.remove('pos', 'neg', 'live');
+  indLabel.textContent = 'SIAP';
+  indSub.textContent = 'Tekan Mulai Live';
+
+  toggleBtn.textContent = '▶ Mulai Live';
+  toggleBtn.classList.remove('stop');
 }
-requestWakeLock();
+
+// ================= WAVEFORM =================
+function drawLoop() {
+  if (!isLive) return;
+  drawWaveform();
+  requestAnimationFrame(drawLoop);
+}
+
+function drawWaveform() {
+  if (!bpBuffer || !audioCtx) return;
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.getBoundingClientRect();
+  if (canvas.width !== rect.width * dpr || canvas.height !== rect.height * dpr) {
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+  }
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  const w = rect.width, h = rect.height;
+  ctx.fillStyle = '#060a14'; ctx.fillRect(0, 0, w, h);
+
+  const N = Math.min(bufferSize, Math.floor(audioCtx.sampleRate * 0.12));
+  let peak = 0.001;
+  for (let i = 0; i < N; i++) {
+    const idx = (bufferIdx - 1 - i + bufferSize * 2) % bufferSize;
+    if (Math.abs(bpBuffer[idx]) > peak) peak = Math.abs(bpBuffer[idx]);
+  }
+
+  const mid = h / 2, scale = h * 0.4 / peak;
+
+  ctx.strokeStyle = '#1e2a44'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(0, mid); ctx.lineTo(w, mid); ctx.stroke();
+
+  ctx.strokeStyle = '#4cc9f0'; ctx.lineWidth = 1.2; ctx.beginPath();
+  for (let px = 0; px < w; px++) {
+    const i = Math.floor(px / w * N);
+    const idx = (bufferIdx - 1 - i + bufferSize * 2) % bufferSize;
+    const y = mid - bpBuffer[idx] * scale;
+    if (px === 0) ctx.moveTo(px, y); else ctx.lineTo(px, y);
+  }
+  ctx.stroke();
+}
+
+// ================= WAKE LOCK =================
+async function requestWakeLock() {
+  try { if ('wakeLock' in navigator) wakeLock = await navigator.wakeLock.request('screen'); }
+  catch(e){}
+}
 document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'visible') requestWakeLock();
+  if (document.visibilityState === 'visible' && isLive) requestWakeLock();
 });
+
+// ================= INIT =================
+toggleBtn.addEventListener('click', async () => {
+  if (isLive) stopLive(); else await startLive();
+});
+
+// Canvas placeholder
+(function initCanvas() {
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = rect.width * dpr;
+  canvas.height = rect.height * dpr;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.fillStyle = '#060a14';
+  ctx.fillRect(0, 0, rect.width, rect.height);
+  ctx.fillStyle = '#4a4a6a';
+  ctx.font = '11px -apple-system, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('Waveform 40–150 Hz akan tampil di sini', rect.width / 2, rect.height / 2);
+})();
 </script>
 </body>
 </html>
