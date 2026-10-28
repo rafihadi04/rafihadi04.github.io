@@ -8,28 +8,46 @@
 <style>
   *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
   body{background:#0a0e1a;color:#e0e0f0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
-    min-height:100vh;padding:20px;padding-bottom:max(20px,env(safe-area-inset-bottom));display:flex;flex-direction:column;align-items:center}
-  .container{width:100%;max-width:480px;display:flex;flex-direction:column;gap:14px}
-  h1{font-size:1.5rem;text-align:center;color:#4cc9f0}
-  .subtitle{text-align:center;color:#8080a0;font-size:.9rem}
-  .card{background:#121a2e;border-radius:16px;padding:20px;border:1px solid #1e2a44}
-  .play-btn{width:100%;padding:32px 20px;font-size:1.5rem;font-weight:bold;border:none;border-radius:16px;
+    min-height:100vh;padding:16px;padding-bottom:max(16px,env(safe-area-inset-bottom));
+    display:flex;flex-direction:column;align-items:center}
+  .container{width:100%;max-width:480px;display:flex;flex-direction:column;gap:12px}
+  h1{font-size:1.35rem;text-align:center;color:#4cc9f0}
+  .subtitle{text-align:center;color:#8080a0;font-size:.82rem}
+  .card{background:#121a2e;border-radius:14px;padding:14px;border:1px solid #1e2a44}
+  .card h3{font-size:.78rem;color:#8080a0;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;font-weight:600}
+  .play-btn{width:100%;padding:28px 20px;font-size:1.4rem;font-weight:bold;border:none;border-radius:14px;
     background:linear-gradient(135deg,#4cc9f0,#4361ee);color:#fff;cursor:pointer;touch-action:manipulation;
-    transition:transform .1s,background .2s;display:flex;align-items:center;justify-content:center;gap:12px}
+    transition:transform .1s;display:flex;align-items:center;justify-content:center;gap:10px}
   .play-btn:active{transform:scale(.97)}
   .play-btn.active{background:linear-gradient(135deg,#f72585,#b5179e)}
-  canvas{width:100%;height:120px;background:#060a14;border-radius:10px;display:block}
-  .info{font-size:.85rem;color:#8080a0;line-height:1.7}
+  canvas{width:100%;height:110px;background:#060a14;border-radius:10px;display:block}
+  .freq-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+  .freq-btn{padding:14px 4px;border-radius:10px;border:2px solid #1e2a44;background:#0f1f3a;
+    color:#b0b0d0;font-size:.95rem;font-weight:bold;cursor:pointer;touch-action:manipulation;
+    transition:all .15s;line-height:1.2}
+  .freq-btn small{display:block;font-size:.6rem;font-weight:normal;opacity:.6;margin-top:3px;letter-spacing:0}
+  .freq-btn:active{transform:scale(.95)}
+  .freq-btn.active{background:linear-gradient(135deg,#4cc9f0,#4361ee);border-color:#4cc9f0;color:#fff}
+  .freq-btn.active small{opacity:.9}
+  .copy-btn{width:100%;padding:14px;font-size:.9rem;font-weight:600;border:2px solid #4cc9f0;border-radius:10px;
+    background:transparent;color:#4cc9f0;cursor:pointer;touch-action:manipulation;transition:all .15s}
+  .copy-btn:active{transform:scale(.97);background:#4cc9f0;color:#0a0e1a}
+  .copy-btn.copied{background:#4ade80;border-color:#4ade80;color:#0a0e1a}
+  .status{text-align:center;font-size:.9rem;color:#4cc9f0;min-height:1.4em;padding:6px}
+  .info{font-size:.82rem;color:#8080a0;line-height:1.65}
   .info strong{color:#b0b0d0}
   .info code{background:#1e2a44;padding:2px 6px;border-radius:4px;color:#4cc9f0;font-size:.85em}
-  .status{text-align:center;font-size:.9rem;color:#4cc9f0;min-height:1.4em;padding:8px}
-  .badge{display:inline-block;background:#4cc9f0;color:#0a0e1a;padding:2px 10px;border-radius:20px;font-size:.75rem;font-weight:bold}
 </style>
 </head>
 <body>
 <div class="container">
   <h1>🔊 Test Tone Generator</h1>
-  <div class="subtitle">Putar sinyal tes di device ini (via amp → speaker)</div>
+  <div class="subtitle">Putar sinyal tes → amp → speaker</div>
+
+  <div class="card">
+    <h3>Frekuensi</h3>
+    <div class="freq-grid" id="freqGrid"></div>
+  </div>
 
   <div class="card">
     <button class="play-btn" id="playBtn">
@@ -39,46 +57,108 @@
   </div>
 
   <div class="card"><canvas id="waveform"></canvas></div>
-
   <div class="status" id="status">Siap</div>
+
+  <button class="copy-btn" id="copyBtn">📋 Salin Link Checker (frekuensi sama)</button>
 
   <div class="card info">
     <strong>📋 Cara pakai:</strong><br>
-    1. Sambungkan device ini ke <strong>amplifier → speaker</strong><br>
-    2. Buka <code>checker.html</code> di HP lain<br>
-    3. Tekan <strong>Mulai Putar</strong> di sini<br>
-    4. Di HP checker, dekatkan ke speaker dan mulai tes<br><br>
-    <strong>🎵 Sinyal yang diputar:</strong><br>
-    • <span class="badge">80 Hz</span> pulsa 4 siklus (50 ms)<br>
-    • Jeda 450 ms — berulang setiap 500 ms<br>
-    • Amplitudo 60% (hindari clipping)<br><br>
-    <strong>⚠️ Jangan pakai headphone!</strong> Suara harus keluar dari speaker fisik.
+    1. Pilih frekuensi (default <strong>100 Hz</strong>)<br>
+    2. Sambungkan device ini ke <strong>amp → speaker</strong><br>
+    3. Tekan <strong>Salin Link Checker</strong> → buka link itu di HP penguji<br>
+    4. Tekan <strong>Mulai Putar</strong> di sini<br>
+    5. Di HP checker, dekatkan ke speaker dan tekan <strong>Mulai Live</strong><br><br>
+    <strong>🎵 Rekomendasi frekuensi:</strong><br>
+    • <b>50/60 Hz</b> — woofer besar / subwoofer<br>
+    • <b>80 Hz</b> — titik crossover umum<br>
+    • <b>100 Hz</b> — universal, paling aman untuk mic HP<br>
+    • <b>120 Hz</b> — speaker kecil / full-range<br><br>
+    <strong>⚠️ Frekuensi di kedua file HARUS SAMA.</strong>
   </div>
 </div>
 
 <script>
-const FREQ = 80;
+const FREQ_OPTIONS = [
+  { hz: 50, label: 'Woofer' },
+  { hz: 60, label: 'Woofer' },
+  { hz: 80, label: 'Crossover' },
+  { hz: 100, label: 'Universal' },
+  { hz: 120, label: 'Speaker kecil' }
+];
+const DEFAULT_FREQ = 100;
 const CYCLES_PER_PULSE = 4;
 const PULSE_INTERVAL_MS = 500;
 const PULSE_AMP = 0.6;
 
 let audioCtx = null, isPlaying = false, sourceNode = null;
+let currentFreq = DEFAULT_FREQ;
+let wakeLock = null;
 
-function generatePulseBuffer(sampleRate) {
+// ==== Frekuensi state: URL > localStorage > default ====
+function getInitialFreq() {
+  const params = new URLSearchParams(location.search);
+  const urlFreq = parseInt(params.get('freq'), 10);
+  if (FREQ_OPTIONS.some(o => o.hz === urlFreq)) return urlFreq;
+
+  const saved = parseInt(localStorage.getItem('phasechecker_freq'), 10);
+  if (FREQ_OPTIONS.some(o => o.hz === saved)) return saved;
+
+  return DEFAULT_FREQ;
+}
+
+function setFreq(hz, persist = true) {
+  if (!FREQ_OPTIONS.some(o => o.hz === hz)) return;
+  currentFreq = hz;
+  if (persist) {
+    localStorage.setItem('phasechecker_freq', String(hz));
+    // Update URL biar bisa di-copy / di-share
+    const url = new URL(location.href);
+    url.searchParams.set('freq', String(hz));
+    history.replaceState(null, '', url.toString());
+  }
+  updateFreqButtons();
+  updateWaveformPreview();
+  // Restart playback kalau sedang jalan
+  if (isPlaying) { stopPlayback(); startPlayback().catch(console.error); }
+}
+
+// ==== Build UI ====
+function buildFreqButtons() {
+  const grid = document.getElementById('freqGrid');
+  grid.innerHTML = '';
+  FREQ_OPTIONS.forEach(opt => {
+    const b = document.createElement('button');
+    b.className = 'freq-btn';
+    b.dataset.hz = opt.hz;
+    b.innerHTML = `${opt.hz} Hz<small>${opt.label}</small>`;
+    b.addEventListener('click', () => setFreq(opt.hz));
+    grid.appendChild(b);
+  });
+}
+
+function updateFreqButtons() {
+  document.querySelectorAll('.freq-btn').forEach(b => {
+    b.classList.toggle('active', parseInt(b.dataset.hz, 10) === currentFreq);
+  });
+}
+
+// ==== Audio ====
+function buildPulseBuffer(sampleRate) {
   const totalLen = Math.floor((PULSE_INTERVAL_MS / 1000) * sampleRate);
   const buffer = audioCtx.createBuffer(1, totalLen, sampleRate);
   const data = buffer.getChannelData(0);
-  const pulseLen = Math.floor((CYCLES_PER_PULSE / FREQ) * sampleRate);
-
-  // Ensure pulse fits within buffer
-  const actualPulseLen = Math.min(pulseLen, totalLen);
-  for (let i = 0; i < actualPulseLen; i++) {
-    data[i] = Math.sin(2 * Math.PI * FREQ * i / sampleRate) * PULSE_AMP;
+  const pulseLen = Math.min(
+    Math.floor((CYCLES_PER_PULSE / currentFreq) * sampleRate),
+    totalLen
+  );
+  for (let i = 0; i < pulseLen; i++) {
+    data[i] = Math.sin(2 * Math.PI * currentFreq * i / sampleRate) * PULSE_AMP;
   }
   return buffer;
 }
 
-function drawWaveform(buffer) {
+// Waveform preview (tanpa audio ctx yang fully ready)
+function updateWaveformPreview() {
   const canvas = document.getElementById('waveform');
   const ctx = canvas.getContext('2d');
   const dpr = window.devicePixelRatio || 1;
@@ -86,55 +166,51 @@ function drawWaveform(buffer) {
   canvas.width = rect.width * dpr;
   canvas.height = rect.height * dpr;
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
   const w = rect.width, h = rect.height;
   ctx.fillStyle = '#060a14'; ctx.fillRect(0, 0, w, h);
-  if (!buffer) return;
 
-  const data = buffer.getChannelData(0);
+  const sr = 48000;
+  const totalLen = Math.floor((PULSE_INTERVAL_MS / 1000) * sr);
+  const pulseLen = Math.floor((CYCLES_PER_PULSE / currentFreq) * sr);
   const mid = h / 2;
-  const scale = h * 0.4 / PULSE_AMP;
+  const scale = h * 0.38 / PULSE_AMP;
 
   ctx.strokeStyle = '#1e2a44'; ctx.lineWidth = 1;
   ctx.beginPath(); ctx.moveTo(0, mid); ctx.lineTo(w, mid); ctx.stroke();
 
   ctx.strokeStyle = '#4cc9f0'; ctx.lineWidth = 1.5; ctx.beginPath();
   for (let px = 0; px < w; px++) {
-    const idx = Math.floor(px / w * data.length);
-    const v = data[idx] || 0;
+    const idx = Math.floor(px / w * totalLen);
+    const v = idx < pulseLen ? Math.sin(2 * Math.PI * currentFreq * idx / sr) * PULSE_AMP : 0;
     const y = mid - v * scale;
-    px === 0 ? ctx.moveTo(px, y) : ctx.lineTo(px, y);
+    if (px === 0) ctx.moveTo(px, y); else ctx.lineTo(px, y);
   }
   ctx.stroke();
 
-  ctx.fillStyle = '#4cc9f0'; ctx.font = '11px -apple-system, sans-serif';
-  ctx.fillText('Pulsa 80 Hz × 4 siklus', 8, 16);
-  ctx.fillStyle = '#606080';
-  ctx.fillText('Interval 500 ms', 8, h - 8);
+  ctx.fillStyle = '#4cc9f0'; ctx.font = 'bold 12px -apple-system, sans-serif';
+  ctx.fillText(`${currentFreq} Hz × ${CYCLES_PER_PULSE} siklus`, 8, 16);
+  ctx.fillStyle = '#606080'; ctx.font = '11px -apple-system, sans-serif';
+  ctx.fillText(`Interval ${PULSE_INTERVAL_MS} ms`, 8, h - 8);
 }
 
 async function startPlayback() {
-  if (!audioCtx) {
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  }
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   if (audioCtx.state === 'suspended') await audioCtx.resume();
 
-  const buffer = generatePulseBuffer(audioCtx.sampleRate);
-  drawWaveform(buffer);
-
+  const buffer = buildPulseBuffer(audioCtx.sampleRate);
   sourceNode = audioCtx.createBufferSource();
   sourceNode.buffer = buffer;
   sourceNode.loop = true;
   sourceNode.connect(audioCtx.destination);
   sourceNode.start();
-
   isPlaying = true;
   updateUI();
+  requestWakeLock();
 }
 
 function stopPlayback() {
   if (sourceNode) {
-    try { sourceNode.stop(); } catch (e) {}
+    try { sourceNode.stop(); } catch(e){}
     sourceNode.disconnect();
     sourceNode = null;
   }
@@ -149,8 +225,8 @@ function updateUI() {
   const status = document.getElementById('status');
   if (isPlaying) {
     btn.classList.add('active');
-    icon.textContent = '⏸'; text.textContent = 'Stop';
-    status.textContent = '🔊 Memutar sinyal tes...';
+    icon.textContent = '⏹'; text.textContent = 'Stop';
+    status.textContent = `🔊 Memutar ${currentFreq} Hz...`;
   } else {
     btn.classList.remove('active');
     icon.textContent = '▶'; text.textContent = 'Mulai Putar';
@@ -158,6 +234,38 @@ function updateUI() {
   }
 }
 
+// ==== Copy Link ====
+function checkerURL(freq) {
+  const base = location.href.split('?')[0].replace(/[^/]*$/, '');
+  return base + 'checker.html?freq=' + freq;
+}
+
+document.getElementById('copyBtn').addEventListener('click', async () => {
+  const url = checkerURL(currentFreq);
+  try {
+    await navigator.clipboard.writeText(url);
+  } catch {
+    // Fallback
+    const ta = document.createElement('textarea');
+    ta.value = url; document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); document.body.removeChild(ta);
+  }
+  const btn = document.getElementById('copyBtn');
+  const old = btn.textContent;
+  btn.textContent = '✓ Tersalin!';
+  btn.classList.add('copied');
+  setTimeout(() => { btn.textContent = old; btn.classList.remove('copied'); }, 1500);
+});
+
+// ==== Wake lock ====
+async function requestWakeLock() {
+  try { if ('wakeLock' in navigator) wakeLock = await navigator.wakeLock.request('screen'); } catch(e){}
+}
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible' && isPlaying) requestWakeLock();
+});
+
+// ==== Play button ====
 document.getElementById('playBtn').addEventListener('click', async () => {
   try {
     if (isPlaying) stopPlayback(); else await startPlayback();
@@ -167,15 +275,13 @@ document.getElementById('playBtn').addEventListener('click', async () => {
   }
 });
 
-// Keep screen awake
-let wakeLock = null;
-async function requestWakeLock() {
-  try { if ('wakeLock' in navigator) wakeLock = await navigator.wakeLock.request('screen'); } catch(e) {}
-}
-requestWakeLock();
-document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'visible') requestWakeLock();
-});
+// ==== Init ====
+currentFreq = getInitialFreq();
+buildFreqButtons();
+updateFreqButtons();
+setFreq(currentFreq, false); // sync URL tanpa override
+window.addEventListener('resize', updateWaveformPreview);
+setTimeout(updateWaveformPreview, 50);
 </script>
 </body>
 </html>
