@@ -1,1509 +1,1873 @@
 <!DOCTYPE html>
-<html lang="id">
-
+<html lang="en">
 <head>
-    <!-- Meta Tags Essentials -->
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rafi Hadi — Show Production, Visual & Audio Tools</title>
+  <meta name="description" content="Portfolio and open-source production tools by Rafi Hadi. Resolume Arena Timer OSC, Pixel Mapper LED, Test Pattern Generator, and Live Acoustic Phase Checker.">
+  <link rel="icon" type="image/x-icon" href="assets/resolume-timer/icon.ico">
+  
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0b0f14;
+      --bg-soft: #0f151d;
+      --panel: #121a23;
+      --panel-2: #0d141c;
+      --border: #243143;
+      --border-soft: #1b2634;
+      --text: #e9f0fa;
+      --muted: #8da2bb;
+      --accent: #3ddc97;
+      --accent-2: #4cc9f0;
+      --accent-glow: rgba(61, 220, 151, 0.25);
+      --accent-2-glow: rgba(76, 201, 240, 0.25);
+      --danger: #ff4d6d;
+      --warning: #ffcc00;
+      --shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+      --radius: 18px;
+      --radius-sm: 10px;
+      font-family: "Segoe UI", Inter, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+    }
 
-    <!-- SEO Meta Tags -->
-    <title>Pixel Mapper LED - Tool Gratis Untuk Mapping LED Display & Video Wall</title>
-    <meta name="description"
-        content="Tool profesional gratis untuk pixel mapping LED display, video wall, dan stage lighting. Buat layout LED matrix dengan mudah, export ke PNG, dan optimalkan setup visual Anda.">
-    <meta name="keywords"
-        content="pixel mapper, led mapping, video wall mapper, led display tool, stage lighting, visual mapping, led matrix, pixel mapping software">
-    <meta name="author" content="Pixel Mapper LED">
-    <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://your-domain.vercel.app/">
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://your-domain.vercel.app/">
-    <meta property="og:title" content="Pixel Mapper LED - Tool Gratis Mapping LED Display">
-    <meta property="og:description"
-        content="Tool profesional gratis untuk pixel mapping LED display dan video wall. Buat layout LED matrix dengan mudah dan export hasil Anda.">
-    <meta property="og:image" content="https://your-domain.vercel.app/og-image.png">
+    html {
+      scroll-behavior: smooth;
+    }
 
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://your-domain.vercel.app/">
-    <meta property="twitter:title" content="Pixel Mapper LED - Tool Gratis Mapping LED Display">
-    <meta property="twitter:description"
-        content="Tool profesional gratis untuk pixel mapping LED display dan video wall.">
-    <meta property="twitter:image" content="https://your-domain.vercel.app/og-image.png">
+    body {
+      color: var(--text);
+      background:
+        radial-gradient(1100px 600px at 12% -10%, rgba(61, 220, 151, 0.12), transparent 60%),
+        radial-gradient(900px 500px at 95% 0%, rgba(76, 201, 240, 0.1), transparent 55%),
+        linear-gradient(160deg, #0b0f14 0%, #0a1119 55%, #080d13 100%);
+      background-attachment: fixed;
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.55;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
 
-    <!-- Structured Data / Schema.org -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebApplication",
-      "name": "Pixel Mapper LED",
-      "description": "Tool profesional gratis untuk pixel mapping LED display, video wall, dan stage lighting",
-      "url": "https://your-domain.vercel.app/",
-      "applicationCategory": "DesignApplication",
-      "operatingSystem": "Any",
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "USD"
-      },
-      "aggregateRating": {
-        "@type": "AggregateRating",
-        "ratingValue": "4.8",
-        "ratingCount": "127"
+    /* Container */
+    .container {
+      width: min(1360px, 94%);
+      margin: 0 auto;
+      padding: 24px 0 60px;
+    }
+
+    /* App Header / Navigation */
+    .app-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 14px 22px;
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(18, 26, 35, 0.95), rgba(12, 18, 25, 0.88));
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 16px;
+      z-index: 100;
+      margin-bottom: 36px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .brand__mark {
+      width: 46px;
+      height: 46px;
+      flex: 0 0 auto;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      font-weight: 800;
+      font-size: 19px;
+      letter-spacing: 0.05em;
+      color: #04110b;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow: 0 8px 24px rgba(61, 220, 151, 0.35);
+    }
+
+    .brand__text h1 {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand__text p {
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .header-nav {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      list-style: none;
+    }
+
+    .nav-link {
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 140ms ease, background 140ms ease;
+    }
+
+    .nav-link:hover {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    /* Badges & Pills */
+    .health-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      border: 1px solid var(--border);
+      background: rgba(13, 20, 28, 0.9);
+      color: var(--muted);
+      white-space: nowrap;
+      text-decoration: none;
+    }
+
+    .health-pill--connected {
+      color: #9cf5c9;
+      border-color: rgba(61, 220, 151, 0.45);
+      background: rgba(61, 220, 151, 0.1);
+    }
+
+    .health-pill--checking {
+      color: #ffe58a;
+      border-color: rgba(255, 204, 0, 0.4);
+      background: rgba(255, 204, 0, 0.08);
+    }
+
+    .health-pill--error {
+      color: #ffb3c1;
+      border-color: rgba(255, 77, 109, 0.45);
+      background: rgba(255, 77, 109, 0.1);
+    }
+
+    .status-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--muted);
+      box-shadow: 0 0 0 4px rgba(141, 162, 187, 0.12);
+      flex-shrink: 0;
+    }
+
+    .status-dot--connected {
+      background: var(--accent);
+      box-shadow: 0 0 0 4px rgba(61, 220, 151, 0.16), 0 0 16px rgba(61, 220, 151, 0.8);
+      animation: pulse 2.4s infinite;
+    }
+
+    .status-dot--checking {
+      background: var(--warning);
+      box-shadow: 0 0 0 4px rgba(255, 204, 0, 0.16);
+      animation: pulse 1.2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(0.92); }
+    }
+
+    /* Buttons */
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: #141d27;
+      color: var(--text);
+      font-weight: 600;
+      font-size: 13px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: transform 120ms ease, border-color 140ms ease, background 140ms ease, box-shadow 140ms ease;
+      white-space: nowrap;
+    }
+
+    .button:hover {
+      border-color: #3b5068;
+      background: #18232f;
+    }
+
+    .button:active {
+      transform: translateY(1px);
+    }
+
+    .button--primary {
+      border-color: transparent;
+      color: #04110b;
+      background: linear-gradient(135deg, var(--accent), #22c98a);
+      box-shadow: 0 8px 24px rgba(61, 220, 151, 0.28);
+      font-weight: 700;
+    }
+
+    .button--primary:hover {
+      background: linear-gradient(135deg, #4ce7a3, #2be29c);
+      box-shadow: 0 10px 30px rgba(61, 220, 151, 0.42);
+      border-color: transparent;
+    }
+
+    .button--accent {
+      border-color: rgba(76, 201, 240, 0.45);
+      color: #dff8ff;
+      background: rgba(76, 201, 240, 0.14);
+    }
+
+    .button--accent:hover {
+      border-color: rgba(76, 201, 240, 0.7);
+      background: rgba(76, 201, 240, 0.22);
+      box-shadow: 0 8px 20px rgba(76, 201, 240, 0.25);
+    }
+
+    .button--ghost {
+      background: transparent;
+      border-color: var(--border-soft);
+      color: var(--muted);
+    }
+
+    .button--ghost:hover {
+      color: var(--text);
+      border-color: var(--border);
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .button--sm {
+      padding: 6px 12px;
+      font-size: 12px;
+      border-radius: 8px;
+    }
+
+    /* Panels & Cards */
+    .panel {
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(18, 26, 35, 0.96), rgba(12, 18, 25, 0.94));
+      box-shadow: var(--shadow);
+      padding: 24px;
+      position: relative;
+    }
+
+    /* Section Headers */
+    .section-header {
+      margin-bottom: 22px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .section-title-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .section-eyebrow {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .section-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: #f1f6fc;
+      letter-spacing: -0.01em;
+    }
+
+    .section-desc {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    /* FEATURED HERO: RESOLUME TIMER */
+    .featured-hero {
+      border: 1px solid rgba(61, 220, 151, 0.35);
+      border-radius: var(--radius);
+      background:
+        radial-gradient(1000px 480px at 80% -10%, rgba(76, 201, 240, 0.14), transparent 60%),
+        radial-gradient(900px 450px at 10% 20%, rgba(61, 220, 151, 0.15), transparent 60%),
+        linear-gradient(180deg, rgba(19, 28, 38, 0.98), rgba(11, 17, 24, 0.98));
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(61, 220, 151, 0.15);
+      padding: 32px;
+      margin-bottom: 50px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-badge-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .hero-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      background: rgba(61, 220, 151, 0.15);
+      border: 1px solid rgba(61, 220, 151, 0.45);
+      color: #9cf5c9;
+    }
+
+    .hero-tags {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .tag {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 6px;
+      background: rgba(14, 21, 30, 0.85);
+      border: 1px solid var(--border-soft);
+      color: var(--muted);
+      letter-spacing: 0.04em;
+    }
+
+    .tag--cyan {
+      border-color: rgba(76, 201, 240, 0.4);
+      color: #aae9fa;
+      background: rgba(76, 201, 240, 0.1);
+    }
+
+    .tag--emerald {
+      border-color: rgba(61, 220, 151, 0.4);
+      color: #9cf5c9;
+      background: rgba(61, 220, 151, 0.1);
+    }
+
+    .hero-main-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 32px;
+      align-items: start;
+    }
+
+    @media (max-width: 1024px) {
+      .hero-main-grid {
+        grid-template-columns: 1fr;
       }
     }
-    </script>
-
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" sizes="32x32"
-        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎨</text></svg>">
-
-    <!-- Google AdSense -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8076941697142270"
-        crossorigin="anonymous"></script>
-
-    <!-- Styles -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
-        rel="stylesheet">
-
-    <style>
-        :root {
-            --primary-color: #6366f1;
-            --primary-dark: #4f46e5;
-            --secondary-color: #8b5cf6;
-            --success-color: #10b981;
-            --danger-color: #ef4444;
-            --warning-color: #f59e0b;
-            --dark-bg: #1f2937;
-            --light-bg: #f9fafb;
-            --card-bg: #ffffff;
-            --text-primary: #111827;
-            --text-secondary: #6b7280;
-            --border-color: #e5e7eb;
-            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            background-attachment: fixed;
-            color: var(--text-primary);
-            min-height: 100vh;
-        }
-
-        /* Header Styles */
-        .app-header {
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(10px);
-            box-shadow: var(--shadow-md);
-            padding: 1rem 0;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            max-width: 1600px;
-            margin: 0 auto;
-            padding: 0 1.5rem;
-        }
-
-        .logo-section {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .logo-icon {
-            font-size: 2rem;
-            filter: drop-shadow(0 2px 4px rgba(99, 102, 241, 0.3));
-        }
-
-        .logo-text h1 {
-            font-size: 1.5rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin: 0;
-            line-height: 1.2;
-        }
-
-        .logo-text p {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            margin: 0;
-            font-weight: 500;
-        }
-
-        /* Ad Container Styles */
-        .ad-container {
-            background: var(--card-bg);
-            border-radius: 0.5rem;
-            padding: 0.5rem;
-            box-shadow: var(--shadow-sm);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 90px;
-            border: 1px solid var(--border-color);
-        }
-
-        .ad-placeholder {
-            text-align: center;
-            color: var(--text-secondary);
-            font-size: 0.75rem;
-            padding: 1rem;
-        }
-
-        /* Main Container */
-        .main-container {
-            max-width: 1600px;
-            margin: 0 auto;
-            padding: 1.5rem;
-        }
-
-        /* Desktop Ads - Hidden on Mobile */
-        .desktop-ad {
-            display: block;
-        }
-
-        /* Mobile Interstitial Ad */
-        .mobile-interstitial-ad {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            z-index: 9999;
-            align-items: center;
-            justify-content: center;
-            animation: fadeIn 0.3s ease;
-        }
-
-        .mobile-interstitial-ad.show {
-            display: flex;
-        }
-
-        .interstitial-content {
-            position: relative;
-            max-width: 90%;
-            max-height: 90%;
-        }
-
-        .close-interstitial {
-            position: absolute;
-            top: -40px;
-            right: 0;
-            background: white;
-            border: none;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            font-size: 20px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-            z-index: 10000;
-        }
-
-        .close-interstitial:hover {
-            background: #f3f4f6;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
-        }
-
-        /* Top Ad Banner */
-        .top-ad-banner {
-            margin-bottom: 1.5rem;
-        }
-
-        /* Card Styles */
-        .control-card {
-            background: var(--card-bg);
-            border-radius: 1rem;
-            padding: 1.5rem;
-            box-shadow: var(--shadow-lg);
-            border: 1px solid var(--border-color);
-            transition: all 0.3s ease;
-        }
-
-        .control-card:hover {
-            box-shadow: var(--shadow-xl);
-            transform: translateY(-2px);
-        }
-
-        .card-title {
-            font-size: 1rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .card-title::before {
-            content: '';
-            width: 4px;
-            height: 1.2rem;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            border-radius: 2px;
-        }
-
-        /* Form Controls */
-        .form-control,
-        .form-select {
-            border: 2px solid var(--border-color);
-            border-radius: 0.5rem;
-            padding: 0.5rem 0.75rem;
-            font-size: 0.875rem;
-            transition: all 0.2s;
-        }
-
-        .form-control:focus,
-        .form-select:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-        }
-
-        /* Button Styles */
-        .btn {
-            border-radius: 0.5rem;
-            font-weight: 600;
-            padding: 0.625rem 1.25rem;
-            border: none;
-            transition: all 0.2s;
-            font-size: 0.875rem;
-            cursor: pointer;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-            color: white;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
-        }
-
-        .btn-success {
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
-        }
-
-        .btn-success:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
-        }
-
-        .btn-danger {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-            color: white;
-        }
-
-        .btn-danger:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
-        }
-
-        .btn-warning {
-            background: linear-gradient(135deg, #f59e0b, #d97706);
-            color: white;
-        }
-
-        .btn-warning:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
-        }
-
-        /* Canvas Container */
-        #canvas-container {
-            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-            border-radius: 1rem;
-            margin-top: 1.5rem;
-            position: relative;
-            overflow: hidden;
-            box-shadow: var(--shadow-xl);
-            border: 3px solid rgba(255, 255, 255, 0.1);
-            min-height: 500px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        #previewCanvas {
-            border-radius: 0.5rem;
-            touch-action: none;
-            background-color: transparent;
-            cursor: grab;
-        }
-
-        #previewCanvas:active {
-            cursor: grabbing;
-        }
-
-        #previewCanvas.panning {
-            cursor: grabbing !important;
-        }
-
-        /* Group List */
-        .group-item {
-            cursor: pointer;
-            transition: all 0.2s;
-            border-radius: 0.5rem;
-            padding: 0.75rem;
-            margin-bottom: 0.5rem;
-            border: 2px solid transparent;
-            background: var(--light-bg);
-        }
-
-        .group-item:hover {
-            background: #f3f4f6;
-            border-color: var(--primary-color);
-        }
-
-        .group-item.active {
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-            color: white;
-            border-color: var(--primary-color);
-            font-weight: 600;
-        }
-
-        .group-item.active .badge {
-            background-color: white;
-            color: var(--primary-color);
-        }
-
-        .group-item .badge {
-            background-color: var(--primary-color);
-            color: white;
-            font-size: 0.75rem;
-            padding: 0.25rem 0.5rem;
-            border-radius: 0.375rem;
-        }
-
-        /* Zoom Controls */
-        #zoom-controls {
-            position: absolute;
-            bottom: 1rem;
-            right: 1rem;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(10px);
-            border-radius: 0.75rem;
-            padding: 0.5rem;
-            display: flex;
-            gap: 0.25rem;
-            align-items: center;
-            box-shadow: var(--shadow-lg);
-        }
-
-        #zoom-controls button {
-            background: transparent;
-            border: none;
-            color: white;
-            padding: 0.5rem 0.75rem;
-            cursor: pointer;
-            border-radius: 0.5rem;
-            transition: all 0.2s;
-            font-size: 1.125rem;
-            font-weight: 600;
-        }
-
-        #zoom-controls button:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        #zoomLevel {
-            color: white;
-            padding: 0.5rem 0.75rem;
-            font-weight: 600;
-            font-size: 0.875rem;
-        }
-
-        /* Form Switch */
-        .form-check-input:checked {
-            background-color: var(--primary-color);
-            border-color: var(--primary-color);
-        }
-
-        .form-check-input:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 0.25rem rgba(99, 102, 241, 0.25);
-        }
-
-        /* Sidebar Ad */
-        .sidebar-ad {
-            position: sticky;
-            top: 100px;
-            margin-bottom: 1.5rem;
-        }
-
-        /* Footer */
-        .app-footer {
-            background: rgba(255, 255, 255, 0.98);
-            padding: 2rem 0;
-            margin-top: 3rem;
-            border-top: 1px solid var(--border-color);
-        }
-
-        .footer-content {
-            max-width: 1600px;
-            margin: 0 auto;
-            padding: 0 1.5rem;
-            text-align: center;
-        }
-
-        .footer-links {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            margin-bottom: 1rem;
-            flex-wrap: wrap;
-        }
-
-        .footer-links a {
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-size: 0.875rem;
-            font-weight: 500;
-            transition: color 0.2s;
-        }
-
-        .footer-links a:hover {
-            color: var(--primary-color);
-        }
-
-        .footer-text {
-            color: var(--text-secondary);
-            font-size: 0.875rem;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .header-content {
-                flex-direction: column;
-                gap: 1rem;
-            }
-
-            .logo-text h1 {
-                font-size: 1.25rem;
-            }
-
-            /* Hide desktop ads on mobile */
-            .desktop-ad {
-                display: none !important;
-            }
-
-            .main-container {
-                padding: 1rem;
-            }
-
-            .control-card {
-                padding: 1rem;
-            }
-
-            #canvas-container {
-                min-height: 300px;
-            }
-
-            .input-label {
-                min-width: 75px;
-                font-size: 0.8rem;
-            }
-
-            .input-row input {
-                min-width: 65px;
-                max-width: 80px;
-            }
-
-            /* Hide tips on mobile */
-            #canvas-container>div[style*="position: absolute; top: 1rem"] {
-                display: none;
-            }
-        }
-
-        /* Tablet and up */
-        @media (min-width: 769px) {
-            .mobile-interstitial-ad {
-                display: none !important;
-            }
-        }
-
-        /* Loading Animation */
-        @keyframes pulse {
-
-            0%,
-            100% {
-                opacity: 1;
-            }
-
-            50% {
-                opacity: 0.5;
-            }
-        }
-
-        .pulse {
-            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        }
-
-        /* Input Group Styles */
-        .input-group-custom {
-            display: flex;
-            gap: 0.5rem;
-            align-items: center;
-            margin-bottom: 0.75rem;
-            flex-wrap: wrap;
-        }
-
-        .input-label {
-            min-width: 95px;
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: var(--text-secondary);
-            flex-shrink: 0;
-        }
-
-        .input-row {
-            display: flex;
-            gap: 0.375rem;
-            align-items: center;
-            flex: 1;
-            min-width: 0;
-        }
-
-        .input-row input {
-            flex: 1;
-            min-width: 75px;
-            max-width: 100px;
-        }
-
-        .input-separator {
-            font-weight: 600;
-            color: var(--text-secondary);
-            flex-shrink: 0;
-            padding: 0 2px;
-        }
-
-        /* Color Input */
-        input[type="color"] {
-            height: 40px;
-            border: 2px solid var(--border-color);
-            border-radius: 0.5rem;
-            cursor: pointer;
-        }
-
-        /* Scrollbar Styling */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: var(--light-bg);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--primary-color);
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--primary-dark);
-        }
-    </style>
+
+    .hero-content h2 {
+      font-size: clamp(28px, 4vw, 42px);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      color: #ffffff;
+      margin-bottom: 12px;
+    }
+
+    .hero-content h2 span {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-lead {
+      font-size: 15px;
+      color: #bcd0e6;
+      line-height: 1.6;
+      margin-bottom: 22px;
+    }
+
+    /* Feature highlights inside hero */
+    .hero-features-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 26px;
+    }
+
+    @media (max-width: 640px) {
+      .hero-features-list {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .hero-feat-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 13px;
+      color: #c9d8ea;
+      background: rgba(9, 14, 21, 0.6);
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-soft);
+    }
+
+    .hero-feat-item svg {
+      width: 18px;
+      height: 18px;
+      color: var(--accent);
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    /* Auto Update Checker Box */
+    .update-checker-panel {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: rgba(10, 16, 23, 0.95);
+      padding: 22px;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.4);
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .checker-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      border-bottom: 1px solid var(--border-soft);
+      padding-bottom: 14px;
+    }
+
+    .checker-title-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .checker-title-wrap h3 {
+      font-size: 15px;
+      font-weight: 700;
+      color: #eaf1fa;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .checker-subtitle {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .checker-status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      background: rgba(61, 220, 151, 0.1);
+      border: 1px solid rgba(61, 220, 151, 0.35);
+      color: #9cf5c9;
+    }
+
+    .version-display-card {
+      background: rgba(18, 26, 36, 0.85);
+      border: 1px solid var(--border-soft);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .version-meta-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .version-tag {
+      font-family: Consolas, monospace;
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--accent);
+      letter-spacing: 0.05em;
+    }
+
+    .release-date {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .release-headline {
+      font-size: 13px;
+      color: #cdd9e8;
+      line-height: 1.45;
+    }
+
+    /* Version comparator mini form */
+    .version-compare-box {
+      background: rgba(7, 11, 17, 0.7);
+      border: 1px solid var(--border-soft);
+      border-radius: 10px;
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+    }
+
+    .version-compare-box input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text);
+      font-family: Consolas, monospace;
+      font-size: 12px;
+    }
+
+    .version-compare-box input::placeholder {
+      color: #4b6380;
+    }
+
+    .compare-result {
+      font-size: 12px;
+      padding: 6px 10px;
+      border-radius: 6px;
+      display: none;
+    }
+
+    .compare-result--update {
+      display: block;
+      background: rgba(61, 220, 151, 0.15);
+      color: #9cf5c9;
+      border: 1px solid rgba(61, 220, 151, 0.4);
+    }
+
+    .compare-result--current {
+      display: block;
+      background: rgba(76, 201, 240, 0.15);
+      color: #aae9fa;
+      border: 1px solid rgba(76, 201, 240, 0.4);
+    }
+
+    /* Downloads Action Stack */
+    .download-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .download-btn-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: #131c27;
+      text-decoration: none;
+      color: inherit;
+      transition: all 140ms ease;
+    }
+
+    .download-btn-card:hover {
+      border-color: rgba(61, 220, 151, 0.6);
+      background: #172433;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+    }
+
+    .download-btn-card--primary {
+      border-color: rgba(61, 220, 151, 0.5);
+      background: linear-gradient(135deg, rgba(61, 220, 151, 0.18), rgba(76, 201, 240, 0.12));
+    }
+
+    .download-btn-card--primary:hover {
+      background: linear-gradient(135deg, rgba(61, 220, 151, 0.28), rgba(76, 201, 240, 0.2));
+      border-color: var(--accent);
+    }
+
+    .dl-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .dl-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .dl-texts {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .dl-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #f1f6fc;
+    }
+
+    .dl-filename {
+      font-size: 11px;
+      color: var(--muted);
+      font-family: Consolas, monospace;
+    }
+
+    .dl-size {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent-2);
+      background: rgba(76, 201, 240, 0.1);
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-family: Consolas, monospace;
+    }
+
+    /* Release notes accordion */
+    details.release-notes-details {
+      background: rgba(7, 11, 16, 0.5);
+      border: 1px solid var(--border-soft);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 12px;
+      color: #bcd0e6;
+    }
+
+    details.release-notes-details summary {
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--accent-2);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    details.release-notes-details .notes-body {
+      margin-top: 10px;
+      line-height: 1.6;
+      border-top: 1px solid var(--border-soft);
+      padding-top: 10px;
+      max-height: 180px;
+      overflow-y: auto;
+      font-size: 12px;
+    }
+
+    /* SCREENSHOT CAROUSEL / TABS */
+    .gallery-section {
+      margin-top: 28px;
+      border-top: 1px solid var(--border-soft);
+      padding-top: 24px;
+    }
+
+    .gallery-nav {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 12px;
+      margin-bottom: 16px;
+    }
+
+    .gallery-nav::-webkit-scrollbar {
+      height: 4px;
+    }
+
+    .gallery-nav::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 999px;
+    }
+
+    .gallery-tab-btn {
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border-soft);
+      background: #0f1722;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 120ms ease;
+    }
+
+    .gallery-tab-btn:hover {
+      color: var(--text);
+      background: #15202d;
+    }
+
+    .gallery-tab-btn.active {
+      color: #04110b;
+      background: var(--accent);
+      border-color: var(--accent);
+      box-shadow: 0 4px 14px rgba(61, 220, 151, 0.3);
+    }
+
+    .gallery-stage {
+      position: relative;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: #05080c;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+      cursor: zoom-in;
+    }
+
+    .gallery-stage img {
+      width: 100%;
+      height: auto;
+      display: block;
+      transition: transform 300ms ease;
+    }
+
+    .gallery-stage:hover img {
+      transform: scale(1.01);
+    }
+
+    .gallery-caption {
+      padding: 10px 16px;
+      background: rgba(11, 16, 23, 0.95);
+      border-top: 1px solid var(--border-soft);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    /* PROJECTS GRID (rafihadi04.github.io tools) */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 24px;
+      margin-bottom: 60px;
+    }
+
+    @media (max-width: 480px) {
+      .projects-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .project-card {
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(18, 26, 35, 0.96), rgba(12, 18, 25, 0.94));
+      box-shadow: var(--shadow);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 20px;
+      position: relative;
+      transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+      overflow: hidden;
+    }
+
+    .project-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(61, 220, 151, 0.4);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 30px rgba(61, 220, 151, 0.1);
+    }
+
+    .card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .project-icon-box {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      background: #141f2d;
+      border: 1px solid var(--border);
+      color: var(--accent);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+    }
+
+    .project-icon-box--cyan {
+      color: var(--accent-2);
+      border-color: rgba(76, 201, 240, 0.3);
+      background: rgba(76, 201, 240, 0.08);
+    }
+
+    .project-icon-box--green {
+      color: var(--accent);
+      border-color: rgba(61, 220, 151, 0.3);
+      background: rgba(61, 220, 151, 0.08);
+    }
+
+    .card-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      justify-content: flex-end;
+    }
+
+    .project-body {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .project-title {
+      font-size: 19px;
+      font-weight: 700;
+      color: #f1f6fc;
+      line-height: 1.3;
+    }
+
+    .project-desc {
+      font-size: 13.5px;
+      color: #a7bccf;
+      line-height: 1.55;
+    }
+
+    .feature-bullets {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 4px;
+      padding-top: 10px;
+      border-top: 1px solid var(--border-soft);
+    }
+
+    .feature-bullet-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .bullet-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border-soft);
+    }
+
+    .card-file-label {
+      font-family: Consolas, monospace;
+      font-size: 11px;
+      color: #6c84a0;
+    }
+
+    /* MORE REPOS SECTION */
+    .more-repos-panel {
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(15, 22, 31, 0.95), rgba(11, 16, 23, 0.9));
+      padding: 28px;
+      margin-bottom: 50px;
+    }
+
+    .repos-compact-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+      margin-top: 18px;
+    }
+
+    .repo-compact-card {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: #0d141d;
+      padding: 16px;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: all 140ms ease;
+    }
+
+    .repo-compact-card:hover {
+      border-color: rgba(76, 201, 240, 0.5);
+      background: #111a26;
+      transform: translateY(-2px);
+    }
+
+    .repo-compact-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: #eaf1fa;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .repo-compact-desc {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    /* FOOTER */
+    .app-footer {
+      border-top: 1px solid var(--border-soft);
+      padding-top: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 18px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .footer-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .footer-links {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .footer-link {
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 120ms ease;
+    }
+
+    .footer-link:hover {
+      color: var(--accent);
+    }
+
+    /* MODAL: QRIS & LIGHTBOX */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(4, 7, 11, 0.85);
+      backdrop-filter: blur(8px);
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 200ms ease;
+    }
+
+    .modal-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-card {
+      width: min(480px, 100%);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: #111a24;
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.7);
+      padding: 24px;
+      position: relative;
+      transform: scale(0.96);
+      transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .modal-backdrop.open .modal-card {
+      transform: scale(1);
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .modal-header h3 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #f1f6fc;
+    }
+
+    .modal-close-btn {
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      padding: 4px;
+      font-size: 20px;
+      display: grid;
+      place-items: center;
+      border-radius: 6px;
+    }
+
+    .modal-close-btn:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .qris-image-box {
+      background: #ffffff;
+      border-radius: 14px;
+      padding: 16px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 16px;
+    }
+
+    .qris-image-box img {
+      max-width: 260px;
+      height: auto;
+      display: block;
+    }
+
+    /* Lightbox modal */
+    .lightbox-card {
+      width: min(1100px, 96vw);
+      max-height: 90vh;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: #090e15;
+      padding: 12px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .lightbox-card img {
+      width: 100%;
+      height: auto;
+      max-height: calc(85vh - 50px);
+      object-fit: contain;
+      border-radius: 8px;
+    }
+
+    /* Spinner */
+    .spin {
+      animation: rotate 1s linear infinite;
+    }
+
+    @keyframes rotate {
+      100% { transform: rotate(360deg); }
+    }
+  </style>
 </head>
-
 <body>
 
-    <!-- Header -->
-    <header class="app-header">
-        <div class="header-content">
-            <div class="logo-section">
-                <div class="logo-icon">🎨</div>
-                <div class="logo-text">
-                    <h1>Pixel Mapper LED</h1>
-                    <p>Professional LED Display Mapping Tool</p>
-                </div>
-            </div>
+  <div class="container">
 
-            <!-- Header Ad Slot (728x90 Leaderboard) - Desktop Only -->
-            <div class="ad-container desktop-ad" style="max-width: 728px; width: 100%;">
-                <!-- Google AdSense Leaderboard 728x90 -->
-                <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8076941697142270"
-                    data-ad-slot="9030229358" data-ad-format="auto" data-full-width-responsive="true"></ins>
-                <script>
-                    (adsbygoogle = window.adsbygoogle || []).push({});
-                </script>
-            </div>
+    <!-- NAVIGATION HEADER -->
+    <header class="app-header">
+      <a href="#" class="brand">
+        <div class="brand__mark">RH</div>
+        <div class="brand__text">
+          <h1>rafihadi04 <span class="tag tag--emerald" style="font-size: 10px; font-weight: 700;">PROD SUITE</span></h1>
+          <p>Stage Visuals, LED Mapping & Audio Engineering</p>
         </div>
+      </a>
+
+      <div class="header-nav">
+        <ul class="nav-links">
+          <li><a href="#featured" class="nav-link">Resolume Timer</a></li>
+          <li><a href="#tools" class="nav-link">Web Tools</a></li>
+          <li><a href="#ecosystem" class="nav-link">Repos</a></li>
+        </ul>
+
+        <div id="navStatusPill" class="health-pill health-pill--connected" title="Latest release status">
+          <div class="status-dot status-dot--connected"></div>
+          <span id="navStatusText">v1.0.1 Live</span>
+        </div>
+
+        <button type="button" class="button button--ghost button--sm" onclick="openQrisModal()">
+          ❤️ Support
+        </button>
+
+        <a href="https://github.com/rafihadi04" target="_blank" rel="noopener noreferrer" class="button button--ghost button--sm">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+          </svg>
+          GitHub
+        </a>
+      </div>
     </header>
 
-    <div class="main-container">
-        <!-- Mobile Interstitial Ad Placeholder (akan muncul setiap 5 detik page view di mobile) -->
-        <div id="mobileInterstitialAd" class="mobile-interstitial-ad">
-            <div class="interstitial-content">
-                <button class="close-interstitial" onclick="closeMobileAd()">✕</button>
-                <!-- Google AdSense Mobile Interstitial -->
-                <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8076941697142270"
-                    data-ad-slot="8838657665" data-ad-format="auto" data-full-width-responsive="true"></ins>
-                <script>
-                    (adsbygoogle = window.adsbygoogle || []).push({});
-                </script>
+
+    <!-- FEATURED HERO: RESOLUME TIMER OSC -->
+    <section id="featured" class="featured-hero">
+      <div class="hero-badge-row">
+        <div class="hero-pill">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+          </svg>
+          FEATURED DESKTOP APPLICATION
+        </div>
+        <div class="hero-tags">
+          <span class="tag tag--emerald">Resolume Arena 7.20 - 7.28+</span>
+          <span class="tag tag--cyan">Native NDI® 6 Video</span>
+          <span class="tag">REST API & OSC</span>
+          <span class="tag">Electron 30</span>
+          <span class="tag">Windows & macOS</span>
+        </div>
+      </div>
+
+      <div class="hero-main-grid">
+        <!-- Hero Text & Features -->
+        <div class="hero-content">
+          <h2>Resolume Arena <span>Application Timer</span></h2>
+          <p class="hero-lead">
+            An open-source, precision desktop show timer built specifically for live event visual operators (VJs), stage managers, church media directors, and broadcast technicians. Synchronizes countdowns, count-ups, and overtime tracking directly into Resolume Arena Text Blocks, streams transparent NDI 6 video feeds, and broadcasts web confidence monitors with remote mobile controls.
+          </p>
+
+          <div class="hero-features-list">
+            <div class="hero-feat-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              <div><strong>Precision Timer Modes:</strong> Countdown, Count-up, and Overtime (+00:02:15) with speed remapping (0.25x – 2.0x).</div>
             </div>
+            <div class="hero-feat-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 16.1A5 5 0 0 1 5.9 20M2 12.05A9 9 0 0 1 9.95 20M2 8V6a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-6"/><line x1="2" y1="20" x2="2.01" y2="20"/></svg>
+              <div><strong>Native NDI® 6 Output:</strong> Direct low-latency video feed for OBS, vMix, and switchers with 32-bit alpha transparency.</div>
+            </div>
+            <div class="hero-feat-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+              <div><strong>Web Confidence Monitor:</strong> Full-screen downstage output (`/output`) for speaker confidence screens on LAN.</div>
+            </div>
+            <div class="hero-feat-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+              <div><strong>Mobile Wi-Fi Remote:</strong> Scan QR code from any smartphone to control timers, speeds, and stage notes over local Wi-Fi.</div>
+            </div>
+            <div class="hero-feat-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+              <div><strong>Stage Attention Strobe:</strong> Full-screen high-impact alert flash overlay for urgent cues on stage.</div>
+            </div>
+            <div class="hero-feat-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              <div><strong>Zero Freezing Heartbeat:</strong> Background throttle bypass and sleep prevention ensures 0% timing drift.</div>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+            <a href="https://github.com/rafihadi04/resolume-timer-osc" target="_blank" rel="noopener noreferrer" class="button button--accent">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+              View GitHub Repository
+            </a>
+            <a href="https://github.com/rafihadi04/resolume-timer-osc/blob/main/docs/SETUP_GUIDE.md" target="_blank" rel="noopener noreferrer" class="button button--ghost">
+              📖 Step-by-Step Guide
+            </a>
+          </div>
         </div>
 
-        <div class="row g-3">
-            <!-- Main Content -->
-            <div class="col-12">
-                <!-- Controls Grid -->
-                <div class="row g-3 mb-3">
-                    <!-- Composition Card -->
-                    <div class="col-sm-6 col-lg-4 col-xl-3">
-                        <div class="control-card">
-                            <h5 class="card-title">Composition</h5>
-                            <div class="input-group-custom">
-                                <label class="input-label">Size (px):</label>
-                                <div class="input-row">
-                                    <input type="number" id="compositionWidthInput" class="form-control form-control-sm"
-                                        placeholder="W" value="3456">
-                                    <span class="input-separator">×</span>
-                                    <input type="number" id="compositionHeightInput"
-                                        class="form-control form-control-sm" placeholder="H" value="960">
-                                </div>
-                            </div>
-                            <button id="loadCompositionBtn" class="btn btn-primary w-100">Load Composition</button>
-                        </div>
-                    </div>
-
-                    <!-- Group Controls Card -->
-                    <div class="col-sm-6 col-lg-4 col-xl-3">
-                        <div class="control-card">
-                            <h5 class="card-title">Group Controls</h5>
-                            <div class="input-group-custom">
-                                <label class="input-label">Name:</label>
-                                <input type="text" id="groupNameInput" class="form-control form-control-sm"
-                                    placeholder="Group Name" style="flex: 1; min-width: 0;">
-                            </div>
-                            <div class="input-group-custom">
-                                <label class="input-label">Size (px):</label>
-                                <div class="input-row">
-                                    <input type="number" id="groupWidthInput" class="form-control form-control-sm"
-                                        placeholder="W">
-                                    <span class="input-separator">×</span>
-                                    <input type="number" id="groupHeightInput" class="form-control form-control-sm"
-                                        placeholder="H">
-                                </div>
-                            </div>
-                            <div class="input-group-custom">
-                                <label class="input-label">Position (px):</label>
-                                <div class="input-row">
-                                    <input type="number" id="groupXInput" class="form-control form-control-sm"
-                                        placeholder="X" value="0">
-                                    <span class="input-separator">,</span>
-                                    <input type="number" id="groupYInput" class="form-control form-control-sm"
-                                        placeholder="Y" value="0">
-                                </div>
-                            </div>
-                            <div class="input-group-custom">
-                                <label class="input-label">Color:</label>
-                                <input type="color" id="groupColorInput" class="form-control" value="#ff8800"
-                                    style="flex: 1; max-width: 120px; height: 40px;">
-                            </div>
-                            <button id="addGroupBtn" class="btn btn-success w-100">Add Group</button>
-                        </div>
-                    </div>
-
-                    <!-- Groups List Card -->
-                    <div class="col-sm-6 col-lg-4 col-xl-3">
-                        <div class="control-card">
-                            <h5 class="card-title">Groups</h5>
-                            <div id="groupList" style="max-height: 200px; overflow-y: auto; margin-bottom: 0.75rem;">
-                                <!-- Groups will be populated here -->
-                            </div>
-                            <div style="display: flex; gap: 0.5rem;">
-                                <button id="removeGroupBtn" class="btn btn-danger flex-fill" disabled>Remove</button>
-                                <button id="saveGroupBtn" class="btn btn-warning flex-fill" disabled>Save</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Global Settings Card -->
-                    <div class="col-sm-6 col-lg-4 col-xl-3">
-                        <div class="control-card">
-                            <h5 class="card-title">Global Settings</h5>
-                            <div class="form-check form-switch mb-2">
-                                <input class="form-check-input" type="checkbox" role="switch" id="snapToCenterToggle"
-                                    checked>
-                                <label class="form-check-label" for="snapToCenterToggle">Snap to Center</label>
-                            </div>
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" role="switch" id="snapToGroupToggle"
-                                    checked>
-                                <label class="form-check-label" for="snapToGroupToggle">Snap to Groups</label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Output Card -->
-                    <div class="col-sm-6 col-lg-4 col-xl-3">
-                        <div class="control-card">
-                            <h5 class="card-title">Output</h5>
-                            <div class="form-check form-switch mb-2">
-                                <input class="form-check-input" type="checkbox" role="switch" id="showTestPattern"
-                                    checked>
-                                <label class="form-check-label" for="showTestPattern">Show Test Pattern</label>
-                            </div>
-                            <div class="input-group-custom" style="margin-bottom: 0.5rem;">
-                                <label class="input-label">Cell Size:</label>
-                                <input type="number" id="testPatternCellSize" class="form-control form-control-sm"
-                                    value="48" style="flex: 1; max-width: 100px;">
-                            </div>
-                            <div class="form-check form-switch mb-2">
-                                <input class="form-check-input" type="checkbox" role="switch" id="showMainGuides">
-                                <label class="form-check-label" for="showMainGuides">Main Guides</label>
-                            </div>
-                            <div class="form-check form-switch mb-3">
-                                <input class="form-check-input" type="checkbox" role="switch" id="showGroupGuides"
-                                    checked>
-                                <label class="form-check-label" for="showGroupGuides">Group Guides</label>
-                            </div>
-                            <button id="exportPngBtn" class="btn btn-primary w-100">📥 Export PNG</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Canvas -->
-                <div id="canvas-container">
-                    <canvas id="previewCanvas"></canvas>
-                    <div id="zoom-controls">
-                        <button id="zoomOutBtn" title="Zoom Out">−</button>
-                        <span id="zoomLevel">100%</span>
-                        <button id="zoomInBtn" title="Zoom In">+</button>
-                    </div>
-                    <div
-                        style="position: absolute; top: 1rem; left: 1rem; background: rgba(0, 0, 0, 0.7); color: white; padding: 0.5rem 0.75rem; border-radius: 0.5rem; font-size: 0.75rem; backdrop-filter: blur(10px);">
-                        💡 <strong>Tips:</strong> Shift+Click & Drag untuk Pan Canvas • Double Click untuk Reset View •
-                        Mouse Wheel untuk Zoom
-                    </div>
-                </div>
+        <!-- Auto Update Checker & Downloads Column -->
+        <div class="update-checker-panel">
+          <div class="checker-top">
+            <div class="checker-title-wrap">
+              <h3>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" color="var(--accent)"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+                Release & Update Checker
+              </h3>
+              <span class="checker-subtitle">Real-time sync with GitHub Releases</span>
             </div>
+
+            <button type="button" id="btnManualCheck" class="button button--ghost button--sm" onclick="checkForUpdates(true)">
+              <svg id="refreshSpinner" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+              Check Now
+            </button>
+          </div>
+
+          <!-- Dynamic Status Card -->
+          <div class="version-display-card">
+            <div class="version-meta-row">
+              <span id="latestVersionTag" class="version-tag">v1.0.1</span>
+              <span id="releaseStatusBadge" class="checker-status-badge">
+                <span class="status-dot status-dot--connected"></span>
+                <span id="releaseStatusText">Latest Release Verified</span>
+              </span>
+            </div>
+            <div class="release-date" id="releaseDate">Published on October 31, 2026</div>
+            <div class="release-headline" id="releaseHeadline">
+              Release v1.0.1: Added in-app update checker, stage attention screen alerts, notes vibrant color flash, and draft-send control.
+            </div>
+          </div>
+
+          <!-- Version Comparison Helper -->
+          <div class="version-compare-box">
+            <span>Installed version:</span>
+            <input type="text" id="installedVerInput" placeholder="e.g. 1.0.0" value="1.0.0" />
+            <button type="button" class="button button--ghost button--sm" onclick="checkUserInstalledVersion()">Compare</button>
+          </div>
+          <div id="compareResult" class="compare-result"></div>
+
+          <!-- Direct Downloads List -->
+          <div class="download-actions" id="downloadActionsContainer">
+            <!-- Windows Installer (Primary) -->
+            <a id="btnDlWindows" href="https://github.com/rafihadi04/resolume-timer-osc/releases/download/v1.0.1/Resolume.Timer.1.0.1.exe" class="download-btn-card download-btn-card--primary">
+              <div class="dl-info">
+                <div class="dl-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.949-1.8"/>
+                  </svg>
+                </div>
+                <div class="dl-texts">
+                  <span class="dl-title">Download for Windows (.exe)</span>
+                  <span class="dl-filename" id="winFileName">Resolume.Timer.1.0.1.exe</span>
+                </div>
+              </div>
+              <span class="dl-size" id="winFileSize">74.6 MB</span>
+            </a>
+
+            <!-- macOS Apple Silicon DMG -->
+            <a id="btnDlMacDmg" href="https://github.com/rafihadi04/resolume-timer-osc/releases/download/v1.0.1/Resolume.Timer-1.0.1-arm64.dmg" class="download-btn-card">
+              <div class="dl-info">
+                <div class="dl-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.38c.62-.75 1.04-1.8 0.92-2.85-.9.04-2 .6-2.65 1.35-.58.66-1.09 1.73-.95 2.75 1.01.08 2.06-.5 2.68-1.25z"/>
+                  </svg>
+                </div>
+                <div class="dl-texts">
+                  <span class="dl-title">Download for macOS (.dmg)</span>
+                  <span class="dl-filename" id="macDmgFileName">Resolume.Timer-1.0.1-arm64.dmg</span>
+                </div>
+              </div>
+              <span class="dl-size" id="macDmgFileSize">111 MB</span>
+            </a>
+
+            <!-- macOS ZIP Package -->
+            <a id="btnDlMacZip" href="https://github.com/rafihadi04/resolume-timer-osc/releases/download/v1.0.1/Resolume.Timer-1.0.1-arm64-mac.zip" class="download-btn-card">
+              <div class="dl-info">
+                <div class="dl-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                </div>
+                <div class="dl-texts">
+                  <span class="dl-title">Download macOS Portable (.zip)</span>
+                  <span class="dl-filename" id="macZipFileName">Resolume.Timer-1.0.1-arm64-mac.zip</span>
+                </div>
+              </div>
+              <span class="dl-size" id="macZipFileSize">112 MB</span>
+            </a>
+          </div>
+
+          <!-- Expandable Changelog Accordion -->
+          <details class="release-notes-details" id="notesDetails">
+            <summary>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+              View Full Release Notes & Assets
+            </summary>
+            <div class="notes-body" id="releaseNotesContent">
+              <p><strong>v1.0.1 Changelog Highlights:</strong></p>
+              <ul style="padding-left: 18px; margin-top: 6px;">
+                <li>✨ Added in-app auto update checker with GitHub API integration.</li>
+                <li>⚡ Full-screen stage attention strobe flash alerts with configurable durations.</li>
+                <li>🎨 Vibrant notes color flashing pulse animation for urgent speaker alerts.</li>
+                <li>📝 Stage notes draft-and-send control (press Ctrl+Enter or click Send).</li>
+                <li>🍎 macOS Apple Silicon notarization & DMG setup instructions.</li>
+              </ul>
+            </div>
+          </details>
         </div>
-    </div>
+      </div>
 
-    <!-- Footer -->
-    <footer class="app-footer">
-        <div class="footer-content">
-            <div class="footer-links">
-                <a href="#about">About</a>
-                <a href="#features">Features</a>
-                <a href="#tutorial">Tutorial</a>
-                <a href="#contact">Contact</a>
-                <a href="#privacy">Privacy Policy</a>
-                <a href="#terms">Terms of Service</a>
+      <!-- Screenshot Tabs & Carousel Preview -->
+      <div class="gallery-section">
+        <div class="section-eyebrow">SCREENSHOTS & PREVIEW</div>
+        <div class="gallery-nav" id="galleryNav">
+          <button type="button" class="gallery-tab-btn active" onclick="switchScreenshot(0, this)">01 Desktop Dashboard</button>
+          <button type="button" class="gallery-tab-btn" onclick="switchScreenshot(1, this)">02 Resolume & NDI Setup</button>
+          <button type="button" class="gallery-tab-btn" onclick="switchScreenshot(2, this)">03 Web Confidence Monitor</button>
+          <button type="button" class="gallery-tab-btn" onclick="switchScreenshot(3, this)">04 Phone Remote Control</button>
+          <button type="button" class="gallery-tab-btn" onclick="switchScreenshot(4, this)">05 QR Remote Access</button>
+        </div>
+
+        <div class="gallery-stage" onclick="openLightbox()">
+          <img id="galleryImage" src="assets/resolume-timer/01-full-dashboard.png" alt="Resolume Arena Timer Desktop Dashboard" />
+          <div class="gallery-caption">
+            <span id="galleryCaptionText">Desktop Dashboard: High-visibility countdown timer with quick adjustments, live speed multiplier, notes draft, and preset manager.</span>
+            <span>🔍 Click to expand</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- WEB TOOLS SECTION (Inside rafihadi04.github.io) -->
+    <section id="tools">
+      <div class="section-header">
+        <div class="section-title-wrap">
+          <div class="section-eyebrow">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+            BROWSER-BASED UTILITIES
+          </div>
+          <h2 class="section-title">Interactive Web Tools</h2>
+          <p class="section-desc">Zero-installation web apps and production tools hosted right here on rafihadi04.github.io</p>
+        </div>
+      </div>
+
+      <div class="projects-grid">
+        <!-- 1. Pixel Mapper LED -->
+        <div class="project-card">
+          <div class="card-top">
+            <div class="project-icon-box project-icon-box--green">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+              </svg>
             </div>
-            <p class="footer-text">
-                © 2024 Pixel Mapper LED. Professional LED Display Mapping Tool.<br>
-                Made with ❤️ for the LED & Visual Production Community
+            <div class="card-badges">
+              <span class="tag tag--emerald">LED Matrix</span>
+              <span class="tag">Video Wall</span>
+            </div>
+          </div>
+
+          <div class="project-body">
+            <h3 class="project-title">Pixel Mapper LED</h3>
+            <p class="project-desc">
+              Professional web tool for mapping LED video wall panels, stage displays, and lighting matrices. Calculate total resolutions, configure cabinet grids, and export PNG templates for media servers.
             </p>
+            <ul class="feature-bullets">
+              <li class="feature-bullet-item"><span class="bullet-dot"></span> Custom cabinet dimension and pixel pitch calculators</li>
+              <li class="feature-bullet-item"><span class="bullet-dot"></span> Interactive drag & drop matrix canvas layout</li>
+              <li class="feature-bullet-item"><span class="bullet-dot"></span> One-click high-resolution PNG map export</li>
+            </ul>
+          </div>
+
+          <div class="card-footer">
+            <span class="card-file-label">pixel-mapper.html</span>
+            <a href="pixel-mapper.html" class="button button--primary button--sm">
+              Launch Tool →
+            </a>
+          </div>
         </div>
+
+        <!-- 2. LED Test Pattern Generator V2 -->
+        <div class="project-card">
+          <div class="card-top">
+            <div class="project-icon-box project-icon-box--cyan">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/><line x1="2" y1="10" x2="22" y2="10"/><line x1="12" y1="3" x2="12" y2="17"/>
+              </svg>
+            </div>
+            <div class="card-badges">
+              <span class="tag tag--cyan">Calibration</span>
+              <span class="tag">Broadcast</span>
+            </div>
+          </div>
+
+          <div class="project-body">
+            <h3 class="project-title">LED Screen Test Pattern Generator V2</h3>
+            <p class="project-desc">
+              Broadcast-grade test pattern and alignment generator for stage LED screens and video processors. Features resolution grids, grayscale ramps, pure color fields, and alignment crosshairs.
+            </p>
+            <ul class="feature-bullets">
+              <li class="feature-bullet-item"><span class="bullet-dot" style="background:var(--accent-2)"></span> Multi-resolution presets (HD, 4K, custom stage resolutions)</li>
+              <li class="feature-bullet-item"><span class="bullet-dot" style="background:var(--accent-2)"></span> RGBW solid color purity and dead-pixel checking</li>
+              <li class="feature-bullet-item"><span class="bullet-dot" style="background:var(--accent-2)"></span> Fullscreen output with keyboard shortcuts</li>
+            </ul>
+          </div>
+
+          <div class="card-footer">
+            <span class="card-file-label">mapper.html</span>
+            <a href="mapper.html" class="button button--accent button--sm">
+              Launch Tool →
+            </a>
+          </div>
+        </div>
+
+        <!-- 3. Live Phase Checker -->
+        <div class="project-card">
+          <div class="card-top">
+            <div class="project-icon-box project-icon-box--cyan">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/>
+              </svg>
+            </div>
+            <div class="card-badges">
+              <span class="tag tag--cyan">Audio DSP</span>
+              <span class="tag">Microphone</span>
+            </div>
+          </div>
+
+          <div class="project-body">
+            <h3 class="project-title">Live Acoustic Phase Checker</h3>
+            <p class="project-desc">
+              Real-time speaker polarity and acoustic phase analyzer using device microphone input. Accurately identifies positive (+) and reversed negative (−) audio polarity pulses with statistical counters.
+            </p>
+            <ul class="feature-bullets">
+              <li class="feature-bullet-item"><span class="bullet-dot" style="background:var(--accent-2)"></span> Real-time microphone audio DSP and waveform rendering</li>
+              <li class="feature-bullet-item"><span class="bullet-dot" style="background:var(--accent-2)"></span> Tuned frequency filtering (50 Hz, 60 Hz, 80 Hz, 100 Hz, 120 Hz)</li>
+              <li class="feature-bullet-item"><span class="bullet-dot" style="background:var(--accent-2)"></span> High-contrast visual flash for instant on-stage verification</li>
+            </ul>
+          </div>
+
+          <div class="card-footer">
+            <span class="card-file-label">phase.html</span>
+            <a href="phase.html" class="button button--accent button--sm">
+              Launch Tool →
+            </a>
+          </div>
+        </div>
+
+        <!-- 4. Phase Test Tone Generator -->
+        <div class="project-card">
+          <div class="card-top">
+            <div class="project-icon-box project-icon-box--green">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>
+              </svg>
+            </div>
+            <div class="card-badges">
+              <span class="tag tag--emerald">Tone Synth</span>
+              <span class="tag">Audio Signal</span>
+            </div>
+          </div>
+
+          <div class="project-body">
+            <h3 class="project-title">Phase Test Tone Generator</h3>
+            <p class="project-desc">
+              Acoustic polarity pulse and test frequency generator. Designed to pair with the Live Phase Checker across sound systems, subwoofers, and PA line-arrays to test polarity alignment.
+            </p>
+            <ul class="feature-bullets">
+              <li class="feature-bullet-item"><span class="bullet-dot"></span> Subwoofer and mid-frequency pulse generator (50–120 Hz)</li>
+              <li class="feature-bullet-item"><span class="bullet-dot"></span> Real-time HTML5 Canvas oscilloscope visualization</li>
+              <li class="feature-bullet-item"><span class="bullet-dot"></span> Shareable synchronized direct testing links</li>
+            </ul>
+          </div>
+
+          <div class="card-footer">
+            <span class="card-file-label">phase_gen.html</span>
+            <a href="phase_gen.html" class="button button--primary button--sm">
+              Launch Tool →
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- OPEN SOURCE ECOSYSTEM -->
+    <section id="ecosystem" class="more-repos-panel">
+      <div class="section-eyebrow">GITHUB ECOSYSTEM</div>
+      <h3 style="font-size: 18px; font-weight: 700; color: #f1f6fc; margin-top: 4px;">More Open-Source Projects by @rafihadi04</h3>
+
+      <div class="repos-compact-grid">
+        <a href="https://github.com/rafihadi04/resolume-timer-osc" target="_blank" rel="noopener noreferrer" class="repo-compact-card">
+          <div class="repo-compact-name">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+            resolume-timer-osc
+          </div>
+          <div class="repo-compact-desc">Desktop timer with Resolume Arena REST API, OSC routing, NDI 6, web confidence monitor, and mobile remote.</div>
+        </a>
+
+        <a href="https://github.com/rafihadi04/vdo.ninjaNDI" target="_blank" rel="noopener noreferrer" class="repo-compact-card">
+          <div class="repo-compact-name">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+            vdo.ninjaNDI
+          </div>
+          <div class="repo-compact-desc">Ultra low-latency VDO.Ninja to NDI video bridge for broadcast production pipelines.</div>
+        </a>
+
+        <a href="https://github.com/rafihadi04/testpattern" target="_blank" rel="noopener noreferrer" class="repo-compact-card">
+          <div class="repo-compact-name">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+            testpattern
+          </div>
+          <div class="repo-compact-desc">Display calibration and pixel test tools for video engineering and screen tests.</div>
+        </a>
+
+        <a href="https://github.com/rafihadi04/QrisMerchantID" target="_blank" rel="noopener noreferrer" class="repo-compact-card">
+          <div class="repo-compact-name">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+            QrisMerchantID
+          </div>
+          <div class="repo-compact-desc">Indonesian National QRIS payload generator, tag parser, and dynamic transaction builder.</div>
+        </a>
+      </div>
+    </section>
+
+
+    <!-- FOOTER -->
+    <footer class="app-footer">
+      <div class="footer-left">
+        <span>© 2026 Rafi Hadi (<a href="https://github.com/rafihadi04" target="_blank" rel="noopener noreferrer" style="color:var(--text); text-decoration:none;">@rafihadi04</a>)</span>
+        <span>•</span>
+        <span>Open Source MIT</span>
+      </div>
+
+      <div class="footer-links">
+        <a href="https://github.com/rafihadi04/rafihadi04.github.io" target="_blank" rel="noopener noreferrer" class="footer-link">Source Code</a>
+        <a href="https://github.com/rafihadi04/resolume-timer-osc/releases" target="_blank" rel="noopener noreferrer" class="footer-link">Releases</a>
+        <button type="button" class="button button--ghost button--sm" onclick="openQrisModal()">Donate QRIS</button>
+      </div>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Core Variables
-        const compositionWidthInput = document.getElementById('compositionWidthInput');
-        const compositionHeightInput = document.getElementById('compositionHeightInput');
-        const loadCompositionBtn = document.getElementById('loadCompositionBtn');
-        const groupNameInput = document.getElementById('groupNameInput');
-        const groupWidthInput = document.getElementById('groupWidthInput');
-        const groupHeightInput = document.getElementById('groupHeightInput');
-        const groupXInput = document.getElementById('groupXInput');
-        const groupYInput = document.getElementById('groupYInput');
-        const groupColorInput = document.getElementById('groupColorInput');
-        const addGroupBtn = document.getElementById('addGroupBtn');
-        const removeGroupBtn = document.getElementById('removeGroupBtn');
-        const saveGroupBtn = document.getElementById('saveGroupBtn');
-        const groupListDiv = document.getElementById('groupList');
-        const previewCanvas = document.getElementById('previewCanvas');
-        const ctx = previewCanvas.getContext('2d');
-        const exportPngBtn = document.getElementById('exportPngBtn');
-        const showTestPattern = document.getElementById('showTestPattern');
-        const showMainGuides = document.getElementById('showMainGuides');
-        const showGroupGuides = document.getElementById('showGroupGuides');
-        const testPatternCellSizeInput = document.getElementById('testPatternCellSize');
-        const snapToCenterToggle = document.getElementById('snapToCenterToggle');
-        const snapToGroupToggle = document.getElementById('snapToGroupToggle');
-        const zoomInBtn = document.getElementById('zoomInBtn');
-        const zoomOutBtn = document.getElementById('zoomOutBtn');
-        const zoomLevelSpan = document.getElementById('zoomLevel');
+  </div>
 
-        let composition = { width: 3456, height: 960 };
-        let groups = [];
-        let selectedGroup = null;
-        let isDragging = false;
-        let dragStart = { x: 0, y: 0 };
-        let groupStart = { x: 0, y: 0 };
-        let scale = 1.0;
 
-        // Pan/Move canvas variables
-        let isPanning = false;
-        let panStart = { x: 0, y: 0 };
-        let panOffset = { x: 0, y: 0 };
+  <!-- MODAL: QRIS DONATION -->
+  <div id="qrisModal" class="modal-backdrop" onclick="closeModalOnBackdrop(event)">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Support via QRIS</h3>
+        <button type="button" class="modal-close-btn" onclick="closeQrisModal()">✕</button>
+      </div>
+      <div class="qris-image-box">
+        <img src="assets/resolume-timer/donate-qris.png" alt="QRIS Donation Rafi Hadi" onerror="this.src='assets/resolume-timer/qris-donation.png'" />
+      </div>
+      <p style="font-size: 13px; color: var(--muted); text-align: center; line-height: 1.5;">
+        Scan with BCA, GoPay, OVO, Dana, ShopeePay, or any mobile banking app supporting QRIS to support ongoing development of open-source tools!
+      </p>
+    </div>
+  </div>
 
-        const s = (val) => val * scale;
-        const SNAP_THRESHOLD = 10;
 
-        function autoScale() {
-            const container = document.getElementById('canvas-container');
-            const containerWidth = container.clientWidth - 40;
-            const containerHeight = container.clientHeight - 40;
+  <!-- MODAL: LIGHTBOX IMAGE VIEWER -->
+  <div id="lightboxModal" class="modal-backdrop" onclick="closeModalOnBackdrop(event)">
+    <div class="lightbox-card">
+      <div style="display:flex; justify-content:space-between; align-items:center; padding: 4px 10px 10px;">
+        <span id="lightboxCaption" style="font-size:13px; color:#bcd0e6; font-weight:600;">Screenshot</span>
+        <button type="button" class="modal-close-btn" onclick="closeLightbox()">✕</button>
+      </div>
+      <img id="lightboxImg" src="" alt="Screenshot Full View" />
+    </div>
+  </div>
 
-            const scaleX = containerWidth / composition.width;
-            const scaleY = containerHeight / composition.height;
-            scale = Math.min(scaleX, scaleY, 1.0);
 
-            previewCanvas.width = containerWidth + 40;
-            previewCanvas.height = containerHeight + 40;
+  <!-- SCRIPT: AUTO UPDATE CHECKER & GALLERY -->
+  <script>
+    // Configuration
+    const GITHUB_REPO = 'rafihadi04/resolume-timer-osc';
+    const GITHUB_API_URL = `https://api.github.com/repos/${GITHUB_REPO}/releases/latest`;
+    const STORAGE_KEY = 'resolume_timer_release_cache';
+    const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes cache
 
-            // Reset pan offset when auto-scaling
-            panOffset = { x: 0, y: 0 };
+    // Gallery Slides
+    const GALLERY_ITEMS = [
+      {
+        src: 'assets/resolume-timer/01-full-dashboard.png',
+        title: 'Desktop Dashboard',
+        caption: 'High-visibility countdown timer with quick adjustments (+1m, +5m), live speed multiplier, notes draft, and preset manager.'
+      },
+      {
+        src: 'assets/resolume-timer/02-resolume-ndi-panel.png',
+        title: 'Resolume & NDI Setup',
+        caption: 'One-click composition target scanner for Resolume Arena Text Blocks, plus 30/60 FPS NDI video broadcasting with alpha transparency.'
+      },
+      {
+        src: 'assets/resolume-timer/04-web-confidence-monitor.png',
+        title: 'Web Confidence Monitor',
+        caption: 'Downstage presenter monitor (/output) with clean high-contrast timer display, speaker cues, and transparent OBS browser overlay support.'
+      },
+      {
+        src: 'assets/resolume-timer/05-phone-remote.png',
+        title: 'Phone Remote Control',
+        caption: 'Touch-friendly mobile controller over local Wi-Fi with start/pause, base duration adjustments, playback speed toggle, and live notes editor.'
+      },
+      {
+        src: 'assets/resolume-timer/03-remote-access-modal.png',
+        title: 'QR Remote Access',
+        caption: 'Instant Wi-Fi QR code sharing modal allows crew members to connect instantly without installing apps.'
+      }
+    ];
 
-            zoomLevelSpan.textContent = `${Math.round(scale * 100)}%`;
-            draw();
+    let currentGalleryIndex = 0;
+
+    function switchScreenshot(index, btnElement) {
+      currentGalleryIndex = index;
+      const item = GALLERY_ITEMS[index];
+      const img = document.getElementById('galleryImage');
+      const caption = document.getElementById('galleryCaptionText');
+      
+      img.style.opacity = '0.4';
+      setTimeout(() => {
+        img.src = item.src;
+        img.style.opacity = '1';
+        caption.innerText = `${item.title}: ${item.caption}`;
+      }, 100);
+
+      // Update active button state
+      const buttons = document.querySelectorAll('.gallery-tab-btn');
+      buttons.forEach(btn => btn.classList.remove('active'));
+      if (btnElement) btnElement.classList.add('active');
+    }
+
+    function openLightbox() {
+      const item = GALLERY_ITEMS[currentGalleryIndex];
+      const modal = document.getElementById('lightboxModal');
+      const img = document.getElementById('lightboxImg');
+      const caption = document.getElementById('lightboxCaption');
+      
+      img.src = item.src;
+      caption.innerText = item.title;
+      modal.classList.add('open');
+    }
+
+    function closeLightbox() {
+      document.getElementById('lightboxModal').classList.remove('open');
+    }
+
+    function openQrisModal() {
+      document.getElementById('qrisModal').classList.add('open');
+    }
+
+    function closeQrisModal() {
+      document.getElementById('qrisModal').classList.remove('open');
+    }
+
+    function closeModalOnBackdrop(event) {
+      if (event.target.classList.contains('modal-backdrop')) {
+        event.target.classList.remove('open');
+      }
+    }
+
+    // Helper: format bytes into MB
+    function formatBytes(bytes) {
+      if (!bytes || bytes === 0) return '';
+      return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+    }
+
+    // Helper: format ISO date to readable string
+    function formatDate(isoString) {
+      try {
+        const d = new Date(isoString);
+        return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+      } catch (e) {
+        return isoString;
+      }
+    }
+
+    // Semver comparison: return 1 if vA > vB, -1 if vA < vB, 0 if equal
+    function compareSemver(vA, vB) {
+      const cleanA = (vA || '').replace(/^v/i, '').split('.').map(n => parseInt(n, 10) || 0);
+      const cleanB = (vB || '').replace(/^v/i, '').split('.').map(n => parseInt(n, 10) || 0);
+      
+      for (let i = 0; i < Math.max(cleanA.length, cleanB.length); i++) {
+        const a = cleanA[i] || 0;
+        const b = cleanB[i] || 0;
+        if (a > b) return 1;
+        if (a < b) return -1;
+      }
+      return 0;
+    }
+
+    // Update the DOM with release data
+    function applyReleaseData(release) {
+      if (!release) return;
+
+      const tag = release.tag_name || 'v1.0.1';
+      document.getElementById('latestVersionTag').innerText = tag;
+      document.getElementById('navStatusText').innerText = `${tag} Live`;
+
+      if (release.published_at) {
+        document.getElementById('releaseDate').innerText = `Published on ${formatDate(release.published_at)}`;
+      }
+
+      if (release.name) {
+        document.getElementById('releaseHeadline').innerText = `${release.name}: Official binary build with automatic updater support.`;
+      }
+
+      if (release.body) {
+        const rendered = release.body
+          .replace(/### (.*)/g, '<strong style="color:var(--text);display:block;margin-top:8px;">$1</strong>')
+          .replace(/## (.*)/g, '<strong style="color:var(--accent);display:block;margin-top:10px;">$1</strong>')
+          .replace(/\* (.*)/g, '<li style="margin-left:14px;">$1</li>')
+          .replace(/- (.*)/g, '<li style="margin-left:14px;">$1</li>')
+          .replace(/`([^`]+)`/g, '<code style="background:#1b2634;padding:2px 5px;border-radius:4px;color:var(--accent);font-family:Consolas,monospace;">$1</code>');
+        document.getElementById('releaseNotesContent').innerHTML = rendered;
+      }
+
+      // Parse assets
+      const assets = release.assets || [];
+      const winAsset = assets.find(a => a.name.endsWith('.exe'));
+      const macDmgAsset = assets.find(a => a.name.endsWith('.dmg'));
+      const macZipAsset = assets.find(a => a.name.endsWith('.zip') && a.name.includes('mac'));
+
+      if (winAsset) {
+        const winBtn = document.getElementById('btnDlWindows');
+        winBtn.href = winAsset.browser_download_url;
+        document.getElementById('winFileName').innerText = winAsset.name;
+        document.getElementById('winFileSize').innerText = formatBytes(winAsset.size);
+      }
+
+      if (macDmgAsset) {
+        const macDmgBtn = document.getElementById('btnDlMacDmg');
+        macDmgBtn.href = macDmgAsset.browser_download_url;
+        document.getElementById('macDmgFileName').innerText = macDmgAsset.name;
+        document.getElementById('macDmgFileSize').innerText = formatBytes(macDmgAsset.size);
+      }
+
+      if (macZipAsset) {
+        const macZipBtn = document.getElementById('btnDlMacZip');
+        macZipBtn.href = macZipAsset.browser_download_url;
+        document.getElementById('macZipFileName').innerText = macZipAsset.name;
+        document.getElementById('macZipFileSize').innerText = formatBytes(macZipAsset.size);
+      }
+
+      // Check current user comparison
+      checkUserInstalledVersion();
+    }
+
+    // Main Update Checker Routine
+    async function checkForUpdates(forceRefresh = false) {
+      const spinner = document.getElementById('refreshSpinner');
+      const badge = document.getElementById('releaseStatusBadge');
+      const statusText = document.getElementById('releaseStatusText');
+      const navStatus = document.getElementById('navStatusPill');
+
+      spinner.classList.add('spin');
+      badge.className = 'checker-status-badge';
+      badge.innerHTML = '<span class="status-dot status-dot--checking"></span><span>Checking GitHub...</span>';
+
+      // Check sessionStorage cache first if not force refresh
+      if (!forceRefresh) {
+        try {
+          const cached = sessionStorage.getItem(STORAGE_KEY);
+          if (cached) {
+            const parsed = JSON.parse(cached);
+            if (Date.now() - parsed.timestamp < CACHE_TTL_MS) {
+              spinner.classList.remove('spin');
+              badge.innerHTML = '<span class="status-dot status-dot--connected"></span><span>Up to date (Cached)</span>';
+              applyReleaseData(parsed.data);
+              return;
+            }
+          }
+        } catch (e) {
+          console.warn('Cache read error:', e);
+        }
+      }
+
+      try {
+        const res = await fetch(GITHUB_API_URL, {
+          headers: {
+            'Accept': 'application/vnd.github.v3+json'
+          }
+        });
+
+        if (!res.ok) {
+          throw new Error(`GitHub API returned status ${res.status}`);
         }
 
-        function draw() {
-            ctx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
-
-            const offsetX = (previewCanvas.width - s(composition.width)) / 2 + panOffset.x;
-            const offsetY = (previewCanvas.height - s(composition.height)) / 2 + panOffset.y;
-
-            ctx.save();
-            ctx.translate(offsetX, offsetY);
-
-            // Draw composition background
-            ctx.fillStyle = '#1e293b';
-            ctx.fillRect(0, 0, s(composition.width), s(composition.height));
-
-            // Draw test pattern
-            if (showTestPattern.checked) {
-                const cellSize = parseInt(testPatternCellSizeInput.value) || 48;
-                ctx.strokeStyle = 'rgba(100, 116, 139, 0.3)';
-                ctx.lineWidth = 1;
-
-                for (let x = 0; x <= composition.width; x += cellSize) {
-                    ctx.beginPath();
-                    ctx.moveTo(s(x), 0);
-                    ctx.lineTo(s(x), s(composition.height));
-                    ctx.stroke();
-                }
-
-                for (let y = 0; y <= composition.height; y += cellSize) {
-                    ctx.beginPath();
-                    ctx.moveTo(0, s(y));
-                    ctx.lineTo(s(composition.width), s(y));
-                    ctx.stroke();
-                }
-            }
-
-            // Draw main guides
-            if (showMainGuides.checked) {
-                ctx.strokeStyle = 'rgba(239, 68, 68, 0.5)';
-                ctx.lineWidth = 2;
-                ctx.setLineDash([5, 5]);
-
-                // Center vertical
-                ctx.beginPath();
-                ctx.moveTo(s(composition.width / 2), 0);
-                ctx.lineTo(s(composition.width / 2), s(composition.height));
-                ctx.stroke();
-
-                // Center horizontal
-                ctx.beginPath();
-                ctx.moveTo(0, s(composition.height / 2));
-                ctx.lineTo(s(composition.width), s(composition.height / 2));
-                ctx.stroke();
-
-                ctx.setLineDash([]);
-            }
-
-            // Draw groups
-            groups.forEach((group, index) => {
-                const isSelected = selectedGroup === group;
-
-                ctx.fillStyle = group.color;
-                ctx.globalAlpha = isSelected ? 0.8 : 0.6;
-                ctx.fillRect(s(group.x), s(group.y), s(group.width), s(group.height));
-                ctx.globalAlpha = 1;
-
-                ctx.strokeStyle = isSelected ? '#fff' : 'rgba(255, 255, 255, 0.5)';
-                ctx.lineWidth = isSelected ? 3 : 2;
-                ctx.strokeRect(s(group.x), s(group.y), s(group.width), s(group.height));
-
-                // Draw group guides
-                if (showGroupGuides.checked) {
-                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
-                    ctx.lineWidth = 1;
-                    ctx.setLineDash([3, 3]);
-
-                    // Vertical center
-                    ctx.beginPath();
-                    ctx.moveTo(s(group.x + group.width / 2), 0);
-                    ctx.lineTo(s(group.x + group.width / 2), s(composition.height));
-                    ctx.stroke();
-
-                    // Horizontal center
-                    ctx.beginPath();
-                    ctx.moveTo(0, s(group.y + group.height / 2));
-                    ctx.lineTo(s(composition.width), s(group.y + group.height / 2));
-                    ctx.stroke();
-
-                    ctx.setLineDash([]);
-                }
-
-                // Draw label with better sizing
-                ctx.fillStyle = '#fff';
-                const fontSize = Math.max(14, s(18));
-                ctx.font = `bold ${fontSize}px Inter`;
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText(group.name, s(group.x + group.width / 2), s(group.y + group.height / 2));
-
-                // Draw dimensions
-                ctx.font = `${Math.max(11, s(14))}px Inter`;
-                ctx.fillText(`${group.width}×${group.height}`, s(group.x + group.width / 2), s(group.y + group.height / 2) + fontSize + 5);
-            });
-
-            ctx.restore();
-        }
-
-        function getSnapPosition(x, y, group) {
-            let snapX = x;
-            let snapY = y;
-
-            if (snapToCenterToggle.checked) {
-                const centerX = (composition.width - group.width) / 2;
-                const centerY = (composition.height - group.height) / 2;
-
-                if (Math.abs(x - centerX) < SNAP_THRESHOLD) snapX = centerX;
-                if (Math.abs(y - centerY) < SNAP_THRESHOLD) snapY = centerY;
-            }
-
-            if (snapToGroupToggle.checked) {
-                groups.forEach(otherGroup => {
-                    if (otherGroup === group) return;
-
-                    // Snap to edges
-                    if (Math.abs(x - otherGroup.x) < SNAP_THRESHOLD) snapX = otherGroup.x;
-                    if (Math.abs(x + group.width - otherGroup.x) < SNAP_THRESHOLD) snapX = otherGroup.x - group.width;
-                    if (Math.abs(x - (otherGroup.x + otherGroup.width)) < SNAP_THRESHOLD) snapX = otherGroup.x + otherGroup.width;
-                    if (Math.abs(x + group.width - (otherGroup.x + otherGroup.width)) < SNAP_THRESHOLD) snapX = otherGroup.x + otherGroup.width - group.width;
-
-                    if (Math.abs(y - otherGroup.y) < SNAP_THRESHOLD) snapY = otherGroup.y;
-                    if (Math.abs(y + group.height - otherGroup.y) < SNAP_THRESHOLD) snapY = otherGroup.y - group.height;
-                    if (Math.abs(y - (otherGroup.y + otherGroup.height)) < SNAP_THRESHOLD) snapY = otherGroup.y + otherGroup.height;
-                    if (Math.abs(y + group.height - (otherGroup.y + otherGroup.height)) < SNAP_THRESHOLD) snapY = otherGroup.y + otherGroup.height - group.height;
-                });
-            }
-
-            return { x: snapX, y: snapY };
-        }
-
-        function selectGroup(index) {
-            if (index !== null && index >= 0 && index < groups.length) {
-                selectedGroup = groups[index];
-                groupNameInput.value = selectedGroup.name;
-                groupWidthInput.value = selectedGroup.width;
-                groupHeightInput.value = selectedGroup.height;
-                groupXInput.value = selectedGroup.x;
-                groupYInput.value = selectedGroup.y;
-                groupColorInput.value = selectedGroup.color;
-                removeGroupBtn.disabled = false;
-                saveGroupBtn.disabled = false;
-            } else {
-                selectedGroup = null;
-                groupNameInput.value = '';
-                groupWidthInput.value = '';
-                groupHeightInput.value = '';
-                groupXInput.value = '0';
-                groupYInput.value = '0';
-                groupColorInput.value = '#ff8800';
-                removeGroupBtn.disabled = true;
-                saveGroupBtn.disabled = true;
-            }
-            populateGroupList();
-        }
-
-        function populateGroupList() {
-            groupListDiv.innerHTML = '';
-            groups.forEach((group, index) => {
-                const div = document.createElement('div');
-                div.className = 'group-item' + (selectedGroup === group ? ' active' : '');
-                div.innerHTML = `
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <span style="font-weight: 600;">${group.name}</span>
-                    <span class="badge">${group.width}×${group.height}</span>
-                </div>
-                <div style="font-size: 0.75rem; opacity: 0.8; margin-top: 0.25rem;">
-                    Position: ${group.x}, ${group.y}
-                </div>
-            `;
-                div.addEventListener('click', () => selectGroup(index));
-                groupListDiv.appendChild(div);
-            });
-        }
-
-        function exportPng() {
-            const exportCanvas = document.createElement('canvas');
-            exportCanvas.width = composition.width;
-            exportCanvas.height = composition.height;
-            const exportCtx = exportCanvas.getContext('2d');
-
-            // Background
-            exportCtx.fillStyle = '#1e293b';
-            exportCtx.fillRect(0, 0, composition.width, composition.height);
-
-            // Draw test pattern if enabled
-            if (showTestPattern.checked) {
-                const cellSize = parseInt(testPatternCellSizeInput.value) || 48;
-                exportCtx.strokeStyle = 'rgba(100, 116, 139, 0.3)';
-                exportCtx.lineWidth = 1;
-
-                for (let x = 0; x <= composition.width; x += cellSize) {
-                    exportCtx.beginPath();
-                    exportCtx.moveTo(x, 0);
-                    exportCtx.lineTo(x, composition.height);
-                    exportCtx.stroke();
-                }
-
-                for (let y = 0; y <= composition.height; y += cellSize) {
-                    exportCtx.beginPath();
-                    exportCtx.moveTo(0, y);
-                    exportCtx.lineTo(composition.width, y);
-                    exportCtx.stroke();
-                }
-            }
-
-            // Draw main guides if enabled
-            if (showMainGuides.checked) {
-                exportCtx.strokeStyle = 'rgba(239, 68, 68, 0.5)';
-                exportCtx.lineWidth = 2;
-                exportCtx.setLineDash([5, 5]);
-
-                // Center vertical
-                exportCtx.beginPath();
-                exportCtx.moveTo(composition.width / 2, 0);
-                exportCtx.lineTo(composition.width / 2, composition.height);
-                exportCtx.stroke();
-
-                // Center horizontal
-                exportCtx.beginPath();
-                exportCtx.moveTo(0, composition.height / 2);
-                exportCtx.lineTo(composition.width, composition.height / 2);
-                exportCtx.stroke();
-
-                exportCtx.setLineDash([]);
-            }
-
-            // Draw groups
-            groups.forEach(group => {
-                // Fill
-                exportCtx.fillStyle = group.color;
-                exportCtx.globalAlpha = 0.6;
-                exportCtx.fillRect(group.x, group.y, group.width, group.height);
-                exportCtx.globalAlpha = 1;
-
-                // Border
-                exportCtx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
-                exportCtx.lineWidth = 2;
-                exportCtx.strokeRect(group.x, group.y, group.width, group.height);
-
-                // Draw group guides if enabled
-                if (showGroupGuides.checked) {
-                    exportCtx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
-                    exportCtx.lineWidth = 1;
-                    exportCtx.setLineDash([3, 3]);
-
-                    // Vertical center
-                    exportCtx.beginPath();
-                    exportCtx.moveTo(group.x + group.width / 2, 0);
-                    exportCtx.lineTo(group.x + group.width / 2, composition.height);
-                    exportCtx.stroke();
-
-                    // Horizontal center
-                    exportCtx.beginPath();
-                    exportCtx.moveTo(0, group.y + group.height / 2);
-                    exportCtx.lineTo(composition.width, group.y + group.height / 2);
-                    exportCtx.stroke();
-
-                    exportCtx.setLineDash([]);
-                }
-
-                // Calculate text size
-                const centerX = group.x + group.width / 2;
-                const centerY = group.y + group.height / 2;
-                const nameFontSize = Math.max(24, group.height / 15);
-                const dimFontSize = Math.max(18, group.height / 20);
-
-                // Measure text for box
-                exportCtx.font = `bold ${nameFontSize}px Inter`;
-                const nameMetrics = exportCtx.measureText(group.name);
-                exportCtx.font = `${dimFontSize}px Inter`;
-                const dimText = `${group.width}×${group.height}`;
-                const dimMetrics = exportCtx.measureText(dimText);
-
-                const maxWidth = Math.max(nameMetrics.width, dimMetrics.width);
-                const boxPadding = 12;
-                const boxWidth = maxWidth + boxPadding * 2;
-                const boxHeight = nameFontSize + dimFontSize + boxPadding * 2 + 8;
-
-                // Draw semi-transparent box
-                exportCtx.fillStyle = 'rgba(0, 0, 0, 0.6)';
-                exportCtx.fillRect(
-                    centerX - boxWidth / 2,
-                    centerY - boxHeight / 2,
-                    boxWidth,
-                    boxHeight
-                );
-
-                // Draw box border
-                exportCtx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
-                exportCtx.lineWidth = 1;
-                exportCtx.strokeRect(
-                    centerX - boxWidth / 2,
-                    centerY - boxHeight / 2,
-                    boxWidth,
-                    boxHeight
-                );
-
-                // Draw group name
-                exportCtx.fillStyle = '#fff';
-                exportCtx.font = `bold ${nameFontSize}px Inter`;
-                exportCtx.textAlign = 'center';
-                exportCtx.textBaseline = 'middle';
-                exportCtx.fillText(group.name, centerX, centerY - dimFontSize / 2 - 4);
-
-                // Draw dimensions
-                exportCtx.font = `${dimFontSize}px Inter`;
-                exportCtx.fillText(dimText, centerX, centerY + nameFontSize / 2 + 4);
-            });
-
-            const link = document.createElement('a');
-            link.download = `pixel-mapper-${composition.width}x${composition.height}.png`;
-            link.href = exportCanvas.toDataURL('image/png');
-            link.click();
-        }
-
-        // Event Listeners
-        loadCompositionBtn.addEventListener('click', () => {
-            const width = parseInt(compositionWidthInput.value);
-            const height = parseInt(compositionHeightInput.value);
-            if (width > 0 && height > 0) {
-                composition = { width, height };
-                autoScale();
-            }
-        });
-
-        addGroupBtn.addEventListener('click', () => {
-            const name = groupNameInput.value || `Group ${groups.length + 1}`;
-            const width = parseInt(groupWidthInput.value) || 100;
-            const height = parseInt(groupHeightInput.value) || 100;
-            const x = parseInt(groupXInput.value) || 0;
-            const y = parseInt(groupYInput.value) || 0;
-            const color = groupColorInput.value;
-
-            groups.push({ name, width, height, x, y, color });
-            populateGroupList();
-            draw();
-        });
-
-        saveGroupBtn.addEventListener('click', () => {
-            if (selectedGroup) {
-                selectedGroup.name = groupNameInput.value;
-                selectedGroup.width = parseInt(groupWidthInput.value) || selectedGroup.width;
-                selectedGroup.height = parseInt(groupHeightInput.value) || selectedGroup.height;
-                selectedGroup.x = parseInt(groupXInput.value) || selectedGroup.x;
-                selectedGroup.y = parseInt(groupYInput.value) || selectedGroup.y;
-                selectedGroup.color = groupColorInput.value;
-                populateGroupList();
-                draw();
-            }
-        });
-
-        removeGroupBtn.addEventListener('click', () => {
-            if (selectedGroup) {
-                const index = groups.indexOf(selectedGroup);
-                if (index > -1) {
-                    groups.splice(index, 1);
-                    selectGroup(null);
-                    populateGroupList();
-                    draw();
-                }
-            }
-        });
-
-        previewCanvas.addEventListener('mousedown', (e) => {
-            const rect = previewCanvas.getBoundingClientRect();
-            const offsetX = (previewCanvas.width - s(composition.width)) / 2 + panOffset.x;
-            const offsetY = (previewCanvas.height - s(composition.height)) / 2 + panOffset.y;
-            const mouseX = (e.clientX - rect.left - offsetX) / scale;
-            const mouseY = (e.clientY - rect.top - offsetY) / scale;
-
-            // Middle click or space+click for panning
-            if (e.button === 1 || (e.button === 0 && e.shiftKey)) {
-                isPanning = true;
-                panStart = { x: e.clientX - panOffset.x, y: e.clientY - panOffset.y };
-                previewCanvas.style.cursor = 'grabbing';
-                e.preventDefault();
-                return;
-            }
-
-            let foundIndex = null;
-            for (let i = groups.length - 1; i >= 0; i--) {
-                const group = groups[i];
-                if (mouseX >= group.x && mouseX <= group.x + group.width &&
-                    mouseY >= group.y && mouseY <= group.y + group.height) {
-                    foundIndex = i;
-                    break;
-                }
-            }
-
-            if (foundIndex !== null) {
-                selectGroup(foundIndex);
-                isDragging = true;
-                dragStart = { x: e.clientX, y: e.clientY };
-                groupStart = { x: selectedGroup.x, y: selectedGroup.y };
-                draw();
-            } else {
-                selectGroup(null);
-            }
-        });
-
-        previewCanvas.addEventListener('mousemove', (e) => {
-            if (isPanning) {
-                panOffset.x = e.clientX - panStart.x;
-                panOffset.y = e.clientY - panStart.y;
-                draw();
-                return;
-            }
-
-            if (isDragging && selectedGroup) {
-                const deltaX = (e.clientX - dragStart.x) / scale;
-                const deltaY = (e.clientY - dragStart.y) / scale;
-                const newX = groupStart.x + deltaX;
-                const newY = groupStart.y + deltaY;
-                const snapPos = getSnapPosition(newX, newY, selectedGroup);
-
-                selectedGroup.x = snapPos.x;
-                selectedGroup.y = snapPos.y;
-                groupXInput.value = Math.round(selectedGroup.x);
-                groupYInput.value = Math.round(selectedGroup.y);
-                draw();
-            }
-        });
-
-        previewCanvas.addEventListener('mouseup', () => {
-            if (isPanning) {
-                isPanning = false;
-                previewCanvas.style.cursor = 'grab';
-            }
-
-            isDragging = false;
-            if (selectedGroup) {
-                selectedGroup.x = Math.round(selectedGroup.x);
-                selectedGroup.y = Math.round(selectedGroup.y);
-                groupXInput.value = selectedGroup.x;
-                groupYInput.value = selectedGroup.y;
-                draw();
-            }
-        });
-
-        // Touch Events
-        previewCanvas.addEventListener('touchstart', (e) => {
-            const touch = e.touches[0];
-            const rect = previewCanvas.getBoundingClientRect();
-            const offsetX = (previewCanvas.width - s(composition.width)) / 2 + panOffset.x;
-            const offsetY = (previewCanvas.height - s(composition.height)) / 2 + panOffset.y;
-            const mouseX = (touch.clientX - rect.left - offsetX) / scale;
-            const mouseY = (touch.clientY - rect.top - offsetY) / scale;
-
-            let foundIndex = null;
-            for (let i = groups.length - 1; i >= 0; i--) {
-                const group = groups[i];
-                if (mouseX >= group.x && mouseX <= group.x + group.width &&
-                    mouseY >= group.y && mouseY <= group.y + group.height) {
-                    foundIndex = i;
-                    break;
-                }
-            }
-
-            if (foundIndex !== null) {
-                selectGroup(foundIndex);
-                isDragging = true;
-                dragStart = { x: touch.clientX, y: touch.clientY };
-                groupStart = { x: selectedGroup.x, y: selectedGroup.y };
-                draw();
-                e.preventDefault();
-            } else {
-                selectGroup(null);
-            }
-        });
-
-        previewCanvas.addEventListener('touchmove', (e) => {
-            if (isDragging && selectedGroup) {
-                const touch = e.touches[0];
-                const deltaX = (touch.clientX - dragStart.x) / scale;
-                const deltaY = (touch.clientY - dragStart.y) / scale;
-                const newX = groupStart.x + deltaX;
-                const newY = groupStart.y + deltaY;
-                const snapPos = getSnapPosition(newX, newY, selectedGroup);
-
-                selectedGroup.x = snapPos.x;
-                selectedGroup.y = snapPos.y;
-                groupXInput.value = Math.round(selectedGroup.x);
-                groupYInput.value = Math.round(selectedGroup.y);
-                draw();
-                e.preventDefault();
-            }
-        });
-
-        previewCanvas.addEventListener('touchend', () => {
-            isDragging = false;
-            if (selectedGroup) {
-                selectedGroup.x = Math.round(selectedGroup.x);
-                selectedGroup.y = Math.round(selectedGroup.y);
-                groupXInput.value = selectedGroup.x;
-                groupYInput.value = selectedGroup.y;
-                draw();
-            }
-        });
-
-        exportPngBtn.addEventListener('click', exportPng);
-
-        zoomInBtn.addEventListener('click', () => {
-            scale = Math.min(2.0, scale + 0.1);
-            zoomLevelSpan.textContent = `${Math.round(scale * 100)}%`;
-            draw();
-        });
-
-        zoomOutBtn.addEventListener('click', () => {
-            scale = Math.max(0.1, scale - 0.1);
-            zoomLevelSpan.textContent = `${Math.round(scale * 100)}%`;
-            draw();
-        });
-
-        // Mouse wheel zoom
-        previewCanvas.addEventListener('wheel', (e) => {
-            e.preventDefault();
-            const delta = e.deltaY > 0 ? -0.05 : 0.05;
-            scale = Math.max(0.1, Math.min(2.0, scale + delta));
-            zoomLevelSpan.textContent = `${Math.round(scale * 100)}%`;
-            draw();
-        });
-
-        // Reset view with double click
-        previewCanvas.addEventListener('dblclick', () => {
-            panOffset = { x: 0, y: 0 };
-            autoScale();
-        });
-
-        groupNameInput.addEventListener('input', () => { if (selectedGroup) { selectedGroup.name = groupNameInput.value; populateGroupList(); draw(); } });
-        groupWidthInput.addEventListener('input', () => { if (selectedGroup) { selectedGroup.width = parseInt(groupWidthInput.value) || 0; draw(); } });
-        groupHeightInput.addEventListener('input', () => { if (selectedGroup) { selectedGroup.height = parseInt(groupHeightInput.value) || 0; draw(); } });
-        groupXInput.addEventListener('input', () => { if (selectedGroup) { selectedGroup.x = parseInt(groupXInput.value) || 0; draw(); } });
-        groupYInput.addEventListener('input', () => { if (selectedGroup) { selectedGroup.y = parseInt(groupYInput.value) || 0; draw(); } });
-        groupColorInput.addEventListener('input', () => { if (selectedGroup) { selectedGroup.color = groupColorInput.value; draw(); } });
-        testPatternCellSizeInput.addEventListener('input', draw);
-
-        showTestPattern.addEventListener('change', draw);
-        showMainGuides.addEventListener('change', draw);
-        showGroupGuides.addEventListener('change', draw);
-        snapToCenterToggle.addEventListener('change', draw);
-        snapToGroupToggle.addEventListener('change', draw);
-
-        window.addEventListener('resize', autoScale);
-
-        function initialSetup() {
-            groups.push({ name: 'L', width: 384, height: 960, x: 0, y: 0, color: '#CC6666' });
-            groups.push({ name: 'CTR', width: 2688, height: 960, x: 384, y: 0, color: '#CC66CC' });
-            groups.push({ name: 'R', width: 384, height: 960, x: 3072, y: 0, color: '#6699CC' });
-            populateGroupList();
-            autoScale();
-        }
-
-        window.onload = initialSetup;
-    </script>
-
-    <!-- Mobile Interstitial Ad Logic -->
-    <script>
-        let adShownCount = 0;
-
-        function closeMobileAd() {
-            const ad = document.getElementById('mobileInterstitialAd');
-            ad.classList.remove('show');
-
-            // Set timer untuk ad berikutnya (5 detik)
-            setTimeout(showMobileAd, 50000);
-        }
-
-        function showMobileAd() {
-            // Hanya tampilkan di mobile (max-width 768px)
-            if (window.innerWidth <= 768) {
-                const ad = document.getElementById('mobileInterstitialAd');
-                ad.classList.add('show');
-                adShownCount++;
-
-                // Re-push AdSense ads untuk refresh (setelah ad pertama)
-                if (adShownCount > 1) {
-                    try {
-                        (adsbygoogle = window.adsbygoogle || []).push({});
-                    } catch (e) {
-                        console.log('AdSense refresh:', e);
-                    }
-                }
-            }
-        }
-
-        // Tampilkan ad pertama kali setelah 5 detik jika mobile
-        if (window.innerWidth <= 768) {
-            setTimeout(showMobileAd, 5000);
-        }
-    </script>
-
-
+        const data = await res.json();
+        
+        // Cache successful response
+        try {
+          sessionStorage.setItem(STORAGE_KEY, JSON.stringify({
+            timestamp: Date.now(),
+            data: data
+          }));
+        } catch (e) {}
+
+        applyReleaseData(data);
+
+        badge.innerHTML = '<span class="status-dot status-dot--connected"></span><span>Latest Release Verified</span>';
+        navStatus.className = 'health-pill health-pill--connected';
+      } catch (err) {
+        console.warn('Unable to query GitHub API:', err);
+        badge.innerHTML = '<span class="status-dot status-dot--checking"></span><span>Offline / Cached (v1.0.1)</span>';
+      } finally {
+        spinner.classList.remove('spin');
+      }
+    }
+
+    // User comparison function
+    function checkUserInstalledVersion() {
+      const input = document.getElementById('installedVerInput').value.trim();
+      const latestTag = document.getElementById('latestVersionTag').innerText.trim();
+      const resultBox = document.getElementById('compareResult');
+
+      if (!input) {
+        resultBox.style.display = 'none';
+        return;
+      }
+
+      const cmp = compareSemver(latestTag, input);
+      if (cmp > 0) {
+        resultBox.className = 'compare-result compare-result--update';
+        resultBox.innerHTML = `🚀 <strong>New update available: ${latestTag}!</strong> You are currently on ${input}. Click a download button above.`;
+      } else if (cmp === 0) {
+        resultBox.className = 'compare-result compare-result--current';
+        resultBox.innerHTML = `✅ <strong>Up to date!</strong> You are running the latest release (${input}).`;
+      } else {
+        resultBox.className = 'compare-result compare-result--current';
+        resultBox.innerHTML = `⚡ You are running an unreleased / preview version (${input}).`;
+      }
+    }
+
+    // Initialize on load
+    document.addEventListener('DOMContentLoaded', () => {
+      checkForUpdates(false);
+
+      const verInput = document.getElementById('installedVerInput');
+      verInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') checkUserInstalledVersion();
+      });
+    });
+  </script>
 </body>
-
 </html>
+
