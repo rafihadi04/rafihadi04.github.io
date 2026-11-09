@@ -1,0 +1,2220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark">
+<title>Live Translator — Deepgram to Resolume Arena</title>
+<meta name="description" content="Real-time speech to Resolume Arena text parameters. Deepgram streaming transcription, optional translation, direct REST writes.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b1017'/%3E%3Cpath d='M9 22V10h2.6v9.6H19V22z' fill='%233ddc97'/%3E%3Cpath d='M21.4 10H24v4.6h-2.6z' fill='%234cc9f0'/%3E%3C/svg%3E">
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+
+  :root {
+    color-scheme: dark;
+    --bg: #070b10;
+    --panel: #0e161e;
+    --panel-2: #0b1219;
+    --inset: #060a0f;
+    --line: #1c2836;
+    --line-2: #141f2a;
+    --text: #e7eef6;
+    --text-2: #a9b8c8;
+    --dim: #71838f;
+    --dim-2: #4e5f72;
+    --acc: #3ddc97;
+    --acc-press: #33c485;
+    --acc-soft: rgba(61, 220, 151, 0.14);
+    --cyan: #4cc9f0;
+    --violet: #b392f0;
+    --warn: #e6b03c;
+    --danger: #ff5c74;
+    --r: 12px;
+    --mono: ui-monospace, "SFMono-Regular", "Cascadia Mono", "JetBrains Mono", Consolas, monospace;
+    --sans: "Segoe UI", Inter, system-ui, -apple-system, sans-serif;
+  }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 14px/1.5 var(--sans);
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0 0 auto 0;
+    height: 420px;
+    pointer-events: none;
+    background: radial-gradient(760px 380px at 18% -20%, rgba(61, 220, 151, 0.07), transparent 70%),
+                radial-gradient(620px 320px at 88% -30%, rgba(76, 201, 240, 0.05), transparent 70%);
+  }
+
+  .app { position: relative; max-width: 1340px; margin: 0 auto; padding: 0 20px 40px; }
+
+  /* ---------- top bar ---------- */
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 0;
+    background: linear-gradient(180deg, var(--bg) 72%, rgba(7, 11, 16, 0));
+    border-bottom: 1px solid var(--line-2);
+    margin-bottom: 18px;
+  }
+  .brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+  .mark {
+    width: 34px; height: 34px; flex: 0 0 auto;
+    display: grid; place-items: center;
+    border-radius: 9px;
+    border: 1px solid rgba(61, 220, 151, 0.35);
+    background: rgba(61, 220, 151, 0.07);
+    color: var(--acc);
+    font: 700 12px/1 var(--mono);
+    letter-spacing: 0.06em;
+  }
+  .brand h1 { margin: 0; font-size: 15px; font-weight: 650; letter-spacing: -0.01em; }
+  .brand p { margin: 1px 0 0; font-size: 11.5px; color: var(--dim); letter-spacing: 0.01em; }
+
+  .topbar-right { margin-left: auto; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+  .chip {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 6px 10px 6px 9px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--panel-2);
+    font: 500 11.5px/1 var(--mono);
+    color: var(--dim);
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+  }
+  .chip b { font-weight: 600; color: var(--text-2); }
+  .chip .dot { width: 6px; height: 6px; border-radius: 50%; background: #3b4a5a; transition: background .2s, box-shadow .2s; }
+  .chip[data-state="live"] { border-color: rgba(61, 220, 151, 0.32); }
+  .chip[data-state="live"] b { color: var(--acc); }
+  .chip[data-state="live"] .dot { background: var(--acc); box-shadow: 0 0 0 3px rgba(61, 220, 151, 0.16); }
+  .chip[data-state="connecting"] .dot { background: var(--warn); animation: pulse 1.1s ease-in-out infinite; }
+  .chip[data-state="error"] { border-color: rgba(255, 92, 116, 0.34); }
+  .chip[data-state="error"] b { color: var(--danger); }
+  .chip[data-state="error"] .dot { background: var(--danger); }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
+
+  /* ---------- layout ---------- */
+  .shell {
+    display: grid;
+    grid-template-columns: 342px minmax(0, 1fr);
+    gap: 14px;
+    align-items: stretch;
+  }
+  .rail { display: flex; flex-direction: column; gap: 12px; align-self: start; }
+  .stage { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+  .stage > .log-card { flex: 1 1 auto; display: flex; flex-direction: column; min-height: 240px; }
+  .stage > .log-card .log-list { flex: 1 1 auto; max-height: none; min-height: 0; }
+
+  @media (max-width: 1040px) {
+    .shell { grid-template-columns: minmax(0, 1fr); }
+    .stage { order: 1; }
+    .rail { order: 2; }
+  }
+
+  /* ---------- blocks ---------- */
+  .block {
+    background: var(--panel);
+    border: 1px solid var(--line-2);
+    border-radius: var(--r);
+    padding: 14px 14px 12px;
+  }
+  .block-hd { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+  .block-hd .idx { font: 700 10px/1 var(--mono); color: var(--acc); letter-spacing: 0.1em; }
+  .block-hd h2 { margin: 0; font-size: 12px; font-weight: 650; letter-spacing: 0.02em; }
+  .block-hd .tag {
+    margin-left: auto;
+    font: 600 9.5px/1 var(--mono);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--dim-2);
+  }
+  .sub { font-size: 11.5px; color: var(--dim); margin: 2px 0 0; }
+
+  /* ---------- fields ---------- */
+  .field { margin-bottom: 11px; }
+  .field:last-child { margin-bottom: 0; }
+  .field-hd { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 5px; }
+  .field-hd label { font-size: 11.5px; font-weight: 600; color: var(--text-2); letter-spacing: 0.01em; }
+  .field-hd .hint { font-size: 10.5px; color: var(--dim-2); font-family: var(--mono); letter-spacing: 0.02em; }
+  a.hint { text-decoration: none; border-bottom: 1px dotted #2a3a4d; }
+  a.hint:hover { color: var(--text-2); border-color: var(--dim); }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+  input[type="text"], input[type="password"], input[type="number"], select {
+    width: 100%;
+    background: var(--inset);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    color: var(--text);
+    font: 13px/1.4 var(--sans);
+    padding: 8px 10px;
+    transition: border-color .14s ease, box-shadow .14s ease;
+  }
+  input::placeholder { color: #50637a; }
+  input:hover, select:hover { border-color: #26364a; }
+  input:focus-visible, select:focus-visible {
+    outline: none;
+    border-color: var(--acc);
+    box-shadow: 0 0 0 3px var(--acc-soft);
+  }
+  input[type="number"] { font-family: var(--mono); font-size: 12.5px; }
+  select {
+    appearance: none;
+    padding-right: 26px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.4 4.6 6 8.2l3.6-3.6' fill='none' stroke='%2371838f' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 9px center;
+    background-size: 11px;
+  }
+  select:disabled, input:disabled { opacity: 0.45; }
+
+  .keyfield { position: relative; }
+  .keyfield input { padding-right: 52px; font-family: var(--mono); font-size: 12px; letter-spacing: 0.02em; }
+  .keyfield .reveal {
+    position: absolute; right: 4px; top: 50%; transform: translateY(-50%);
+    border: 0; background: transparent; color: var(--dim);
+    font: 600 10px/1 var(--mono); letter-spacing: 0.08em;
+    padding: 6px 8px; border-radius: 6px; cursor: pointer;
+  }
+  .keyfield .reveal:hover { color: var(--text-2); background: rgba(255,255,255,.04); }
+
+  /* ---------- switches ---------- */
+  .switch {
+    display: flex; align-items: center; gap: 9px;
+    padding: 6px 0;
+    cursor: pointer;
+    user-select: none;
+  }
+  .switch input { position: absolute; opacity: 0; width: 0; height: 0; }
+  .switch .track {
+    position: relative;
+    width: 32px; height: 18px; flex: 0 0 auto;
+    border-radius: 999px;
+    background: #16212c;
+    border: 1px solid var(--line);
+    transition: background .16s ease, border-color .16s ease;
+  }
+  .switch .track::after {
+    content: "";
+    position: absolute; top: 2px; left: 2px;
+    width: 12px; height: 12px; border-radius: 50%;
+    background: #64798c;
+    transition: transform .16s ease, background .16s ease;
+  }
+  .switch input:checked + .track { background: rgba(61, 220, 151, 0.18); border-color: rgba(61, 220, 151, 0.5); }
+  .switch input:checked + .track::after { transform: translateX(14px); background: var(--acc); }
+  .switch input:focus-visible + .track { box-shadow: 0 0 0 3px var(--acc-soft); }
+  .switch .txt { font-size: 12px; color: var(--text-2); }
+
+  /* ---------- buttons ---------- */
+  button { font-family: inherit; }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+    border: 1px solid var(--line);
+    background: #131d27;
+    color: var(--text-2);
+    border-radius: 9px;
+    padding: 8px 12px;
+    font-size: 12.5px; font-weight: 600;
+    cursor: pointer;
+    transition: background .14s ease, border-color .14s ease, color .14s ease, transform .06s ease;
+    white-space: nowrap;
+  }
+  .btn:hover { background: #17232f; color: var(--text); border-color: #27384b; }
+  .btn:active { transform: translateY(1px); }
+  .btn:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--acc-soft); border-color: var(--acc); }
+  .btn[disabled] { opacity: 0.4; cursor: not-allowed; transform: none; }
+  .btn svg { flex: 0 0 auto; }
+
+  .btn-start {
+    background: var(--acc); border-color: var(--acc); color: #04150d;
+    padding: 10px 18px; font-size: 13px;
+  }
+  .btn-start:hover { background: var(--acc-press); border-color: var(--acc-press); color: #04150d; }
+  .btn-stop {
+    background: rgba(255, 92, 116, 0.08); border-color: rgba(255, 92, 116, 0.3); color: var(--danger);
+    padding: 10px 16px; font-size: 13px;
+  }
+  .btn-stop:hover { background: rgba(255, 92, 116, 0.14); border-color: rgba(255, 92, 116, 0.5); color: #ff8598; }
+  .btn-ghost { background: transparent; border-color: transparent; color: var(--dim); padding: 6px 9px; font-size: 11.5px; }
+  .btn-ghost:hover { background: rgba(255,255,255,.04); color: var(--text-2); border-color: transparent; }
+  .btn-block { width: 100%; }
+
+  /* ---------- segmented ---------- */
+  .seg {
+    display: inline-flex;
+    background: var(--inset);
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    padding: 3px;
+    gap: 2px;
+  }
+  .seg button {
+    border: 0; background: transparent; color: var(--dim);
+    font-size: 12px; font-weight: 600; letter-spacing: 0.01em;
+    padding: 6px 13px; border-radius: 6px; cursor: pointer;
+    transition: background .14s ease, color .14s ease;
+  }
+  .seg button:hover { color: var(--text-2); }
+  .seg button[aria-pressed="true"] { background: #17232f; color: var(--acc); box-shadow: inset 0 1px 0 rgba(255,255,255,.05); }
+
+  /* ---------- transport ---------- */
+  .transport {
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    padding: 12px 14px;
+    background: var(--panel);
+    border: 1px solid var(--line-2);
+    border-radius: var(--r);
+  }
+  .transport .sep { width: 1px; align-self: stretch; background: var(--line-2); margin: 0 2px; }
+  .clock {
+    margin-left: auto;
+    font: 600 15px/1 var(--mono);
+    letter-spacing: 0.04em;
+    color: var(--text-2);
+    font-variant-numeric: tabular-nums;
+    padding: 6px 10px;
+    border: 1px solid var(--line-2);
+    border-radius: 8px;
+    background: var(--inset);
+  }
+  .clock[data-live="true"] { color: var(--acc); border-color: rgba(61, 220, 151, 0.28); }
+  .kbd {
+    font: 600 9.5px/1 var(--mono);
+    border: 1px solid rgba(0,0,0,.25);
+    background: rgba(0,0,0,.14);
+    padding: 3px 5px;
+    border-radius: 4px;
+    letter-spacing: 0.02em;
+    opacity: 0.7;
+  }
+
+  /* ---------- monitor ---------- */
+  .monitor { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 720px) { .monitor { grid-template-columns: minmax(0, 1fr); } }
+
+  .pane {
+    display: flex; flex-direction: column;
+    background: var(--panel-2);
+    border: 1px solid var(--line-2);
+    border-radius: var(--r);
+    min-height: 172px;
+    overflow: hidden;
+  }
+  .pane[data-accent="live"] { border-color: rgba(61, 220, 151, 0.22); }
+  .pane-hd {
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    padding: 9px 13px;
+    border-bottom: 1px solid var(--line-2);
+  }
+  .pane-hd h3 {
+    margin: 0;
+    font: 600 10px/1 var(--mono);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--dim);
+  }
+  .pane[data-accent="live"] .pane-hd h3 { color: var(--acc); }
+  .pane-meta { font: 500 10.5px/1 var(--mono); color: var(--dim-2); letter-spacing: 0.02em; }
+  .pane-body {
+    flex: 1;
+    margin: 0;
+    padding: 13px;
+    font-size: 19px;
+    line-height: 1.4;
+    letter-spacing: -0.012em;
+    color: var(--text);
+    overflow: auto;
+    max-height: 230px;
+    word-break: break-word;
+  }
+  .pane-body.is-empty { color: var(--dim-2); font-size: 14px; letter-spacing: 0; }
+  .pane-body .interim { color: var(--dim); }
+
+  /* ---------- meter + stats ---------- */
+  .meter-card {
+    background: var(--panel-2);
+    border: 1px solid var(--line-2);
+    border-radius: var(--r);
+    padding: 11px 13px 12px;
+  }
+  .meter-hd { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .meter-hd h3 { margin: 0; font: 600 10px/1 var(--mono); letter-spacing: 0.16em; text-transform: uppercase; color: var(--dim); }
+  .meter-hd .db { font: 500 11px/1 var(--mono); color: var(--dim); font-variant-numeric: tabular-nums; }
+  #meter { display: block; width: 100%; height: 46px; }
+  .meter-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 7px;
+    font: 500 10.5px/1 var(--mono);
+    color: var(--dim-2);
+    letter-spacing: 0.03em;
+  }
+
+  .stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+  @media (max-width: 620px) { .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .stat {
+    background: var(--panel-2);
+    border: 1px solid var(--line-2);
+    border-radius: 10px;
+    padding: 9px 11px;
+  }
+  .stat span {
+    display: block;
+    font: 600 9.5px/1 var(--mono);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--dim-2);
+  }
+  .stat b {
+    display: block;
+    margin-top: 4px;
+    font: 600 15px/1 var(--mono);
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ---------- log ---------- */
+  .log-card {
+    background: var(--panel-2);
+    border: 1px solid var(--line-2);
+    border-radius: var(--r);
+    overflow: hidden;
+  }
+  .log-hd {
+    display: flex; align-items: center; gap: 6px;
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--line-2);
+    flex-wrap: wrap;
+  }
+  .log-hd h3 {
+    margin: 0 8px 0 0;
+    font: 600 10px/1 var(--mono);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--dim);
+  }
+  .filters { display: flex; gap: 2px; flex-wrap: wrap; }
+  .filters button {
+    border: 0; background: transparent; color: var(--dim-2);
+    font: 600 10.5px/1 var(--mono); letter-spacing: 0.04em;
+    padding: 5px 8px; border-radius: 6px; cursor: pointer;
+  }
+  .filters button:hover { color: var(--text-2); background: rgba(255,255,255,.03); }
+  .filters button[aria-pressed="true"] { background: #17232f; color: var(--acc); }
+  .log-hd .btn-ghost { margin-left: auto; }
+
+  .log-list {
+    list-style: none; margin: 0; padding: 0;
+    max-height: 268px; overflow: auto;
+    font: 11.5px/1.5 var(--mono);
+  }
+  .log-row {
+    display: grid;
+    grid-template-columns: 78px 38px minmax(0, 1fr) auto;
+    gap: 10px;
+    padding: 5px 12px;
+    border-bottom: 1px solid rgba(20, 31, 42, 0.8);
+    color: var(--text-2);
+  }
+  .log-row:last-child { border-bottom: 0; }
+  .log-row:hover { background: rgba(255, 255, 255, 0.022); }
+  .log-row time { color: #556a7f; font-variant-numeric: tabular-nums; }
+  .log-row .src { font-weight: 700; font-size: 10px; letter-spacing: 0.1em; color: var(--dim); }
+  .log-row .msg { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .log-row .ms { color: var(--dim-2); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .log-row[data-src="dg"] .src { color: var(--cyan); }
+  .log-row[data-src="mt"] .src { color: var(--violet); }
+  .log-row[data-src="arena"] .src { color: var(--acc); }
+  .log-row[data-src="err"] .src, .log-row[data-src="err"] .msg { color: var(--danger); }
+  .log-row[data-src="warn"] .src, .log-row[data-src="warn"] .msg { color: var(--warn); }
+  .log-list[data-filter="speech"] .log-row:not([data-src="dg"]):not([data-src="warn"]):not([data-src="err"]) { display: none; }
+  .log-list[data-filter="translate"] .log-row:not([data-src="mt"]):not([data-src="err"]) { display: none; }
+  .log-list[data-filter="arena"] .log-row:not([data-src="arena"]):not([data-src="err"]) { display: none; }
+  .log-list[data-filter="errors"] .log-row:not([data-src="err"]):not([data-src="warn"]) { display: none; }
+
+  /* ---------- details / manual ---------- */
+  details.adv { margin-top: 12px; border-top: 1px solid var(--line-2); padding-top: 10px; }
+  details.adv summary {
+    cursor: pointer;
+    list-style: none;
+    font: 600 10.5px/1 var(--mono);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--dim);
+    display: flex; align-items: center; gap: 6px;
+  }
+  details.adv summary::-webkit-details-marker { display: none; }
+  details.adv summary::before {
+    content: "+";
+    font: 700 12px/1 var(--mono);
+    color: var(--dim-2);
+    width: 10px;
+  }
+  details.adv[open] summary::before { content: "–"; }
+  details.adv summary:hover { color: var(--text-2); }
+  details.adv .adv-body { padding-top: 11px; }
+
+  .info-row {
+    display: flex; align-items: center; gap: 6px;
+    font: 500 10.5px/1.4 var(--mono);
+    color: var(--dim-2);
+    padding: 7px 9px;
+    border: 1px dashed var(--line);
+    border-radius: 8px;
+    margin-top: 10px;
+  }
+  .info-row b { color: var(--text-2); font-weight: 600; }
+
+  /* ---------- footer ---------- */
+  .foot {
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px solid var(--line-2);
+    display: flex; flex-wrap: wrap; gap: 6px 18px;
+    font-size: 11.5px;
+    color: var(--dim-2);
+  }
+  .foot span { display: inline-flex; gap: 6px; align-items: center; }
+  .foot b { color: var(--dim); font-weight: 600; }
+  .foot a { color: var(--dim); text-decoration: none; border-bottom: 1px solid var(--line); }
+  .foot a:hover { color: var(--text-2); border-color: var(--text-2); }
+
+  /* ---------- toast ---------- */
+  .toast {
+    position: fixed;
+    left: 50%; bottom: 26px;
+    transform: translate(-50%, 14px);
+    background: #131d27;
+    border: 1px solid var(--line);
+    color: var(--text);
+    font-size: 12.5px;
+    padding: 9px 14px;
+    border-radius: 9px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .18s ease, transform .18s ease;
+    z-index: 60;
+    max-width: min(420px, calc(100vw - 40px));
+  }
+  .toast[data-show="true"] { opacity: 1; transform: translate(-50%, 0); }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: .001ms !important; transition-duration: .001ms !important; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header class="topbar">
+    <div class="brand">
+      <div class="mark">LT</div>
+      <div>
+        <h1>Live Translator</h1>
+        <p>Deepgram speech → Resolume Arena text parameters</p>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="chip" id="chipStt" data-state="idle" role="status"><span class="dot"></span>Deepgram<b>idle</b></div>
+      <div class="chip" id="chipArena" data-state="idle" role="status"><span class="dot"></span>Arena<b>offline</b></div>
+      <button class="btn btn-ghost" id="resetBtn" type="button" title="Clear stored settings">Reset</button>
+    </div>
+  </header>
+
+  <main class="shell">
+
+    <!-- ============ rail ============ -->
+    <aside class="rail" aria-label="Configuration">
+
+      <section class="block">
+        <div class="block-hd"><span class="idx">01</span><h2>Speech input</h2><span class="tag">Deepgram</span></div>
+
+        <div class="field">
+          <div class="field-hd"><label for="dgKey">API key</label><a class="hint" href="https://console.deepgram.com/" target="_blank" rel="noopener">console ↗</a></div>
+          <div class="keyfield">
+            <input type="password" id="dgKey" placeholder="dg_••••••••" autocomplete="off" spellcheck="false">
+            <button class="reveal" type="button" data-reveal="dgKey">SHOW</button>
+          </div>
+        </div>
+
+        <div class="row2">
+          <div class="field">
+            <div class="field-hd"><label for="model">Model</label></div>
+            <select id="model">
+              <option value="nova-3">nova-3</option>
+              <option value="nova-2" selected>nova-2</option>
+              <option value="nova-2-general">nova-2-general</option>
+              <option value="nova-2-phonecall">nova-2-phonecall</option>
+            </select>
+          </div>
+          <div class="field">
+            <div class="field-hd"><label for="lang">Source language</label></div>
+            <select id="lang">
+              <option value="multi">auto (multi)</option>
+              <option value="id" selected>Indonesian</option>
+              <option value="en">English</option>
+              <option value="ja">Japanese</option>
+              <option value="ko">Korean</option>
+              <option value="zh">Chinese</option>
+              <option value="es">Spanish</option>
+              <option value="fr">French</option>
+              <option value="de">German</option>
+              <option value="pt">Portuguese</option>
+              <option value="ms">Malay</option>
+              <option value="th">Thai</option>
+              <option value="vi">Vietnamese</option>
+              <option value="hi">Hindi</option>
+              <option value="ar">Arabic</option>
+              <option value="ru">Russian</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="field-hd"><label for="keyterms">Key terms</label><span class="hint">word:boost</span></div>
+          <input type="text" id="keyterms" placeholder="Resolume:2, grandMA:2, LED:1.5" spellcheck="false">
+        </div>
+
+        <details class="adv">
+          <summary>Recognition options</summary>
+          <div class="adv-body">
+            <label class="switch"><input type="checkbox" id="smart" checked><span class="track"></span><span class="txt">Smart format &amp; punctuation</span></label>
+            <label class="switch"><input type="checkbox" id="numerals" checked><span class="track"></span><span class="txt">Numerals as digits</span></label>
+            <label class="switch"><input type="checkbox" id="filler"><span class="track"></span><span class="txt">Keep filler words</span></label>
+            <label class="switch"><input type="checkbox" id="diarize"><span class="track"></span><span class="txt">Speaker diarization</span></label>
+            <label class="switch"><input type="checkbox" id="profanity"><span class="track"></span><span class="txt">Profanity filter</span></label>
+            <label class="switch"><input type="checkbox" id="autoRecover" checked><span class="track"></span><span class="txt">Reconnect socket on drop</span></label>
+
+            <div class="row2" style="margin-top:10px">
+              <div class="field">
+                <div class="field-hd"><label for="endpointing">Endpointing</label></div>
+                <select id="endpointing">
+                  <option value="" selected>service default</option>
+                  <option value="300">300 ms</option>
+                  <option value="500">500 ms</option>
+                  <option value="800">800 ms</option>
+                  <option value="1000">1000 ms</option>
+                  <option value="1500">1500 ms</option>
+                  <option value="false">off</option>
+                </select>
+              </div>
+              <div class="field">
+                <div class="field-hd"><label for="uttend">Utterance end</label></div>
+                <select id="uttend">
+                  <option value="0" selected>off</option>
+                  <option value="1000">1000 ms</option>
+                  <option value="1500">1500 ms</option>
+                  <option value="2000">2000 ms</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="field" style="margin-top:4px">
+              <div class="field-hd"><label for="trigger">Commit trigger</label></div>
+              <select id="trigger">
+                <option value="final" selected>on final result</option>
+                <option value="speech_final">on sentence end</option>
+                <option value="interim">on interim (lowest latency)</option>
+              </select>
+            </div>
+            <p class="sub">Interim commits run one translation request per update and one Arena write per update.</p>
+          </div>
+        </details>
+      </section>
+
+      <section class="block">
+        <div class="block-hd"><span class="idx">02</span><h2>Translation</h2><span class="tag" id="mtTag">Free</span></div>
+
+        <div class="field">
+          <div class="field-hd"><label for="provider">Engine</label><span class="hint" id="providerHint">no key</span></div>
+          <select id="provider">
+            <option value="google" selected>Google translate · free</option>
+            <option value="mymemory">MyMemory · free</option>
+            <option value="groq">Groq · API key</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <div class="field-hd"><label for="tlang">Target language</label></div>
+          <select id="tlang">
+            <option value="English" data-code="en" selected>English</option>
+            <option value="Indonesian" data-code="id">Indonesian</option>
+            <option value="Japanese" data-code="ja">Japanese</option>
+            <option value="Korean" data-code="ko">Korean</option>
+            <option value="Chinese (Simplified)" data-code="zh-CN">Chinese</option>
+            <option value="Spanish" data-code="es">Spanish</option>
+            <option value="French" data-code="fr">French</option>
+            <option value="German" data-code="de">German</option>
+            <option value="Portuguese" data-code="pt">Portuguese</option>
+            <option value="Malay" data-code="ms">Malay</option>
+            <option value="Thai" data-code="th">Thai</option>
+            <option value="Vietnamese" data-code="vi">Vietnamese</option>
+            <option value="Arabic" data-code="ar">Arabic</option>
+            <option value="Russian" data-code="ru">Russian</option>
+            <option value="Hindi" data-code="hi">Hindi</option>
+            <option value="Turkish" data-code="tr">Turkish</option>
+          </select>
+        </div>
+
+        <div id="groqFields" hidden>
+          <div class="field">
+            <div class="field-hd"><label for="mtKey">Groq API key</label><a class="hint" href="https://console.groq.com/keys" target="_blank" rel="noopener">console ↗</a></div>
+            <div class="keyfield">
+              <input type="password" id="mtKey" placeholder="gsk_••••••••" autocomplete="off" spellcheck="false">
+              <button class="reveal" type="button" data-reveal="mtKey">SHOW</button>
+            </div>
+          </div>
+
+          <div class="field">
+            <div class="field-hd"><label for="mtModel">Model</label></div>
+            <select id="mtModel">
+              <option value="llama-3.1-8b-instant" selected>llama-3.1-8b</option>
+              <option value="llama-3.3-70b-versatile">llama-3.3-70b</option>
+              <option value="openai/gpt-oss-20b">gpt-oss-20b</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <div class="field-hd"><label for="glossary">Keep verbatim</label><span class="hint">names, gear</span></div>
+            <input type="text" id="glossary" placeholder="Resolume, grandMA, NDI, LiFePO4" spellcheck="false">
+          </div>
+        </div>
+
+        <p class="sub">Free engines need no key and are rate limited per IP; the glossary applies to Groq only. Timeout 5 s, with source-text fallback.</p>
+      </section>
+
+      <section class="block">
+        <div class="block-hd"><span class="idx">03</span><h2>Arena output</h2><span class="tag">REST</span></div>
+
+        <div class="field">
+          <div class="field-hd"><label for="host">Host</label><span class="hint">:8080</span></div>
+          <input type="text" id="host" value="http://127.0.0.1:8080" spellcheck="false">
+        </div>
+
+        <div class="field">
+          <div class="field-hd"><label for="target">Text parameter</label></div>
+          <select id="target">
+            <option value="">— run a scan —</option>
+          </select>
+          <div style="display:flex;gap:6px;margin-top:7px">
+            <button class="btn btn-block" id="scanBtn" type="button">Scan composition</button>
+            <button class="btn" id="testBtn" type="button" title="Write a test string to the selected parameter">Test</button>
+          </div>
+          <div class="info-row" id="arenaInfoRow"><span>Arena:</span><b id="arenaInfo">not checked</b></div>
+        </div>
+
+        <label class="switch" style="margin-top:2px"><input type="checkbox" id="autoConnect" checked><span class="track"></span><span class="txt">Connect clip after each write</span></label>
+
+        <div class="row2" style="margin-top:8px">
+          <div class="field">
+            <div class="field-hd"><label for="throttle">Write throttle</label><span class="hint">ms</span></div>
+            <input type="number" id="throttle" min="0" max="5000" step="50" value="200">
+          </div>
+          <div class="field">
+            <div class="field-hd"><label for="maxChars">Max chars</label><span class="hint">0 = no limit</span></div>
+            <input type="number" id="maxChars" min="0" max="2000" step="10" value="0">
+          </div>
+        </div>
+
+        <label class="switch"><input type="checkbox" id="upper"><span class="track"></span><span class="txt">Force uppercase</span></label>
+
+        <details class="adv">
+          <summary>Manual target</summary>
+          <div class="adv-body">
+            <div class="row2">
+              <div class="field">
+                <div class="field-hd"><label for="manLayer">Layer</label></div>
+                <input type="number" id="manLayer" min="1" step="1" value="1">
+              </div>
+              <div class="field">
+                <div class="field-hd"><label for="manClip">Clip</label></div>
+                <input type="number" id="manClip" min="1" step="1" value="1">
+              </div>
+            </div>
+            <div class="field">
+              <div class="field-hd"><label for="manParam">Parameter name</label></div>
+              <input type="text" id="manParam" placeholder="Text" spellcheck="false">
+            </div>
+            <button class="btn btn-block" id="applyManual" type="button">Use this target</button>
+          </div>
+        </details>
+      </section>
+
+    </aside>
+
+    <!-- ============ stage ============ -->
+    <section class="stage">
+
+      <div class="transport">
+        <button class="btn btn-start" id="startBtn" type="button">
+          <svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><path d="M4.2 2.6 12.8 8l-8.6 5.4Z" fill="currentColor"/></svg>
+          Start capture
+        </button>
+        <button class="btn btn-stop" id="stopBtn" type="button" disabled>
+          <svg viewBox="0 0 16 16" width="11" height="11" aria-hidden="true"><rect x="3.5" y="3.5" width="9" height="9" rx="1.4" fill="currentColor"/></svg>
+          Stop
+        </button>
+        <div class="sep" aria-hidden="true"></div>
+        <div class="seg" role="group" aria-label="Output mode">
+          <button type="button" data-mode="translate" aria-pressed="true">Translate</button>
+          <button type="button" data-mode="verbatim" aria-pressed="false">Verbatim</button>
+        </div>
+        <div class="clock" id="clock" data-live="false">00:00</div>
+      </div>
+
+      <div class="monitor">
+        <article class="pane">
+          <div class="pane-hd">
+            <h3>Heard</h3>
+            <div class="pane-meta"><span id="heardMeta">—</span></div>
+          </div>
+          <p class="pane-body is-empty" id="heardBody">Waiting for audio</p>
+        </article>
+        <article class="pane" data-accent="live">
+          <div class="pane-hd">
+            <h3>Written to Arena</h3>
+            <div class="pane-meta"><span id="sentMeta">—</span></div>
+          </div>
+          <p class="pane-body is-empty" id="sentBody">Nothing sent yet</p>
+        </article>
+      </div>
+
+      <div class="meter-card">
+        <div class="meter-hd">
+          <h3>Input level</h3>
+          <div class="db" id="db">−∞ dB</div>
+        </div>
+        <canvas id="meter" width="600" height="46" aria-hidden="true"></canvas>
+        <div class="meter-foot">
+          <span id="streamInfo">16 kHz · mono · linear16</span>
+          <span id="bytesInfo">0 KB sent</span>
+        </div>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><span>Segments</span><b id="statSeg">0</b></div>
+        <div class="stat"><span>STT latency</span><b id="statStt">—</b></div>
+        <div class="stat"><span>Translation</span><b id="statMt">—</b></div>
+        <div class="stat"><span>Arena write</span><b id="statPut">—</b></div>
+      </div>
+
+      <div class="log-card">
+        <div class="log-hd">
+          <h3>Event log</h3>
+          <div class="filters" id="logFilter">
+            <button type="button" data-filter="all" aria-pressed="true">All</button>
+            <button type="button" data-filter="speech" aria-pressed="false">Speech</button>
+            <button type="button" data-filter="translate" aria-pressed="false">Translate</button>
+            <button type="button" data-filter="arena" aria-pressed="false">Arena</button>
+            <button type="button" data-filter="errors" aria-pressed="false">Errors</button>
+          </div>
+          <button class="btn btn-ghost" id="clearLog" type="button">Clear</button>
+        </div>
+        <ol class="log-list" id="logList" data-filter="all">
+          <li class="log-row" data-src="ui">
+            <time>—</time><span class="src">UI</span><span class="msg">Console ready</span><span class="ms"></span>
+          </li>
+        </ol>
+      </div>
+
+    </section>
+  </main>
+
+  <footer class="foot">
+    <span><b>Mic</b> requires HTTPS or localhost</span>
+    <span><b>Keys</b> stay in this browser (localStorage)</span>
+    <span><b>Arena</b> Preferences → Webserver must be enabled</span>
+    <span><b>Shortcut</b> Ctrl / ⌘ + Enter starts and stops capture</span>
+  </footer>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+  "use strict";
+
+  var STORE = "rtc.bridge.v2";
+  var $ = function (id) { return document.getElementById(id); };
+
+  var el = {
+    chipStt: $("chipStt"),
+    chipArena: $("chipArena"),
+    dgKey: $("dgKey"), model: $("model"), lang: $("lang"), keyterms: $("keyterms"),
+    smart: $("smart"), numerals: $("numerals"), filler: $("filler"), diarize: $("diarize"),
+    profanity: $("profanity"), autoRecover: $("autoRecover"),
+    endpointing: $("endpointing"), uttend: $("uttend"), trigger: $("trigger"),
+    provider: $("provider"), providerHint: $("providerHint"), mtTag: $("mtTag"),
+    groqFields: $("groqFields"),
+    mtKey: $("mtKey"), mtModel: $("mtModel"), tlang: $("tlang"), glossary: $("glossary"),
+    host: $("host"), target: $("target"), autoConnect: $("autoConnect"),
+    upper: $("upper"), maxChars: $("maxChars"), throttle: $("throttle"),
+    manLayer: $("manLayer"), manClip: $("manClip"), manParam: $("manParam"),
+    scanBtn: $("scanBtn"), testBtn: $("testBtn"), applyManual: $("applyManual"),
+    arenaInfo: $("arenaInfo"), arenaInfoRow: $("arenaInfoRow"),
+    startBtn: $("startBtn"), stopBtn: $("stopBtn"), clock: $("clock"),
+    heardBody: $("heardBody"), heardMeta: $("heardMeta"),
+    sentBody: $("sentBody"), sentMeta: $("sentMeta"),
+    meter: $("meter"), db: $("db"),
+    streamInfo: $("streamInfo"), bytesInfo: $("bytesInfo"),
+    statSeg: $("statSeg"), statStt: $("statStt"), statMt: $("statMt"), statPut: $("statPut"),
+    logList: $("logList"), logFilter: $("logFilter"), clearLog: $("clearLog"),
+    resetBtn: $("resetBtn"), toast: $("toast")
+  };
+
+  var state = {
+    mode: "translate",
+    running: false,
+    target: null,
+    ws: null,
+    stream: null,
+    audioCtx: null,
+    analyser: null,
+    raf: 0,
+    timer: 0,
+    keepAlive: 0,
+    startedAt: 0,
+    retries: 0,
+    reconnectTimer: 0,
+    pendingParts: [],
+    lastChunkAt: 0,
+    lastResultAt: 0,
+    gotResults: false,
+    silentWarned: false,
+    bytes: 0,
+    lastInfoAt: 0,
+    ctxRate: 0,
+    audioNode: null,
+    audioSource: null,
+    workletState: "unknown",
+    watch: 0,
+    lastSttMs: null,
+    lastPutAt: 0,
+    lastSentSource: "",
+    segments: 0,
+    writes: 0,
+    levels: null,
+    mctx: null,
+    mw: 0,
+    mh: 0,
+    heardFinal: "",
+    sentenceClosed: false,
+    arenaProduct: ""
+  };
+
+  var writeQueue = { pending: null, busy: false };
+  var segQueue = [];
+  var pumping = false;
+  var toastTimer = 0;
+
+  /* ------------------------------------------------------------------ */
+  /* helpers                                                             */
+  /* ------------------------------------------------------------------ */
+
+  function toast(msg) {
+    el.toast.textContent = msg;
+    el.toast.dataset.show = "true";
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { el.toast.dataset.show = "false"; }, 2600);
+  }
+
+  function sleep(ms) {
+    return new Promise(function (r) { setTimeout(r, ms); });
+  }
+
+  function base() {
+    var h = (el.host.value || "").trim().replace(/\/+$/, "");
+    if (!h) h = "http://127.0.0.1:8080";
+    if (!/^https?:\/\//i.test(h)) h = "http://" + h;
+    return h;
+  }
+
+  function setChip(node, stateName, label) {
+    node.dataset.state = stateName;
+    var b = node.querySelector("b");
+    if (b) b.textContent = label;
+  }
+
+  function clockStamp() {
+    var d = new Date();
+    var p = function (n) { return String(n).padStart(2, "0"); };
+    return p(d.getHours()) + ":" + p(d.getMinutes()) + ":" + p(d.getSeconds());
+  }
+
+  var SRC_LABEL = { dg: "DG", mt: "MT", arena: "AR", err: "ERR", warn: "WARN", ui: "UI" };
+
+  function log(src, msg, ms) {
+    var row = document.createElement("li");
+    row.className = "log-row";
+    row.dataset.src = src;
+
+    var t = document.createElement("time");
+    t.textContent = clockStamp();
+
+    var s = document.createElement("span");
+    s.className = "src";
+    s.textContent = SRC_LABEL[src] || src.toUpperCase();
+
+    var m = document.createElement("span");
+    m.className = "msg";
+    m.textContent = msg;
+    m.title = msg;
+
+    var x = document.createElement("span");
+    x.className = "ms";
+    x.textContent = typeof ms === "number" ? ms + " ms" : "";
+
+    row.append(t, s, m, x);
+    el.logList.insertBefore(row, el.logList.firstChild);
+
+    while (el.logList.children.length > 300) {
+      el.logList.removeChild(el.logList.lastChild);
+    }
+  }
+
+  function clearLog() {
+    el.logList.textContent = "";
+    log("ui", "Log cleared");
+  }
+
+  function fetchTimeout(url, options, ms) {
+    var ctrl = new AbortController();
+    var timer = setTimeout(function () { ctrl.abort(); }, ms);
+    var opts = Object.assign({}, options || {}, { signal: ctrl.signal });
+    return fetch(url, opts).then(
+      function (r) { clearTimeout(timer); return r; },
+      function (e) { clearTimeout(timer); throw e; }
+    );
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* settings persistence                                                */
+  /* ------------------------------------------------------------------ */
+
+  var PERSIST = [
+    "dgKey", "model", "lang", "keyterms", "smart", "numerals", "filler", "diarize",
+    "profanity", "autoRecover", "endpointing", "uttend", "trigger",
+    "provider", "mtKey", "mtModel", "tlang", "glossary",
+    "host", "autoConnect", "upper", "maxChars", "throttle"
+  ];
+
+  var saveTimer = 0;
+
+  function collect() {
+    var out = { mode: state.mode };
+    PERSIST.forEach(function (k) {
+      var node = el[k];
+      if (!node) return;
+      out[k] = node.type === "checkbox" ? node.checked : node.value;
+    });
+    return out;
+  }
+
+  function save() {
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(function () {
+      try { localStorage.setItem(STORE, JSON.stringify(collect())); } catch (e) { /* private mode */ }
+    }, 250);
+  }
+
+  function load() {
+    var raw;
+    try { raw = localStorage.getItem(STORE); } catch (e) { return; }
+    if (!raw) return;
+    var data;
+    try { data = JSON.parse(raw); } catch (e) { return; }
+    PERSIST.forEach(function (k) {
+      var node = el[k];
+      if (!node || data[k] === undefined) return;
+      if (node.type === "checkbox") node.checked = !!data[k];
+      else node.value = data[k];
+    });
+    if (data.mode === "verbatim" || data.mode === "translate") setMode(data.mode, true);
+  }
+
+  function setMode(mode, silent) {
+    state.mode = mode;
+    Array.prototype.forEach.call(document.querySelectorAll("[data-mode]"), function (btn) {
+      btn.setAttribute("aria-pressed", String(btn.dataset.mode === mode));
+    });
+    if (!silent) {
+      log("ui", "Mode: " + (mode === "translate" ? "translate → " + el.tlang.value : "verbatim passthrough"));
+      save();
+    }
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* wiring                                                              */
+  /* ------------------------------------------------------------------ */
+
+  document.querySelectorAll("[data-reveal]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var input = $(btn.dataset.reveal);
+      var hidden = input.type === "password";
+      input.type = hidden ? "text" : "password";
+      btn.textContent = hidden ? "HIDE" : "SHOW";
+    });
+  });
+
+  document.querySelectorAll("[data-mode]").forEach(function (btn) {
+    btn.addEventListener("click", function () { setMode(btn.dataset.mode); });
+  });
+
+  el.logFilter.addEventListener("click", function (e) {
+    var btn = e.target.closest("[data-filter]");
+    if (!btn) return;
+    Array.prototype.forEach.call(el.logFilter.children, function (b) {
+      b.setAttribute("aria-pressed", String(b === btn));
+    });
+    el.logList.dataset.filter = btn.dataset.filter;
+  });
+
+  el.clearLog.addEventListener("click", clearLog);
+
+  el.resetBtn.addEventListener("click", function () {
+    try { localStorage.removeItem(STORE); } catch (e) { /* ignore */ }
+    location.reload();
+  });
+
+  PERSIST.forEach(function (k) {
+    var node = el[k];
+    if (!node) return;
+    node.addEventListener("change", save);
+    if (node.tagName === "INPUT") node.addEventListener("input", save);
+  });
+
+  el.mtKey.addEventListener("change", function () {
+    el.mtKey.value = el.mtKey.value.trim();
+  });
+  el.dgKey.addEventListener("change", function () {
+    el.dgKey.value = el.dgKey.value.trim();
+  });
+
+  function applyProvider() {
+    var isGroq = el.provider.value === "groq";
+    el.groqFields.hidden = !isGroq;
+    el.providerHint.textContent = isGroq ? "key required" : "no key";
+    el.mtTag.textContent = isGroq ? "Groq" : "Free";
+    save();
+  }
+
+  el.provider.addEventListener("change", function () {
+    applyProvider();
+    log("ui", "Engine: " + el.provider.value + (el.provider.value === "groq" ? " · API key" : " · no key"));
+  });
+
+  el.host.addEventListener("change", function () {
+    el.host.value = base();
+    probeArena().then(function (ok) { if (ok) scan(); });
+  });
+
+  el.target.addEventListener("change", function () {
+    if (!el.target.value) { state.target = null; return; }
+    try {
+      state.target = JSON.parse(el.target.value);
+      log("ui", "Target L" + state.target.layer + " C" + state.target.clip + " · " + state.target.param);
+    } catch (e) {
+      state.target = null;
+    }
+  });
+
+  el.scanBtn.addEventListener("click", function () { scan(); });
+
+  el.testBtn.addEventListener("click", function () {
+    if (!state.target) { toast("Pick a text parameter first"); return; }
+    writeClip("ARENA LINK OK");
+  });
+
+  el.applyManual.addEventListener("click", function () {
+    var layer = parseInt(el.manLayer.value, 10) || 1;
+    var clip = parseInt(el.manClip.value, 10) || 1;
+    var param = (el.manParam.value || "Text").trim();
+    state.target = { layer: layer, clip: clip, param: param };
+    log("ui", "Manual target L" + layer + " C" + clip + " · " + param);
+    toast("Manual target applied");
+  });
+
+  el.startBtn.addEventListener("click", start);
+  el.stopBtn.addEventListener("click", function () { stop("Stopped by operator"); });
+
+  document.addEventListener("keydown", function (e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+      e.preventDefault();
+      if (state.running) stop("Stopped by operator"); else start();
+    }
+  });
+
+  window.addEventListener("beforeunload", function () {
+    if (state.ws) { try { state.ws.close(); } catch (e) { /* ignore */ } }
+    if (state.stream) state.stream.getTracks().forEach(function (t) { t.stop(); });
+  });
+
+  /* ------------------------------------------------------------------ */
+  /* Arena                                                               */
+  /* ------------------------------------------------------------------ */
+
+  function probeArena() {
+    return fetchTimeout(base() + "/api/v1/product", {}, 3500)
+      .then(function (r) {
+        if (!r.ok) throw new Error("HTTP " + r.status);
+        return r.json();
+      })
+      .then(function (d) {
+        var name = d && d.name ? d.name : "Arena";
+        var ver = d && d.version ? " " + d.version : "";
+        state.arenaProduct = (name + ver).trim();
+        el.arenaInfo.textContent = state.arenaProduct;
+        setChip(el.chipArena, "live", "online");
+        return true;
+      })
+      .catch(function () {
+        el.arenaInfo.textContent = "not reachable";
+        setChip(el.chipArena, "idle", "offline");
+        return false;
+      });
+  }
+
+  var PARAM_DENY = /^(font|font ?name|font ?file|font ?style|typeface|style)$/i;
+
+  function isTextParam(key, p) {
+    if (!p) return false;
+    if (PARAM_DENY.test(String(key).trim())) return false;
+    var vt = String(p.valuetype || "");
+    if (/ParamString|ParamText/i.test(vt)) return true;
+    if (/^text$/i.test(key)) return true;
+    var name = p.name && p.name.value ? String(p.name.value) : "";
+    return /text/i.test(name);
+  }
+
+  function scan() {
+    el.target.innerHTML = "";
+    var loading = document.createElement("option");
+    loading.value = "";
+    loading.textContent = "Scanning…";
+    el.target.appendChild(loading);
+
+    var previous = state.target;
+
+    fetchTimeout(base() + "/api/v1/composition", {}, 8000)
+      .then(function (r) {
+        if (!r.ok) throw new Error("HTTP " + r.status);
+        return r.json();
+      })
+      .then(function (comp) {
+        el.target.innerHTML = "";
+
+        var placeholder = document.createElement("option");
+        placeholder.value = "";
+        placeholder.textContent = "— select a text parameter —";
+        el.target.appendChild(placeholder);
+
+        var layers = Array.isArray(comp.layers) ? comp.layers : [];
+        var count = 0;
+
+        layers.forEach(function (layer, li) {
+          var layerIndex = li + 1;
+          var layerName = (layer.name && layer.name.value) ? layer.name.value : "Layer " + layerIndex;
+          var clips = Array.isArray(layer.clips) ? layer.clips : [];
+          var group = null;
+
+          clips.forEach(function (clip, ci) {
+            var clipIndex = ci + 1;
+            var clipName = (clip.name && clip.name.value) ? clip.name.value : "Clip " + clipIndex;
+            var params = clip.video && clip.video.sourceparams;
+            if (!params) return;
+
+            Object.keys(params).forEach(function (key) {
+              if (!isTextParam(key, params[key])) return;
+
+              if (!group) {
+                group = document.createElement("optgroup");
+                group.label = "L" + layerIndex + " · " + layerName;
+                el.target.appendChild(group);
+              }
+
+              var opt = document.createElement("option");
+              opt.value = JSON.stringify({ layer: layerIndex, clip: clipIndex, param: key });
+              opt.textContent = "C" + clipIndex + " · " + clipName + " · " + key;
+              group.appendChild(opt);
+              count++;
+            });
+          });
+        });
+
+        if (!count) {
+          log("warn", "No text parameters found in the composition");
+          el.arenaInfoRow.querySelector("b").textContent = "connected, no text params";
+          return;
+        }
+
+        setChip(el.chipArena, "live", "online");
+        el.arenaInfo.textContent = (state.arenaProduct || "Arena") + " · " + count + " text params";
+        log("arena", "Scan found " + count + " text parameter" + (count === 1 ? "" : "s"), undefined);
+
+        if (previous) {
+          var match = Array.prototype.find.call(el.target.options, function (o) {
+            if (!o.value) return false;
+            var t = JSON.parse(o.value);
+            return t.layer === previous.layer && t.clip === previous.clip && t.param === previous.param;
+          });
+          if (match) {
+            el.target.value = match.value;
+            state.target = previous;
+            return;
+          }
+        }
+        el.target.selectedIndex = 1;
+        el.target.dispatchEvent(new Event("change"));
+      })
+      .catch(function (err) {
+        el.target.innerHTML = "";
+        var opt = document.createElement("option");
+        opt.value = "";
+        opt.textContent = "— Arena not reachable —";
+        el.target.appendChild(opt);
+        setChip(el.chipArena, "idle", "offline");
+        log("err", "Scan failed: " + err.message);
+      });
+  }
+
+  function writeClip(text) {
+    var t = state.target;
+    if (!t) return Promise.resolve();
+
+    var url = base() + "/api/v1/composition/layers/" + t.layer + "/clips/" + t.clip;
+    var body = { video: { sourceparams: {} } };
+    body.video.sourceparams[t.param] = { value: text };
+
+    var started = performance.now();
+
+    return fetchTimeout(url, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body)
+    }, 5000)
+      .then(function (res) {
+        var ms = Math.round(performance.now() - started);
+        state.lastPutAt = performance.now();
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        state.writes++;
+        el.statPut.textContent = ms + " ms";
+        el.sentBody.classList.remove("is-empty");
+        el.sentBody.textContent = text;
+        el.sentMeta.textContent = text.length + " chars · " + ms + " ms";
+        log("arena", "L" + t.layer + "·C" + t.clip + " " + t.param + " ← " + text, ms);
+        setChip(el.chipArena, "live", "online");
+
+        if (el.autoConnect.checked) {
+          return fetchTimeout(url + "/connect", { method: "POST" }, 4000).then(function (r) {
+            if (!r.ok) log("warn", "Connect call returned HTTP " + r.status);
+          }).catch(function () {
+            log("warn", "Connect call failed");
+          });
+        }
+      })
+      .catch(function (err) {
+        log("err", "Arena write failed: " + err.message + " (check host, port, and that Arena is running)");
+        setChip(el.chipArena, "error", "error");
+      });
+  }
+
+  function enqueueWrite(text) {
+    writeQueue.pending = text;
+    if (!writeQueue.busy) drainWrites();
+  }
+
+  function drainWrites() {
+    writeQueue.busy = true;
+    (function next() {
+      if (writeQueue.pending === null) { writeQueue.busy = false; return; }
+      var text = writeQueue.pending;
+      writeQueue.pending = null;
+
+      writeClip(text).then(function () {
+        var gap = Math.max(0, (parseInt(el.throttle.value, 10) || 0) - (performance.now() - state.lastPutAt));
+        return gap > 0 ? sleep(gap) : null;
+      }).then(next, next);
+    })();
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* translation                                                         */
+  /* ------------------------------------------------------------------ */
+
+  function systemPrompt() {
+    var target = el.tlang.value;
+    var keep = (el.glossary.value || "").trim();
+
+    var prompt = "You translate live stage announcements into " + target + ". " +
+      "Return only the translated sentence: no quotes, no notes, no transliteration, " +
+      "no added punctuation. Keep the register plain and spoken.";
+    if (keep) {
+      prompt += " Leave these terms untranslated and spelled exactly as written: " + keep + ".";
+    }
+    return prompt;
+  }
+
+  function targetCode() {
+    var opt = el.tlang.selectedOptions && el.tlang.selectedOptions[0];
+    return (opt && opt.getAttribute("data-code")) || "en";
+  }
+
+  function sourceCode() {
+    var v = el.lang.value;
+    return !v || v === "multi" ? "auto" : v;
+  }
+
+  /* --- Groq: chat completion, the only engine that honours the glossary --- */
+  function groqTranslate(source) {
+    var key = (el.mtKey.value || "").trim();
+    if (!key) return Promise.reject(new Error("no API key"));
+
+    return fetchTimeout("https://api.groq.com/openai/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + key
+      },
+      body: JSON.stringify({
+        model: el.mtModel.value,
+        temperature: 0.1,
+        max_tokens: 220,
+        messages: [
+          { role: "system", content: systemPrompt() },
+          { role: "user", content: source }
+        ]
+      })
+    }, 5000)
+      .then(function (res) {
+        if (!res.ok) {
+          return res.json().catch(function () { return {}; }).then(function (d) {
+            var detail = d && d.error && d.error.message ? " — " + d.error.message : "";
+            throw new Error("HTTP " + res.status + detail);
+          });
+        }
+        return res.json();
+      })
+      .then(function (data) {
+        var raw = data && data.choices && data.choices[0] && data.choices[0].message
+          ? data.choices[0].message.content : "";
+        if (!raw) throw new Error("empty completion");
+        return raw;
+      });
+  }
+
+  /* --- Google: the public gtx endpoint, no key, CORS open --- */
+  function googleTranslate(source) {
+    var url = "https://translate.googleapis.com/translate_a/single?client=gtx&dt=t" +
+      "&sl=" + encodeURIComponent(sourceCode()) +
+      "&tl=" + encodeURIComponent(targetCode()) +
+      "&q=" + encodeURIComponent(source);
+
+    return fetchTimeout(url, {}, 5000)
+      .then(function (res) {
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        return res.json();
+      })
+      .then(function (data) {
+        if (!Array.isArray(data) || !Array.isArray(data[0])) throw new Error("unexpected response");
+        var out = data[0].map(function (seg) {
+          return seg && typeof seg[0] === "string" ? seg[0] : "";
+        }).join("").trim();
+        if (!out) throw new Error("empty translation");
+        return out;
+      });
+  }
+
+  /* --- MyMemory: no key, memory-based, needs an explicit source pair --- */
+  function myMemoryTranslate(source) {
+    var from = sourceCode() === "auto" ? "en" : sourceCode();
+    var url = "https://api.mymemory.translated.net/get?q=" + encodeURIComponent(source) +
+      "&langpair=" + encodeURIComponent(from + "|" + targetCode());
+
+    return fetchTimeout(url, {}, 5000)
+      .then(function (res) {
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        return res.json();
+      })
+      .then(function (data) {
+        var out = data && data.responseData && data.responseData.translatedText
+          ? String(data.responseData.translatedText) : "";
+        out = out
+          .replace(/&quot;/g, '"').replace(/&#0?39;/g, "'").replace(/&apos;/g, "'")
+          .replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&")
+          .trim();
+        if (/MYMEMORY WARNING/i.test(out)) throw new Error("daily quota reached");
+        if (!out) throw new Error((data && data.responseDetails) || "empty translation");
+        return out;
+      });
+  }
+
+  var ENGINES = {
+    google: googleTranslate,
+    mymemory: myMemoryTranslate,
+    groq: groqTranslate
+  };
+
+  function translate(source) {
+    var provider = el.provider.value;
+    var engine = ENGINES[provider] || googleTranslate;
+
+    // Nothing to do when the source and target already match.
+    if (sourceCode() !== "auto" && sourceCode() === targetCode()) {
+      return Promise.resolve({ ok: true, ms: 0, text: source });
+    }
+
+    var started = performance.now();
+
+    return engine(source)
+      .then(function (raw) {
+        var ms = Math.round(performance.now() - started);
+        var clean = String(raw)
+          .trim()
+          .replace(/^["'“”«»]+|["'“”«»]+$/g, "")
+          .split("\n")[0]
+          .trim();
+        if (!clean) throw new Error("empty translation");
+        log("mt", clean, ms);
+        return { ok: true, ms: ms, text: clean };
+      })
+      .catch(function (err) {
+        log("err", "Translation failed · " + provider + " · " + err.message);
+        return { ok: false, ms: 0, text: source };
+      });
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* segment pipeline                                                    */
+  /* ------------------------------------------------------------------ */
+
+  function shape(text) {
+    var out = (text || "").replace(/\s+/g, " ").trim();
+    if (el.upper.checked) out = out.toUpperCase();
+    var max = parseInt(el.maxChars.value, 10) || 0;
+    if (max > 0 && out.length > max) out = out.slice(0, max).trim();
+    return out;
+  }
+
+  function enqueueSegment(raw) {
+    var text = (raw || "").replace(/\s+/g, " ").trim();
+    if (!text) return;
+    segQueue.length = 0;
+    segQueue.push(text);
+    pump();
+  }
+
+  function pump() {
+    if (pumping) return;
+    pumping = true;
+
+    (function next() {
+      if (!segQueue.length) { pumping = false; return; }
+      var source = segQueue.shift();
+
+      processSegment(source).then(next, function (err) {
+        log("err", "Segment error: " + (err && err.message ? err.message : err));
+        next();
+      });
+    })();
+  }
+
+  function processSegment(source) {
+    if (source === state.lastSentSource) return Promise.resolve();
+    state.lastSentSource = source;
+
+    state.segments++;
+    el.statSeg.textContent = state.segments;
+    if (state.lastSttMs !== null) el.statStt.textContent = state.lastSttMs + " ms";
+
+    var chain;
+    if (state.mode === "translate") {
+      chain = translate(source).then(function (r) {
+        if (r.ok) {
+          el.statMt.textContent = r.ms + " ms";
+        } else {
+          el.statMt.textContent = "—";
+        }
+        return shape(r.ok ? r.text : source);
+      });
+    } else {
+      el.statMt.textContent = "—";
+      chain = Promise.resolve(shape(source));
+    }
+
+    return chain.then(function (out) {
+      if (!out) return;
+      el.sentBody.classList.remove("is-empty");
+      el.sentBody.textContent = out;
+      enqueueWrite(out);
+    });
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* heard pane                                                          */
+  /* ------------------------------------------------------------------ */
+
+  function renderHeard(text, isFinal) {
+    el.heardBody.classList.remove("is-empty");
+
+    if (isFinal) {
+      var merged = (state.heardFinal ? state.heardFinal + " " : "") + text;
+      state.heardFinal = merged.replace(/\s+/g, " ").trim();
+      el.heardBody.textContent = state.heardFinal;
+      el.heardMeta.textContent = state.heardFinal.length + " chars";
+      return;
+    }
+
+    el.heardBody.textContent = "";
+    if (state.sentenceClosed) {
+      state.heardFinal = "";
+      state.sentenceClosed = false;
+    }
+    if (state.heardFinal) {
+      el.heardBody.appendChild(document.createTextNode(state.heardFinal + " "));
+    }
+    var span = document.createElement("span");
+    span.className = "interim";
+    span.textContent = text;
+    el.heardBody.appendChild(span);
+    el.heardMeta.textContent = "listening";
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* audio meter                                                         */
+  /* ------------------------------------------------------------------ */
+
+  function sizeMeter() {
+    var c = el.meter;
+    var dpr = window.devicePixelRatio || 1;
+    var w = c.clientWidth || 600;
+    var h = c.clientHeight || 46;
+    c.width = Math.round(w * dpr);
+    c.height = Math.round(h * dpr);
+    state.mctx = c.getContext("2d");
+    state.mctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    state.mw = w;
+    state.mh = h;
+    if (!state.analyser) drawIdleMeter();
+  }
+
+  function drawIdleMeter() {
+    var ctx = state.mctx;
+    if (!ctx) return;
+    var w = state.mw, h = state.mh;
+    ctx.clearRect(0, 0, w, h);
+    ctx.fillStyle = "rgba(28, 40, 54, 0.85)";
+    ctx.fillRect(0, h - 1, w, 1);
+    ctx.fillStyle = "rgba(28, 40, 54, 0.5)";
+    [0.25, 0.5, 0.75].forEach(function (p) {
+      ctx.fillRect(0, Math.round(h * p), w, 1);
+    });
+  }
+
+  function drawMeter() {
+    var ctx = state.mctx;
+    if (!ctx || !state.levels) return;
+
+    var w = state.mw, h = state.mh;
+    ctx.clearRect(0, 0, w, h);
+
+    var levels = state.levels;
+    var n = levels.length;
+    var gap = 2;
+    var bw = Math.max(1, (w - gap * (n - 1)) / n);
+
+    for (var i = 0; i < n; i++) {
+      var v = Math.min(1, levels[i] * 3.4);
+      var bh = Math.max(1.5, v * (h - 2));
+      var x = i * (bw + gap);
+      var y = h - bh;
+
+      if (levels[i] > 0.92) ctx.fillStyle = "rgba(255, 92, 116, 0.9)";
+      else if (i > n - 14) ctx.fillStyle = "rgba(61, 220, 151, 0.92)";
+      else ctx.fillStyle = "rgba(61, 220, 151, 0.42)";
+
+      ctx.fillRect(x, y, bw, bh);
+    }
+
+    var last = levels[n - 1];
+    if (last > 0.0005) {
+      el.db.textContent = (20 * Math.log10(last)).toFixed(1).replace("-", "−") + " dB";
+    } else {
+      el.db.textContent = "−∞ dB";
+    }
+  }
+
+  /* ---- capture: 16 kHz mono linear16, no MediaRecorder --------------- */
+
+  var TARGET_RATE = 16000;
+  var PCM_FRAME = 1024;
+
+  var WORKLET_SRC =
+    "class PcmTap extends AudioWorkletProcessor{" +
+    "constructor(){super();this.buf=new Float32Array(" + PCM_FRAME + ");this.n=0;}" +
+    "process(inputs){var ch=inputs[0]&&inputs[0][0];if(!ch)return true;" +
+    "for(var i=0;i<ch.length;i++){this.buf[this.n++]=ch[i];" +
+    "if(this.n===this.buf.length){this.port.postMessage(this.buf.slice(0));this.n=0;}}return true;}};" +
+    "registerProcessor('pcm-tap',PcmTap);";
+
+  function resample(input, from, to) {
+    if (from === to) return input;
+    var ratio = from / to;
+    var len = Math.floor(input.length / ratio);
+    var out = new Float32Array(len);
+    for (var i = 0; i < len; i++) {
+      var idx = i * ratio;
+      var i0 = Math.floor(idx);
+      var i1 = Math.min(i0 + 1, input.length - 1);
+      var frac = idx - i0;
+      out[i] = input[i0] * (1 - frac) + input[i1] * frac;
+    }
+    return out;
+  }
+
+  function updateBytes() {
+    if (el.bytesInfo) el.bytesInfo.textContent = (state.bytes / 1024).toFixed(1) + " KB sent";
+  }
+
+  function sendPcm(frame) {
+    var ws = state.ws;
+    if (!ws || ws.readyState !== 1) return;
+
+    var n = frame.length;
+    var pcm = new Int16Array(n);
+    for (var i = 0; i < n; i++) {
+      var s = frame[i];
+      if (s > 1) s = 1; else if (s < -1) s = -1;
+      pcm[i] = s < 0 ? s * 0x8000 : s * 0x7fff;
+    }
+
+    ws.send(pcm.buffer);
+    state.bytes += pcm.byteLength;
+    state.lastChunkAt = performance.now();
+
+    if (performance.now() - state.lastInfoAt > 400) {
+      state.lastInfoAt = performance.now();
+      updateBytes();
+    }
+  }
+
+  function pushSamples(frame) {
+    if (!state.levels) return;
+    sendPcm(state.ctxRate === TARGET_RATE ? frame : resample(frame, state.ctxRate, TARGET_RATE));
+  }
+
+  function startScriptProcessor(source, mute, reason) {
+    var ctx = state.audioCtx;
+    var node = ctx.createScriptProcessor(2048, 1, 1);
+    node.onaudioprocess = function (ev) {
+      pushSamples(ev.inputBuffer.getChannelData(0).slice(0));
+    };
+    source.connect(node);
+    node.connect(mute);
+    state.audioNode = node;
+    log("dg", "PCM capture · ScriptProcessor · " + state.ctxRate + " Hz" + (reason ? " · " + reason : ""));
+  }
+
+  // The worklet is inlined so the page stays a single file. A data: module URL
+  // loads on every origin, including file://, where a blob: URL has an opaque
+  // origin the browser refuses to fetch. blob: is kept as the second attempt
+  // for engines that reject data: modules.
+  var workletDataUrl = null;
+
+  function getWorkletDataUrl() {
+    if (!workletDataUrl) workletDataUrl = "data:text/javascript;base64," + btoa(WORKLET_SRC);
+    return workletDataUrl;
+  }
+
+  function loadWorkletModule(ctx) {
+    return new Promise(function (resolve, reject) {
+      var urls = [getWorkletDataUrl()];
+      var blob = null;
+
+      if (window.Blob && URL.createObjectURL) {
+        try {
+          blob = URL.createObjectURL(new Blob([WORKLET_SRC], { type: "application/javascript" }));
+          urls.push(blob);
+        } catch (e) { blob = null; }
+      }
+
+      (function attempt(i) {
+        if (i >= urls.length) {
+          if (blob) URL.revokeObjectURL(blob);
+          reject(new Error("no loadable worklet module URL"));
+          return;
+        }
+        ctx.audioWorklet.addModule(urls[i]).then(function () {
+          if (blob) URL.revokeObjectURL(blob);
+          resolve();
+        }, function () {
+          attempt(i + 1);
+        });
+      })(0);
+    });
+  }
+
+  function startAudio(stream) {
+    var Ctx = window.AudioContext || window.webkitAudioContext;
+
+    try {
+      state.audioCtx = new Ctx({ sampleRate: TARGET_RATE });
+    } catch (e) {
+      state.audioCtx = new Ctx();
+    }
+
+    var ctx = state.audioCtx;
+    state.ctxRate = ctx.sampleRate;
+    if (ctx.state === "suspended") ctx.resume();
+
+    var source = ctx.createMediaStreamSource(stream);
+    state.audioSource = source;
+
+    var analyser = ctx.createAnalyser();
+    analyser.fftSize = 1024;
+    analyser.smoothingTimeConstant = 0.55;
+    source.connect(analyser);
+    state.analyser = analyser;
+
+    var mute = ctx.createGain();
+    mute.gain.value = 0;
+    mute.connect(ctx.destination);
+    analyser.connect(mute);
+
+    sizeMeter();
+    state.levels = new Float32Array(140);
+
+    var levelBuf = new Float32Array(analyser.fftSize);
+
+    var draw = function () {
+      if (!state.analyser) return;
+      analyser.getFloatTimeDomainData(levelBuf);
+      var sum = 0;
+      for (var i = 0; i < levelBuf.length; i++) sum += levelBuf[i] * levelBuf[i];
+      state.levels.copyWithin(0, 1);
+      state.levels[state.levels.length - 1] = Math.sqrt(sum / levelBuf.length);
+      drawMeter();
+      state.raf = requestAnimationFrame(draw);
+    };
+    state.raf = requestAnimationFrame(draw);
+
+    if (!ctx.audioWorklet || !window.AudioWorkletNode) {
+      startScriptProcessor(source, mute, "AudioWorklet unavailable");
+      return;
+    }
+
+    if (state.workletState === "blocked") {
+      startScriptProcessor(source, mute, "worklet disabled after an earlier failure");
+      return;
+    }
+
+    loadWorkletModule(ctx).then(function () {
+      if (!state.audioCtx) return;
+      var node = new AudioWorkletNode(ctx, "pcm-tap");
+      node.port.onmessage = function (ev) { pushSamples(ev.data); };
+      source.connect(node);
+      node.connect(mute);
+      state.audioNode = node;
+      state.workletState = "ok";
+      log("dg", "PCM capture · AudioWorklet · " + state.ctxRate + " Hz");
+    }).catch(function (err) {
+      state.workletState = "blocked";
+      startScriptProcessor(source, mute, err.message);
+    });
+  }
+
+  function stopAudio() {
+    if (state.audioNode) {
+      try { if (state.audioNode.port) state.audioNode.port.onmessage = null; } catch (e) { /* ignore */ }
+      try { state.audioNode.disconnect(); } catch (e) { /* ignore */ }
+      state.audioNode = null;
+    }
+    if (state.audioSource) {
+      try { state.audioSource.disconnect(); } catch (e) { /* ignore */ }
+      state.audioSource = null;
+    }
+    if (state.raf) cancelAnimationFrame(state.raf);
+    state.raf = 0;
+    state.analyser = null;
+
+    if (state.audioCtx) {
+      state.audioCtx.close().catch(function () {});
+      state.audioCtx = null;
+    }
+
+    state.levels = null;
+    state.bytes = 0;
+    drawIdleMeter();
+    el.db.textContent = "−∞ dB";
+    updateBytes();
+  }
+
+  window.addEventListener("resize", function () {
+    if (state.analyser) sizeMeter();
+  });
+
+  /* ------------------------------------------------------------------ */
+  /* Deepgram socket                                                     */
+  /* ------------------------------------------------------------------ */
+
+  function buildUrl() {
+    var p = new URLSearchParams();
+    p.set("model", el.model.value);
+    p.set("language", el.lang.value || "en");
+    p.set("encoding", "linear16");
+    p.set("sample_rate", String(TARGET_RATE));
+    p.set("channels", "1");
+    p.set("interim_results", "true");
+
+    if (el.smart.checked) {
+      p.set("smart_format", "true");
+      p.set("punctuate", "true");
+    }
+    if (el.numerals.checked) p.set("numerals", "true");
+    if (el.filler.checked) p.set("filler_words", "true");
+    if (el.diarize.checked) p.set("diarize", "true");
+    if (el.profanity.checked) p.set("profanity_filter", "true");
+
+    if (el.endpointing.value) p.set("endpointing", el.endpointing.value);
+
+    if (el.uttend.value !== "0") {
+      p.set("utterance_end_ms", el.uttend.value);
+      p.set("vad_events", "true");
+    }
+
+    var terms = (el.keyterms.value || "").split(",");
+    terms.forEach(function (t) {
+      var v = t.trim();
+      if (v) p.append("keywords", v);
+    });
+
+    return "wss://api.deepgram.com/v1/listen?" + p.toString();
+  }
+
+  function connectSocket() {
+    var url = buildUrl();
+    var key = (el.dgKey.value || "").trim();
+
+    setChip(el.chipStt, "connecting", "connecting");
+    log("dg", "Opening stream · " + el.model.value + " · " + el.lang.value);
+
+    var ws;
+    try {
+      ws = new WebSocket(url, ["token", key]);
+    } catch (e) {
+      log("err", "Socket open failed: " + e.message);
+      setChip(el.chipStt, "error", "error");
+      return;
+    }
+
+    state.ws = ws;
+
+    ws.onopen = function () {
+      state.retries = 0;
+      state.lastResultAt = performance.now();
+      state.gotResults = false;
+      state.silentWarned = false;
+      setChip(el.chipStt, "live", "live");
+      log("dg", "Stream open · 16 kHz mono linear16");
+
+      clearInterval(state.keepAlive);
+      state.keepAlive = setInterval(function () {
+        if (state.ws && state.ws.readyState === 1) {
+          state.ws.send(JSON.stringify({ type: "KeepAlive" }));
+        }
+      }, 8000);
+    };
+
+    ws.onmessage = onMessage;
+
+    ws.onerror = function () {
+      log("err", "Socket error");
+    };
+
+    ws.onclose = function (ev) {
+      clearInterval(state.keepAlive);
+      if (state.ws === ws) state.ws = null;
+
+      if (!state.running) {
+        setChip(el.chipStt, "idle", "idle");
+        return;
+      }
+
+      log("warn", "Socket closed · code " + (ev.code || "?"));
+
+      if (el.autoRecover.checked && state.retries < 5) {
+        var delay = Math.min(8000, 1000 * Math.pow(2, state.retries));
+        state.retries++;
+        setChip(el.chipStt, "connecting", "reconnect " + state.retries);
+        log("dg", "Reconnecting in " + delay + " ms");
+        state.reconnectTimer = setTimeout(connectSocket, delay);
+      } else {
+        stop("Stream closed");
+      }
+    };
+  }
+
+  function onMessage(ev) {
+    var msg;
+    try { msg = JSON.parse(ev.data); } catch (e) { return; }
+
+    if (msg.type === "Results") {
+      state.lastResultAt = performance.now();
+      state.gotResults = true;
+      state.silentWarned = false;
+
+      var alt = msg.channel && msg.channel.alternatives && msg.channel.alternatives[0];
+      var text = alt && alt.transcript ? alt.transcript : "";
+      var isFinal = !!msg.is_final;
+      var speechFinal = !!msg.speech_final;
+
+      if (text) renderHeard(text, isFinal);
+      if (text && isFinal) state.lastSttMs = Math.round(performance.now() - state.lastChunkAt);
+      handleCommit(text, isFinal, speechFinal);
+      return;
+    }
+
+    if (msg.type === "SpeechStarted") {
+      el.heardMeta.textContent = "speech";
+      return;
+    }
+
+    if (msg.type === "UtteranceEnd") {
+      flushPending();
+      return;
+    }
+
+    if (msg.type === "Error") {
+      log("err", "Deepgram: " + (msg.message || msg.description || "unknown error"));
+    }
+  }
+
+  function handleCommit(text, isFinal, speechFinal) {
+    if (!text) return;
+    var trigger = el.trigger.value;
+
+    if (trigger === "interim") {
+      if (!isFinal) enqueueSegment(text);
+      return;
+    }
+
+    if (trigger === "final") {
+      if (isFinal) {
+        enqueueSegment(text);
+        state.sentenceClosed = true;
+      }
+      return;
+    }
+
+    if (isFinal) state.pendingParts.push(text);
+    if (speechFinal) flushPending();
+  }
+
+  function flushPending() {
+    if (!state.pendingParts.length) {
+      state.sentenceClosed = true;
+      return;
+    }
+    var joined = state.pendingParts.join(" ");
+    state.pendingParts = [];
+    state.sentenceClosed = true;
+    enqueueSegment(joined);
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* transport                                                           */
+  /* ------------------------------------------------------------------ */
+
+  function tickClock() {
+    var s = Math.floor((Date.now() - state.startedAt) / 1000);
+    el.clock.textContent = String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0");
+  }
+
+  function start() {
+    if (state.running) return;
+
+    if (!(el.dgKey.value || "").trim()) {
+      toast("Add a Deepgram API key first");
+      el.dgKey.focus();
+      return;
+    }
+    if (!state.target) {
+      toast("Scan Arena and pick a text parameter");
+      el.scanBtn.focus();
+      return;
+    }
+    if (state.mode === "translate" && el.provider.value === "groq" && !(el.mtKey.value || "").trim()) {
+      el.provider.value = "google";
+      applyProvider();
+      toast("Groq needs a key · switched to Google");
+    }
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      toast("This browser has no microphone API");
+      return;
+    }
+
+    state.running = true;
+    state.retries = 0;
+    state.segments = 0;
+    state.writes = 0;
+    state.pendingParts = [];
+    state.heardFinal = "";
+    state.lastSentSource = "";
+    state.lastSttMs = null;
+    state.lastResultAt = 0;
+    state.gotResults = false;
+    state.silentWarned = false;
+    state.bytes = 0;
+    state.startedAt = Date.now();
+
+    el.statSeg.textContent = "0";
+    el.statStt.textContent = "—";
+    el.statMt.textContent = "—";
+    el.statPut.textContent = "—";
+    el.sentBody.classList.add("is-empty");
+    el.sentBody.textContent = "Nothing sent yet";
+    el.sentMeta.textContent = "—";
+    el.heardBody.classList.add("is-empty");
+    el.heardBody.textContent = "Waiting for audio";
+    el.heardMeta.textContent = "—";
+
+    el.startBtn.disabled = true;
+    el.stopBtn.disabled = false;
+    el.clock.dataset.live = "true";
+
+    clearInterval(state.timer);
+    state.timer = setInterval(tickClock, 250);
+    tickClock();
+
+    log("ui", "Capture started · " + (state.mode === "translate"
+      ? el.provider.value + " → " + el.tlang.value
+      : "verbatim") +
+      " · L" + state.target.layer + " C" + state.target.clip + " " + state.target.param);
+
+    clearInterval(state.watch);
+    state.watch = setInterval(watchdog, 2000);
+
+    navigator.mediaDevices.getUserMedia({
+      audio: {
+        channelCount: 1,
+        echoCancellation: true,
+        noiseSuppression: true,
+        autoGainControl: true
+      }
+    })
+      .then(function (stream) {
+        state.stream = stream;
+        startAudio(stream);
+        updateBytes();
+        connectSocket();
+      })
+      .catch(function (err) {
+        log("err", "Microphone: " + err.message);
+        stop("Microphone unavailable");
+      });
+  }
+
+  function watchdog() {
+    if (!state.running || !state.ws || state.ws.readyState !== 1) return;
+
+    if (state.bytes === 0) {
+      if (!state.silentWarned) {
+        state.silentWarned = true;
+        log("warn", "No audio leaving the page — check the microphone permission and input device");
+      }
+      return;
+    }
+
+    var since = performance.now() - (state.lastResultAt || state.startedAt);
+    var limit = state.gotResults ? 30000 : 10000;
+    var peak = 0;
+    if (state.levels) {
+      for (var i = Math.max(0, state.levels.length - 30); i < state.levels.length; i++) {
+        if (state.levels[i] > peak) peak = state.levels[i];
+      }
+    }
+
+    if (peak > 0.02 && since > limit && !state.silentWarned) {
+      state.silentWarned = true;
+      log("warn", (state.gotResults
+        ? "No transcript for " + Math.round(since / 1000) + " s"
+        : "No transcript since start") +
+        " · audio flowing (" + (state.bytes / 1024).toFixed(1) + " KB)");
+    }
+  }
+
+  function stop(reason) {
+    if (!state.running && !state.ws && !state.stream) return;
+    state.running = false;
+
+    clearTimeout(state.reconnectTimer);
+    clearInterval(state.timer);
+    clearInterval(state.keepAlive);
+    clearInterval(state.watch);
+
+    if (state.ws && state.ws.readyState === 1) {
+      try { state.ws.send(JSON.stringify({ type: "CloseStream" })); } catch (e) { /* ignore */ }
+    }
+
+    if (state.ws) {
+      try { state.ws.close(); } catch (e) { /* ignore */ }
+      state.ws = null;
+    }
+
+    if (state.stream) {
+      state.stream.getTracks().forEach(function (t) { t.stop(); });
+      state.stream = null;
+    }
+
+    stopAudio();
+    flushPending();
+
+    el.startBtn.disabled = false;
+    el.stopBtn.disabled = true;
+    el.clock.dataset.live = "false";
+    setChip(el.chipStt, "idle", "idle");
+    el.heardMeta.textContent = "—";
+
+    log("ui", reason || "Capture stopped");
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* boot                                                                */
+  /* ------------------------------------------------------------------ */
+
+  load();
+  applyProvider();
+  sizeMeter();
+  drawMeter();
+
+  Array.prototype.forEach.call(document.querySelectorAll("[data-mode]"), function (btn) {
+    btn.setAttribute("aria-pressed", String(btn.dataset.mode === state.mode));
+  });
+
+  log("ui", "Console ready · mode " + state.mode);
+  probeArena().then(function (ok) {
+    if (ok) {
+      scan();
+    } else {
+      log("warn", "Arena not answering on " + base() + " — start Arena and its web server, then press Scan");
+    }
+  });
+})();
+</script>
+</body>
+</html>
